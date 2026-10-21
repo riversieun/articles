@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+/* 디자인 시안(claude_design_prototype2 · D3 라임 프라이머리)의 토큰 */
+@theme {
+  --color-ink: #111111;
+  --color-paper: #ffffff;
+  --color-panel: #f4f4f6;
+  --color-line: #e7e7ea;
+  --color-line-2: #dcdce1;
+  --color-line-strong: #d5d5da;
+  --color-sub: #5f5f66;
+  --color-muted: #5f5f66;
+  --color-off: #8e8e96;
+  --color-tip: #c9ced6;
+  --color-lime: #d9f25c;
+  --color-lilac: #e7e0ff;
+  --color-lilac-strong: #cbbcff;
+
+  --font-sans: "Inter", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-serif: "Source Serif 4", Georgia, serif;
+}
+
+@layer base {
+  html {
+    background: #eeeef1;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.5;
+    word-break: keep-all;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  button {
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+    font: inherit;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+
+  textarea {
+    font: inherit;
+  }
+
+  textarea::placeholder {
+    color: var(--color-muted);
+  }
+}
+
+/* 영어 본문/제목은 단어 단위로 줄바꿈 */
+[lang="en"] {
+  word-break: normal;
+}
+
+.ns {
+  scrollbar-width: none;
+}
+.ns::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes up {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes pop {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.up {
+  animation: up 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.pop {
+  animation: pop 0.16s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .up,
+  .pop {
+    animation: none;
+  }
+}
