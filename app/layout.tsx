@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { StoreProvider } from "@/lib/store";
 import { Overlays } from "@/components/Overlays";
+import { Analytics } from "@/components/Analytics";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -32,6 +33,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             {children}
           </div>
           <Overlays />
+          <Analytics />
         </StoreProvider>
       </body>
     </html>

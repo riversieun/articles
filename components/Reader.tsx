@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { track } from "@/lib/analytics";
 import { lib } from "@/lib/content";
 import { useStore } from "@/lib/store";
 import {
@@ -48,6 +49,8 @@ export function Reader({ aid }: { aid: string }) {
   const [menu, setMenu] = useState("");
   const [thought, setThought] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
+  const maxPctRef = useRef(0);
+  const completedRef = useRef(false);
 
   // 상단 프로그레스: 본문 끝 표식까지의 스크롤 진행률
   useEffect(() => {
@@ -58,8 +61,17 @@ export function Reader({ aid }: { aid: string }) {
       const span = Math.max(1, endTop - window.innerHeight + 40);
       const pct = Math.round(clamp(window.scrollY / span, 0, 1) * 100);
       setProgress(pct);
-      if (pct >= COMPLETE_AT) setDone(true);
+      maxPctRef.current = Math.max(maxPctRef.current, pct);
+      if (pct >= COMPLETE_AT) {
+        setDone(true);
+        if (!completedRef.current) {
+          completedRef.current = true;
+          track("Article Completed", { article_id: aid });
+        }
+      }
     };
+    maxPctRef.current = 0;
+    completedRef.current = false;
     update();
     window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
@@ -67,7 +79,43 @@ export function Reader({ aid }: { aid: string }) {
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
     };
-  }, []);
+  }, [aid]);
+
+  // 체류 시간: 탭이 보이는 동안만 센다. 글을 떠나거나 탭을 닫을 때 한 번 보낸다.
+  useEffect(() => {
+    let visibleMs = 0;
+    let since = document.visibilityState === "visible" ? Date.now() : 0;
+    let sent = false;
+
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") {
+        since = Date.now();
+      } else if (since) {
+        visibleMs += Date.now() - since;
+        since = 0;
+      }
+    };
+    const send = () => {
+      if (sent) return;
+      sent = true;
+      if (since) visibleMs += Date.now() - since;
+      if (visibleMs < 1000) return;
+      track("Article Read", {
+        article_id: aid,
+        seconds_visible: Math.round(visibleMs / 1000),
+        max_scroll_pct: maxPctRef.current,
+        completed: completedRef.current,
+      });
+    };
+
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("pagehide", send);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("pagehide", send);
+      send();
+    };
+  }, [aid]);
 
   // 툴팁/메뉴 바깥을 누르면 닫기
   useEffect(() => {
@@ -92,6 +140,7 @@ export function Reader({ aid }: { aid: string }) {
       setTip(null);
       return;
     }
+    track("Expression Tooltip Opened", { article_id: aid, expression_id: xid });
     const btn = e.currentTarget;
     const block = btn.closest<HTMLElement>("[data-sent]");
     let top = 44;
@@ -366,6 +415,7 @@ export function Reader({ aid }: { aid: string }) {
             href={art.url}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => track("Original Article Clicked", { article_id: aid })}
             className="flex h-[50px] items-center rounded-[25px] border-[1.5px] border-ink px-6 text-[15px] font-semibold text-ink no-underline"
           >
             원문 읽기

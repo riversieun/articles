@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import { lib } from "./content";
+import { track } from "./analytics";
 import type { Note } from "./types";
 
 /**
@@ -144,9 +145,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         Object.keys(state.savedX).length > 0 ||
         Object.keys(state.savedA).length > 0,
       showToast,
-      openLogin: () => setSheet({ type: "login", reason: "manual" }),
+      openLogin: () => {
+        track("Login Button Clicked");
+        setSheet({ type: "login", reason: "manual" });
+      },
       closeSheet: () => setSheet(null),
       login: () => {
+        track("Login Completed");
         commit({ ...ref.current, loggedIn: true });
         setSheet(null);
         showToast("구글 계정에 기록을 연결했어요 (프로토타입: 실제 인증 없음)");
@@ -155,10 +160,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         commit({ ...ref.current, loggedIn: false });
         showToast("로그아웃했어요");
       },
-      toggleKo: () => commit({ ...ref.current, showKo: !ref.current.showKo }),
+      toggleKo: () => {
+        track("Translation Toggled", { on: !ref.current.showKo });
+        commit({ ...ref.current, showKo: !ref.current.showKo });
+      },
       toggleHl: (sid) => {
         const hl = { ...ref.current.hl };
         const on = !hl[sid];
+        track("Highlight Toggled", { article_id: lib.sent[sid].aid, on });
         if (on) hl[sid] = true;
         else delete hl[sid];
         commit({ ...ref.current, hl });
@@ -185,6 +194,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         const cur = ref.current;
         const note: Note = { id: newId(), aid: lib.sent[sid].aid, sid, text: t, at: Date.now() };
         const first = !cur.notes.some((n) => n.sid);
+        track("Comment Saved", { article_id: note.aid });
         setSheet(null);
         let next: Persisted = { ...cur, notes: [...cur.notes, note] };
         showToast("코멘트를 남겼어요. 글 아래 내 생각에 모여요");
@@ -195,16 +205,19 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         const t = text.trim();
         if (!t) return;
         const cur = ref.current;
+        track("Thought Added", { article_id: aid });
         commit({ ...cur, notes: [...cur.notes, { id: newId(), aid, sid: "", text: t, at: Date.now() }] });
         showToast("생각을 남겼어요. 아카이브에서 다시 볼 수 있어요");
       },
       removeNote: (id) => {
+        track("Note Deleted");
         commit({ ...ref.current, notes: ref.current.notes.filter((n) => n.id !== id) });
         showToast("삭제했어요");
       },
       toggleX: (xid) => {
         const savedX = { ...ref.current.savedX };
         const on = !savedX[xid];
+        track("Expression Saved Toggled", { expression_id: xid, on });
         if (on) savedX[xid] = true;
         else delete savedX[xid];
         let next: Persisted = { ...ref.current, savedX };
@@ -223,6 +236,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       toggleA: (aid) => {
         const savedA = { ...ref.current.savedA };
         const on = !savedA[aid];
+        track("Article Saved Toggled", { article_id: aid, on });
         if (on) savedA[aid] = true;
         else delete savedA[aid];
         commit({ ...ref.current, savedA });

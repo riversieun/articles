@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { FILTERS, lib } from "@/lib/content";
+import { track } from "@/lib/analytics";
 import { useStore } from "@/lib/store";
 import { ArticleRow } from "./ArticleRow";
 
@@ -13,6 +14,7 @@ export function Feed() {
   const src = params.get("src") ?? "all";
 
   const go = (next: string) => {
+    track("Feed Filter Selected", { source: next });
     router.replace(next === "all" ? "/" : `/?src=${next}`, { scroll: false });
   };
 
