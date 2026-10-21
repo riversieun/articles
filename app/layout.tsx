@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { StoreProvider } from "@/lib/store";
 import { Overlays } from "@/components/Overlays";
 import { Analytics } from "@/components/Analytics";
+import { AmplitudeInit } from "@/components/AmplitudeInit";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           </div>
           <Overlays />
           <Analytics />
+          <AmplitudeInit />
         </StoreProvider>
       </body>
     </html>

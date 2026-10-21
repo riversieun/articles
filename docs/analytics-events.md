@@ -49,3 +49,18 @@
 - 자동 로그인 연동(Supabase) 시 `mixpanel.identify(사용자 내부 ID)`를 추가해 비로그인 기록과 연결할 예정입니다. 이메일은 보내지 않습니다.
 - 개발 모드에서는 브라우저 콘솔에 `MIXPANEL REQUEST`로 전송 내용이 보입니다.
 - 공개 전: 개인정보처리방침/분석 수집 안내 필요.
+
+## Amplitude
+
+`lib/analytics.ts`의 `initAnalytics()`가 Mixpanel과 Amplitude를 함께 초기화한다. (`components/AmplitudeInit.tsx`가 앱 시작 시 호출, 키는 `NEXT_PUBLIC_AMPLITUDE_API_KEY`)
+
+- 위에 정의한 모든 이벤트는 `track()` 한 번으로 **같은 이름·속성**으로 두 도구에 함께 전송된다.
+- Amplitude는 자동 수집(autocapture)도 켜 둠: 페이지뷰(`[Amplitude] Page Viewed`), 세션, 폼 입력, 파일 다운로드, 클릭(`elementInteractions: true`, `[Amplitude] Element Clicked`). Mixpanel에는 자동 수집이 없다.
+- 그래서 Amplitude에는 직접 정의한 `Page View`와 자동 수집 `[Amplitude] Page Viewed`가 둘 다 보인다. 분석할 때 하나만 기준으로 삼는다.
+
+## 사용자 ID (Supabase 연동 시)
+
+로그인하면 `identifyUser(user.id)`, 로그아웃하면 `resetUser()`를 호출한다. 두 도구에 같은 ID가 들어가므로 사용자 단위로 비교할 수 있다.
+
+- ID는 Supabase의 `user.id`(내부 UUID)만 쓴다. 이메일·이름은 보내지 않는다.
+- 로그인 전 기록(기기 ID)은 Mixpanel이 `identify`로 자동 연결한다. Amplitude도 같은 기기의 기록이 이어진다.
