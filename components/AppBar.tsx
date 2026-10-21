@@ -52,7 +52,7 @@ export function AppBar() {
             </Link>
           ) : (
             <button
-              onClick={openLogin}
+              onClick={() => openLogin("app_bar")}
               className="h-11 rounded-[22px] border-[1.5px] border-ink bg-white px-[18px] text-sm font-semibold text-ink"
             >
               로그인

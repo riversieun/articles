@@ -1,9 +1,19 @@
 import mixpanel from "mixpanel-browser";
 import * as amplitude from "@amplitude/analytics-browser";
+import { lib } from "./content";
 
 const MIXPANEL_TOKEN = process.env.NEXT_PUBLIC_MIXPANEL_TOKEN;
 const AMPLITUDE_KEY = process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY;
 let started = false;
+
+/** 로그인 진입 경로. Login Button Clicked / Login Completed 의 trigger 값. */
+export type LoginTrigger = "app_bar" | "guest_notice" | "mypage" | "reader_end_banner" | "backup_prompt";
+
+/** 글 단위 이벤트에 공통으로 붙이는 속성. 값은 콘텐츠 데이터에서 가져온다. */
+export function articleProps(aid: string) {
+  const a = lib.byId[aid];
+  return { article_id: aid, source: a?.src, content_type: a?.kind };
+}
 
 /** 브라우저에서 한 번만 두 도구를 초기화한다. 키가 없는 쪽은 조용히 건너뛴다. */
 export function initAnalytics(): boolean {
@@ -49,9 +59,17 @@ export function identifyUser(userId: string) {
   if (AMPLITUDE_KEY) amplitude.setUserId(userId);
 }
 
+/** 로그인 상태가 바뀔 때마다 호출: 이후 모든 이벤트에 is_guest가 붙는다. (Mixpanel은 register, Amplitude는 사용자 속성) */
+export function setGuestState(guest: boolean) {
+  if (!initAnalytics()) return;
+  if (MIXPANEL_TOKEN) mixpanel.register({ is_guest: guest });
+  if (AMPLITUDE_KEY) amplitude.identify(new amplitude.Identify().set("is_guest", guest));
+}
+
 /** 로그아웃 시 호출: 다음 사용자와 섞이지 않게 두 도구의 사용자를 초기화한다. */
 export function resetUser() {
   if (!initAnalytics()) return;
   if (MIXPANEL_TOKEN) mixpanel.reset();
   if (AMPLITUDE_KEY) amplitude.reset();
+  setGuestState(true); // reset()이 공통 속성도 지우므로 게스트 상태로 다시 등록
 }

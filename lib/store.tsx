@@ -11,7 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import { lib } from "./content";
-import { track } from "./analytics";
+import { setGuestState, track, type LoginTrigger } from "./analytics";
 import type { Note } from "./types";
 
 /**
@@ -44,8 +44,10 @@ const EMPTY: Persisted = {
 const KEY = "articles:proto:v1";
 
 export type PromptReason = "manual" | "expr3" | "comment";
+/** 자동으로 뜬 "기록 백업" 제안의 분석용 trigger 값 */
+const PROMPT_TRIGGER = { expr3: "expressions_3", comment: "first_comment" } as const;
 export type Sheet =
-  | { type: "login"; reason: PromptReason }
+  | { type: "login"; reason: PromptReason; trigger: LoginTrigger }
   | { type: "comment"; sid: string; editId: string }
   | null;
 
@@ -54,11 +56,11 @@ type Ctx = Persisted & {
   sheet: Sheet;
   toast: string;
   hasRecords: boolean;
-  openLogin: () => void;
+  openLogin: (trigger: LoginTrigger) => void;
   closeSheet: () => void;
   login: () => void;
   logout: () => void;
-  toggleKo: () => void;
+  toggleKo: (aid?: string) => void;
   toggleHl: (sid: string) => void;
   openComment: (sid: string) => void;
   editNote: (id: string) => void;
@@ -125,9 +127,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   /** 게스트에게 가치가 쌓인 시점에 한 번만 "기록 백업"을 제안한다. (PRD F-72) */
   const maybePrompt = useCallback(
-    (next: Persisted, key: PromptReason): Persisted => {
+    (next: Persisted, key: Exclude<PromptReason, "manual">): Persisted => {
       if (next.loggedIn || next.prompted[key]) return next;
-      setSheet({ type: "login", reason: key });
+      track("Backup Prompt Shown", { trigger: PROMPT_TRIGGER[key] });
+      setSheet({ type: "login", reason: key, trigger: "backup_prompt" });
       return { ...next, prompted: { ...next.prompted, [key]: true } };
     },
     [],
@@ -145,23 +148,36 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         Object.keys(state.savedX).length > 0 ||
         Object.keys(state.savedA).length > 0,
       showToast,
-      openLogin: () => {
-        track("Login Button Clicked");
-        setSheet({ type: "login", reason: "manual" });
+      openLogin: (trigger) => {
+        track("Login Button Clicked", { trigger });
+        setSheet({ type: "login", reason: "manual", trigger });
       },
-      closeSheet: () => setSheet(null),
+      closeSheet: () => {
+        if (sheet?.type === "login" && sheet.reason !== "manual") {
+          track("Backup Prompt Dismissed", { trigger: PROMPT_TRIGGER[sheet.reason] });
+        }
+        setSheet(null);
+      },
       login: () => {
-        track("Login Completed");
+        const trigger = sheet?.type === "login" ? sheet.trigger : "unknown";
+        // 자동 제안 시트는 시트 안의 "Google로 계속하기"가 로그인 버튼이다. (직접 연 시트는 진입 버튼에서 이미 보냄)
+        if (trigger === "backup_prompt") track("Login Button Clicked", { trigger });
+        setGuestState(false); // Login Completed부터 is_guest=false
+        // TODO(Supabase): 익명 사용자에 구글 계정을 연결(linkIdentity)할 때 기존 구글 계정에 게스트 데이터를 병합했다면 merged: true 로 보낸다.
+        //   이 자리에서 identifyUser(user.id)도 호출한다. 지금은 목업이라 병합 여부를 알 수 없어 false.
+        track("Login Completed", { trigger, merged: false });
         commit({ ...ref.current, loggedIn: true });
         setSheet(null);
         showToast("구글 계정에 기록을 연결했어요 (프로토타입: 실제 인증 없음)");
       },
       logout: () => {
+        track("Logout");
+        // TODO(Supabase): signOut 이후 resetUser()를 호출한다. (Logout 이벤트를 먼저 보낸 뒤)
         commit({ ...ref.current, loggedIn: false });
         showToast("로그아웃했어요");
       },
-      toggleKo: () => {
-        track("Translation Toggled", { on: !ref.current.showKo });
+      toggleKo: (aid) => {
+        track("Translation Toggled", { ...(aid ? { article_id: aid } : {}), on: !ref.current.showKo });
         commit({ ...ref.current, showKo: !ref.current.showKo });
       },
       toggleHl: (sid) => {
@@ -181,6 +197,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       updateNote: (id, text) => {
         const t = text.trim();
         if (!t) return;
+        const target = ref.current.notes.find((n) => n.id === id);
+        if (target) track("Note Edited", { article_id: target.aid, note_type: target.sid ? "comment" : "thought" });
         commit({
           ...ref.current,
           notes: ref.current.notes.map((n) => (n.id === id ? { ...n, text: t } : n)),
@@ -210,14 +228,17 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         showToast("생각을 남겼어요. 아카이브에서 다시 볼 수 있어요");
       },
       removeNote: (id) => {
-        track("Note Deleted");
+        const target = ref.current.notes.find((n) => n.id === id);
+        track("Note Deleted", {
+          ...(target ? { article_id: target.aid, note_type: target.sid ? "comment" : "thought" } : {}),
+        });
         commit({ ...ref.current, notes: ref.current.notes.filter((n) => n.id !== id) });
         showToast("삭제했어요");
       },
       toggleX: (xid) => {
         const savedX = { ...ref.current.savedX };
         const on = !savedX[xid];
-        track("Expression Saved Toggled", { expression_id: xid, on });
+        track("Expression Saved Toggled", { article_id: lib.expr[xid]?.aid, expression_id: xid, on });
         if (on) savedX[xid] = true;
         else delete savedX[xid];
         let next: Persisted = { ...ref.current, savedX };

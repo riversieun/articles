@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { articleProps, track } from "@/lib/analytics";
 import { lib } from "@/lib/content";
 import { useStore } from "@/lib/store";
 import type { Article } from "@/lib/types";
 import { IconBookmark } from "./icons";
 
 /** 피드의 글 한 줄. 오른쪽 아래 책갈피로 글을 저장한다. */
-export function ArticleRow({ a }: { a: Article }) {
+export function ArticleRow({ a, position }: { a: Article; position: number }) {
   const { notes, hl, savedA, toggleA } = useStore();
 
   // 내 기록 = 코멘트·읽고 난 생각 + 코멘트 없이 남긴 하이라이트
@@ -20,6 +21,7 @@ export function ArticleRow({ a }: { a: Article }) {
     <div className="relative border-t border-line">
       <Link
         href={`/contents/${a.id}`}
+        onClick={() => track("Article Opened", { ...articleProps(a.id), entry_point: "feed", position })}
         className="flex flex-col gap-[7px] px-5 pt-5 pb-[18px] text-left text-ink no-underline"
       >
         <span className="flex justify-between gap-2 text-[12.5px] text-sub">

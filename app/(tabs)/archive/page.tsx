@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { articleProps, track } from "@/lib/analytics";
 import { lib } from "@/lib/content";
 import { useStore } from "@/lib/store";
 import type { Article } from "@/lib/types";
@@ -100,10 +101,11 @@ export default function ArchivePage() {
 
         {seg !== "saved" && groups.length > 0 && (
           <div className="flex flex-col gap-7">
-            {groups.map(({ a, items }) => (
+            {groups.map(({ a, items }, gi) => (
               <section key={a.id} className="flex flex-col gap-2">
                 <Link
                   href={`/contents/${a.id}`}
+                  onClick={() => track("Article Opened", { ...articleProps(a.id), entry_point: "archive", position: gi })}
                   className="flex min-h-11 items-center justify-between gap-3 text-left text-ink no-underline"
                 >
                   <span className="flex flex-col gap-[3px]">
@@ -162,10 +164,11 @@ export default function ArchivePage() {
 
         {seg === "saved" && savedArts.length > 0 && (
           <ul className="m-0 flex list-none flex-col p-0">
-            {savedArts.map((a) => (
+            {savedArts.map((a, i) => (
               <li key={a.id} className="flex border-t border-line">
                 <Link
                   href={`/contents/${a.id}`}
+                  onClick={() => track("Article Opened", { ...articleProps(a.id), entry_point: "saved", position: i })}
                   className="flex flex-1 flex-col gap-1.5 py-[18px] text-left text-ink no-underline"
                 >
                   <span className="text-[12.5px] text-sub">{a.sourceLine}</span>

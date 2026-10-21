@@ -42,8 +42,8 @@ export function Feed() {
       </div>
 
       <div className="mt-3.5 flex flex-col">
-        {feed.map((a) => (
-          <ArticleRow key={a.id} a={a} />
+        {feed.map((a, i) => (
+          <ArticleRow key={a.id} a={a} position={i} />
         ))}
       </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { articleProps, track } from "@/lib/analytics";
 import { lib } from "@/lib/content";
 import { useStore } from "@/lib/store";
 import { GuestNotice } from "@/components/GuestNotice";
@@ -33,7 +34,7 @@ export default function ExpressionsPage() {
         <>
         <div className="px-5 pb-2 text-[13px] font-medium text-sub">{saved.length}개</div>
         <ul className="m-0 flex list-none flex-col gap-2.5 px-5 pb-7">
-          {saved.map((x) => (
+          {saved.map((x, i) => (
             <li key={x.id} className="flex flex-col gap-2 rounded-[18px] bg-panel pt-3.5 pr-1.5 pb-1 pl-4">
               <div className="flex items-start justify-between gap-2">
                 <div className="flex flex-col items-start gap-1.5 pt-1">
@@ -65,6 +66,7 @@ export default function ExpressionsPage() {
               )}
               <Link
                 href={`/contents/${x.aid}`}
+                onClick={() => track("Article Opened", { ...articleProps(x.aid), entry_point: "expressions", position: i })}
                 className="mr-2.5 flex min-h-11 items-center justify-between gap-2 text-[13.5px] font-semibold text-ink no-underline"
               >
                 <span lang="en">{lib.byId[x.aid].titleEn}</span>

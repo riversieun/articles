@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { track } from "@/lib/analytics";
+import { articleProps, track } from "@/lib/analytics";
 import { lib } from "@/lib/content";
 import { useStore } from "@/lib/store";
 import {
@@ -16,7 +16,7 @@ import {
 } from "./icons";
 
 const TIP_W = 268;
-const COMPLETE_AT = 95; // PRD F-41: 본문 영역 스크롤 95%
+const COMPLETE_AT = 90; // 완독 기준: 본문 영역 스크롤 90% (PRD F-41의 95%에서 변경)
 
 type Tip = { sid: string; xid: string; top: number; left: number; arrow: number };
 
@@ -66,7 +66,7 @@ export function Reader({ aid }: { aid: string }) {
         setDone(true);
         if (!completedRef.current) {
           completedRef.current = true;
-          track("Article Completed", { article_id: aid });
+          track("Article Completed", articleProps(aid));
         }
       }
     };
@@ -101,7 +101,7 @@ export function Reader({ aid }: { aid: string }) {
       if (since) visibleMs += Date.now() - since;
       if (visibleMs < 1000) return;
       track("Article Read", {
-        article_id: aid,
+        ...articleProps(aid),
         seconds_visible: Math.round(visibleMs / 1000),
         max_scroll_pct: maxPctRef.current,
         completed: completedRef.current,
@@ -116,6 +116,18 @@ export function Reader({ aid }: { aid: string }) {
       send();
     };
   }, [aid]);
+
+  // 완독 후 "기록 백업" 배너가 처음 뜰 때 한 번 (글마다)
+  const bannerShown = useRef(false);
+  useEffect(() => {
+    bannerShown.current = false;
+  }, [aid]);
+  useEffect(() => {
+    if (done && !loggedIn && !bannerShown.current) {
+      bannerShown.current = true;
+      track("Backup Prompt Shown", { trigger: "read_completed" });
+    }
+  }, [done, loggedIn]);
 
   // 툴팁/메뉴 바깥을 누르면 닫기
   useEffect(() => {
@@ -140,7 +152,7 @@ export function Reader({ aid }: { aid: string }) {
       setTip(null);
       return;
     }
-    track("Expression Tooltip Opened", { article_id: aid, expression_id: xid });
+    track("Expression Tooltip Opened", { ...articleProps(aid), expression_id: xid });
     const btn = e.currentTarget;
     const block = btn.closest<HTMLElement>("[data-sent]");
     let top = 44;
@@ -160,6 +172,7 @@ export function Reader({ aid }: { aid: string }) {
   };
 
   const tapSentence = (sid: string) => {
+    if (menu !== sid) track("Sentence Action Sheet Opened", { article_id: aid, sentence_id: sid });
     setTip(null);
     setMenu((m) => (m === sid ? "" : sid));
   };
@@ -190,7 +203,7 @@ export function Reader({ aid }: { aid: string }) {
             onClick={() => {
               setTip(null);
               setMenu("");
-              toggleKo();
+              toggleKo(aid);
             }}
             className="flex h-11 shrink-0 items-center gap-2 border-0 bg-transparent px-2 text-[13.5px] font-medium text-ink"
           >
@@ -415,7 +428,7 @@ export function Reader({ aid }: { aid: string }) {
             href={art.url}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => track("Original Article Clicked", { article_id: aid })}
+            onClick={() => track("Original Article Clicked", articleProps(aid))}
             className="flex h-[50px] items-center rounded-[25px] border-[1.5px] border-ink px-6 text-[15px] font-semibold text-ink no-underline"
           >
             원문 읽기
@@ -430,7 +443,7 @@ export function Reader({ aid }: { aid: string }) {
                 지금까지의 기록은 이 기기에만 저장돼 있어요. 구글 로그인으로 백업해 둘까요?
               </p>
               <button
-                onClick={openLogin}
+                onClick={() => openLogin("reader_end_banner")}
                 className="mt-1 h-11 rounded-[22px] border-0 bg-lime px-[18px] text-sm font-semibold text-ink"
               >
                 기록 백업하기

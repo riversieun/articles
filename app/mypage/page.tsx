@@ -77,7 +77,7 @@ export default function MyPage() {
             이어 볼 수 있어요.
           </p>
           <button
-            onClick={openLogin}
+            onClick={() => openLogin("mypage")}
             className="mt-2.5 h-12 rounded-3xl border-0 bg-lime px-[22px] text-[15px] font-semibold text-ink"
           >
             Google로 계속하기
@@ -115,7 +115,7 @@ export default function MyPage() {
               <button
                 role="switch"
                 aria-checked={showKo}
-                onClick={toggleKo}
+                onClick={() => toggleKo()}
                 className="flex min-h-14 items-center justify-between gap-3 border-0 bg-transparent px-4 text-left text-[15px] font-medium text-ink"
               >
                 <span>한글 번역 기본 표시</span>
