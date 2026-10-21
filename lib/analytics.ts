@@ -20,6 +20,8 @@ export function initAnalytics(): boolean {
     }
     if (AMPLITUDE_KEY) {
       amplitude.init(AMPLITUDE_KEY, {
+        flushQueueSize: 1, // 이벤트마다 바로 전송 (기본값은 30개 또는 1초 단위로 묶어서 전송)
+        flushIntervalMillis: 500,
         autocapture: {
           pageViews: true,
           sessions: true,
