@@ -1,10 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import { Noto_Sans } from "next/font/google";
 import { StoreProvider } from "@/lib/store";
 import { Overlays } from "@/components/Overlays";
 import { Analytics } from "@/components/Analytics";
 import { AmplitudeInit } from "@/components/AmplitudeInit";
 import "./globals.css";
+
+// 영문은 Noto Sans(next/font), 한글은 아래 링크의 Noto Sans KR로 보인다.
+const notoSans = Noto_Sans({ subsets: ["latin"], variable: "--font-noto-sans" });
 
 export const metadata: Metadata = {
   title: "articles",
@@ -18,13 +22,13 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="ko">
+    <html lang="ko" className={notoSans.variable}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap"
         />
       </head>
       <body>

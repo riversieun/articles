@@ -370,7 +370,7 @@ export function Reader({ aid }: { aid: string }) {
 
                     {menuOpen && (
                       <div className="pop pointer-events-none absolute inset-x-0 bottom-full z-[3] -mb-1 flex justify-center">
-                        <div className="pointer-events-auto flex items-center rounded-3xl bg-ink px-1.5 whitespace-nowrap shadow-[0_12px_28px_rgba(17,17,17,0.28)]">
+                        <div className="pointer-events-auto flex items-center rounded-[24px] bg-ink px-1.5 whitespace-nowrap shadow-[0_12px_28px_rgba(17,17,17,0.28)]">
                           <MenuBtn
                             icon={<IconHighlighter size={18} />}
                             label={isHl ? "하이라이트 해제" : "하이라이트"}
@@ -494,7 +494,7 @@ export function Reader({ aid }: { aid: string }) {
         <ul className="m-0 flex list-none flex-col gap-2 p-0">
           {artNotes.map((n) => {
             return (
-              <li key={n.id} className="flex flex-col gap-2 rounded-2xl bg-white pt-3.5 pr-1 pb-0.5 pl-3.5">
+              <li key={n.id} className="flex flex-col gap-2 rounded-[16px] bg-white pt-3.5 pr-1 pb-0.5 pl-3.5">
                 <p className="m-0 mr-2.5 text-[15px] leading-[1.65] whitespace-pre-wrap">{n.text}</p>
                 <div className="flex items-center justify-end">
                   <button
@@ -526,7 +526,7 @@ export function Reader({ aid }: { aid: string }) {
             value={thought}
             onChange={(e) => setThought(e.target.value)}
             placeholder="떠오른 생각, 우리 제품에 적용해 볼 점을 적어 보세요"
-            className="box-border w-full resize-none rounded-2xl border-[1.5px] border-ink bg-white px-3.5 py-3 text-[15px] leading-[1.6] text-ink"
+            className="box-border w-full resize-none rounded-[16px] border-[1.5px] border-ink bg-white px-3.5 py-3 text-[15px] leading-[1.6] text-ink"
           />
           <button
             disabled={!thought.trim()}

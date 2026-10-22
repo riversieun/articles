@@ -79,7 +79,7 @@ export function Overlays() {
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             placeholder="이 문장을 읽고 든 생각을 적어 보세요"
-            className="box-border w-full resize-none rounded-2xl border-[1.5px] border-ink bg-white px-3.5 py-3 text-[15px] leading-[1.6] text-ink"
+            className="box-border w-full resize-none rounded-[16px] border-[1.5px] border-ink bg-white px-3.5 py-3 text-[15px] leading-[1.6] text-ink"
           />
           <div className="grid grid-cols-2 gap-2">
             <button
@@ -106,7 +106,7 @@ export function Overlays() {
             hasTabBar ? "bottom-24" : "bottom-6"
           }`}
         >
-          <div className="rounded-3xl bg-ink px-[18px] py-[13px] text-sm leading-normal font-medium text-white shadow-[0_12px_28px_rgba(17,17,17,0.28)]">
+          <div className="rounded-[24px] bg-ink px-[18px] py-[13px] text-sm leading-normal font-medium text-white shadow-[0_12px_28px_rgba(17,17,17,0.28)]">
             {toast}
           </div>
         </div>

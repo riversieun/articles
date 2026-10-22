@@ -23,7 +23,7 @@ export default function ExpressionsPage() {
           </p>
           <Link
             href="/"
-            className="mt-2.5 flex h-12 items-center rounded-3xl bg-lime px-[22px] text-[15px] font-semibold text-ink no-underline"
+            className="mt-2.5 flex h-12 items-center rounded-[24px] bg-lime px-[22px] text-[15px] font-semibold text-ink no-underline"
           >
             글 읽으러 가기
           </Link>

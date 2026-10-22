@@ -8,7 +8,7 @@ export function GuestNotice() {
   if (loggedIn || !hasRecords) return null;
 
   return (
-    <div className="mx-5 mb-4 flex items-center justify-between gap-3 rounded-2xl bg-panel py-1 pr-2 pl-4 text-[13.5px] leading-normal text-sub">
+    <div className="mx-5 mb-4 flex items-center justify-between gap-3 rounded-[16px] bg-panel py-1 pr-2 pl-4 text-[13.5px] leading-normal text-sub">
       <span>지금 기록은 이 기기에만 저장돼 있어요.</span>
       <button
         onClick={() => openLogin("guest_notice")}

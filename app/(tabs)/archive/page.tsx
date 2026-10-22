@@ -120,7 +120,7 @@ export default function ArchivePage() {
                   {items.map((it) => (
                     <li
                       key={it.key}
-                      className="flex flex-col gap-2 rounded-2xl bg-panel pt-3.5 pr-1 pb-0.5 pl-3.5"
+                      className="flex flex-col gap-2 rounded-[16px] bg-panel pt-3.5 pr-1 pb-0.5 pl-3.5"
                     >
                       {it.kind !== "thought" && (
                         <p lang="en" className="m-0 mr-2.5 font-serif text-[16.5px] leading-[1.6]">
@@ -193,7 +193,7 @@ function Empty({ title, body }: { title: string; body: string }) {
       <p className="m-0 text-[14.5px] leading-[1.65] text-sub">{body}</p>
       <Link
         href="/"
-        className="mt-2.5 flex h-12 items-center rounded-3xl bg-lime px-[22px] text-[15px] font-semibold text-ink no-underline"
+        className="mt-2.5 flex h-12 items-center rounded-[24px] bg-lime px-[22px] text-[15px] font-semibold text-ink no-underline"
       >
         글 읽으러 가기
       </Link>
