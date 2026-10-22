@@ -7,6 +7,7 @@ import { lib } from "@/lib/content";
 import { useStore } from "@/lib/store";
 import type { Article } from "@/lib/types";
 import { GuestNotice } from "@/components/GuestNotice";
+import { buttonVariants } from "@/components/ui/button";
 import { IconChevron, IconPen, IconTrash } from "@/components/icons";
 
 type Seg = "hl" | "notes" | "saved";
@@ -193,7 +194,10 @@ function Empty({ title, body }: { title: string; body: string }) {
       <p className="m-0 text-[14.5px] leading-[1.65] text-sub">{body}</p>
       <Link
         href="/"
-        className="mt-2.5 flex h-12 items-center rounded-[24px] bg-lime px-[22px] text-[15px] font-semibold text-ink no-underline"
+        className={buttonVariants({
+          variant: "accent",
+          className: "mt-2.5 flex h-12 rounded-[24px] px-[22px] text-[15px] font-semibold no-underline",
+        })}
       >
         글 읽으러 가기
       </Link>

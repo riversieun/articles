@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { articleProps, track } from "@/lib/analytics";
 import { lib } from "@/lib/content";
 import { useStore } from "@/lib/store";
+import { Button } from "@/components/ui/button";
 import {
   IconBack,
   IconBookmark,
@@ -442,12 +443,13 @@ export function Reader({ aid }: { aid: string }) {
               <p className="m-0 text-[13.5px] leading-[1.6] text-sub">
                 지금까지의 기록은 이 기기에만 저장돼 있어요. 구글 로그인으로 백업해 둘까요?
               </p>
-              <button
+              <Button
+                variant="accent"
                 onClick={() => openLogin("reader_end_banner")}
-                className="mt-1 h-11 rounded-[22px] border-0 bg-lime px-[18px] text-sm font-semibold text-ink"
+                className="mt-1 h-11 rounded-[22px] px-[18px] text-sm font-semibold"
               >
                 기록 백업하기
-              </button>
+              </Button>
             </div>
           )}
 

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MOCK_PROFILE } from "@/lib/profile";
 import { useStore } from "@/lib/store";
+import { Button } from "@/components/ui/button";
 import { IconBack } from "@/components/icons";
 
 const FB_KEY = "articles:proto:feedback";
@@ -76,12 +77,13 @@ export default function MyPage() {
             로그인 없이도 읽고 기록할 수 있어요. 구글 로그인으로 연결하면 기록이 백업되고 다른 기기에서도
             이어 볼 수 있어요.
           </p>
-          <button
+          <Button
+            variant="accent"
             onClick={() => openLogin("mypage")}
-            className="mt-2.5 h-12 rounded-[24px] border-0 bg-lime px-[22px] text-[15px] font-semibold text-ink"
+            className="mt-2.5 h-12 rounded-[24px] px-[22px] text-[15px] font-semibold"
           >
             Google로 계속하기
-          </button>
+          </Button>
         </div>
       )}
 

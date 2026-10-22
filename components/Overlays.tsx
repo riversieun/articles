@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { lib } from "@/lib/content";
 import { useStore, type PromptReason } from "@/lib/store";
+import { Button } from "@/components/ui/button";
 
 const COPY: Record<PromptReason, { title: string; body: string }> = {
   manual: {
@@ -47,12 +48,13 @@ export function Overlays() {
             {COPY[sheet.reason].title}
           </h2>
           <p className="m-0 text-[14.5px] leading-[1.7] text-sub">{COPY[sheet.reason].body}</p>
-          <button
+          <Button
+            variant="accent"
             onClick={login}
-            className="mt-3 h-[52px] rounded-[26px] border-0 bg-lime text-[15.5px] font-semibold text-ink"
+            className="mt-3 h-[52px] rounded-[26px] text-[15.5px] font-semibold"
           >
             Google로 계속하기
-          </button>
+          </Button>
           <button onClick={closeSheet} className="h-12 border-0 bg-transparent text-[14.5px] font-medium text-sub">
             나중에 할게요
           </button>
