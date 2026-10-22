@@ -1,14 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import { Noto_Sans } from "next/font/google";
 import { StoreProvider } from "@/lib/store";
 import { Overlays } from "@/components/Overlays";
 import { Analytics } from "@/components/Analytics";
 import { AmplitudeInit } from "@/components/AmplitudeInit";
+// Pretendard Variable (npm `pretendard`, 직접 호스팅하는 동적 서브셋). 폰트 이름: "Pretendard Variable"
+import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./globals.css";
-
-// 영문은 Noto Sans(next/font), 한글은 아래 링크의 Noto Sans KR로 보인다.
-const notoSans = Noto_Sans({ subsets: ["latin"], variable: "--font-noto-sans" });
 
 export const metadata: Metadata = {
   title: "articles",
@@ -22,15 +20,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="ko" className={notoSans.variable}>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap"
-        />
-      </head>
+    <html lang="ko">
       <body>
         <StoreProvider>
           {/* 모바일 웹 기준 단일 컬럼. 데스크톱에서는 가운데 정렬된 폰 폭으로 보여준다. */}

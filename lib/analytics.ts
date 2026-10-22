@@ -6,6 +6,11 @@ const MIXPANEL_TOKEN = process.env.NEXT_PUBLIC_MIXPANEL_TOKEN;
 const AMPLITUDE_KEY = process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY;
 let started = false;
 
+/** 분석에서 제외하는 경로. 디자인 시스템 페이지는 내부 확인용이라 집계하지 않는다. */
+const UNTRACKED_PATH = /^\/design-system(\/|$)/;
+const UNTRACKED_URL = /^https?:\/\/[^/]+\/design-system(\/|\?|#|$)/; // Amplitude 제외 목록은 전체 URL과 비교한다
+const onUntrackedPath = () => typeof window !== "undefined" && UNTRACKED_PATH.test(window.location.pathname);
+
 /** 로그인 진입 경로. Login Button Clicked / Login Completed 의 trigger 값. */
 export type LoginTrigger = "app_bar" | "guest_notice" | "mypage" | "reader_end_banner" | "backup_prompt";
 
@@ -33,11 +38,25 @@ export function initAnalytics(): boolean {
         flushQueueSize: 1, // 이벤트마다 바로 전송 (기본값은 30개 또는 1초 단위로 묶어서 전송)
         flushIntervalMillis: 500,
         autocapture: {
-          pageViews: true,
+          pageViews: { trackOn: () => !onUntrackedPath() },
           sessions: true,
           formInteractions: true,
           fileDownloads: true,
-          elementInteractions: true, // 클릭은 기본값이 꺼짐이라 명시
+          elementInteractions: { pageUrlExcludelist: [UNTRACKED_URL] }, // 클릭은 기본값이 꺼짐이라 명시(켜기). 제외 경로만 뺀다
+        },
+      });
+      // 위 옵션으로 못 거르는 자동 이벤트(예: Viewport Content Updated)까지 제외 경로에서 온 것은 전송 전에 버린다.
+      amplitude.add({
+        name: "exclude-untracked-paths",
+        type: "before",
+        setup: async () => undefined,
+        execute: async (event) => {
+          const props = event.event_properties as Record<string, unknown> | undefined;
+          const url = props?.["[Amplitude] Page URL"]; // 자동 이벤트는 URL만 있고 경로 속성은 없을 수 있다
+          const path = props?.["[Amplitude] Page Path"];
+          const excluded =
+            (typeof url === "string" && UNTRACKED_URL.test(url)) || (typeof path === "string" && UNTRACKED_PATH.test(path));
+          return excluded ? null : event;
         },
       });
     }
@@ -47,7 +66,7 @@ export function initAnalytics(): boolean {
 
 /** 같은 이름·속성으로 Mixpanel과 Amplitude에 보낸다. 코멘트·생각 본문 같은 유저 텍스트는 보내지 않는다. */
 export function track(event: string, props?: Record<string, unknown>) {
-  if (!initAnalytics()) return;
+  if (onUntrackedPath() || !initAnalytics()) return;
   if (MIXPANEL_TOKEN) mixpanel.track(event, props);
   if (AMPLITUDE_KEY) amplitude.track(event, props);
 }

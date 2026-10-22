@@ -7,6 +7,7 @@
 - 이벤트 이름은 `Title Case`(영문), 속성 이름은 `snake_case`.
 - 토글류는 on/off를 모두 보내고 `on`(true/false) 속성으로 구분한다.
 - Mixpanel은 약 5초 간격으로 묶어서, Amplitude는 이벤트마다 바로 전송한다.
+- `/design-system`(디자인 시스템 확인용 페이지)은 집계하지 않는다. `lib/analytics.ts`의 `UNTRACKED_PATH`로 직접 정의한 이벤트와 Amplitude 자동 수집(페이지뷰·클릭·뷰포트)을 모두 막는다. 제외할 경로를 늘리려면 이 정규식을 고친다.
 
 ## 공통 속성
 
