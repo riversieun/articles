@@ -47,7 +47,7 @@ export function Feed() {
         ))}
       </div>
 
-      <footer className="mx-5 mt-4 mb-8 rounded-2xl bg-panel px-4 py-3.5 text-[12.5px] leading-[1.6] text-sub">
+      <footer className="mx-5 mt-4 mb-8 rounded-[16px] bg-panel px-4 py-3.5 text-[12.5px] leading-[1.6] text-sub">
         <div className="font-semibold text-ink">프로토타입 안내</div>
         <p className="m-0 mt-1">
           이 화면의 글·번역·출처 표기는 UI 확인용 샘플이며 실제 원문이 아닙니다. 기록은 이 브라우저의

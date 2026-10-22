@@ -33,8 +33,8 @@ export function ArticleRow({ a, position }: { a: Article; position: number }) {
         </span>
         <span className="text-sm leading-normal text-sub">{a.titleKo}</span>
         <span className="mt-1 flex min-h-[26px] flex-wrap items-center gap-2 pr-11 text-[12.5px] font-medium">
-          <span className="rounded-md bg-lime px-2 py-[3px]">주요 표현 {a.xs.length}개</span>
-          {marks > 0 && <span className="rounded-md bg-lilac px-2 py-[3px]">내 기록 {marks}</span>}
+          <span className="rounded-[6px] bg-lime px-2 py-[3px]">주요 표현 {a.xs.length}개</span>
+          {marks > 0 && <span className="rounded-[6px] bg-lilac px-2 py-[3px]">내 기록 {marks}</span>}
         </span>
       </Link>
       <button

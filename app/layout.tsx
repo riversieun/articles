@@ -4,6 +4,8 @@ import { StoreProvider } from "@/lib/store";
 import { Overlays } from "@/components/Overlays";
 import { Analytics } from "@/components/Analytics";
 import { AmplitudeInit } from "@/components/AmplitudeInit";
+// Pretendard Variable (npm `pretendard`, 직접 호스팅하는 동적 서브셋). 폰트 이름: "Pretendard Variable"
+import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -19,14 +21,6 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ko">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap"
-        />
-      </head>
       <body>
         <StoreProvider>
           {/* 모바일 웹 기준 단일 컬럼. 데스크톱에서는 가운데 정렬된 폰 폭으로 보여준다. */}

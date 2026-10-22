@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MOCK_PROFILE } from "@/lib/profile";
 import { useStore } from "@/lib/store";
+import { Button } from "@/components/ui/button";
 import { IconBack } from "@/components/icons";
 
 const FB_KEY = "articles:proto:feedback";
@@ -76,12 +77,13 @@ export default function MyPage() {
             로그인 없이도 읽고 기록할 수 있어요. 구글 로그인으로 연결하면 기록이 백업되고 다른 기기에서도
             이어 볼 수 있어요.
           </p>
-          <button
+          <Button
+            variant="accent"
             onClick={() => openLogin("mypage")}
-            className="mt-2.5 h-12 rounded-3xl border-0 bg-lime px-[22px] text-[15px] font-semibold text-ink"
+            className="mt-2.5 h-12 rounded-[24px] px-[22px] text-[15px] font-semibold"
           >
             Google로 계속하기
-          </button>
+          </Button>
         </div>
       )}
 
@@ -102,7 +104,7 @@ export default function MyPage() {
 
           <section className="grid grid-cols-3 gap-2">
             {stats.map(([label, n]) => (
-              <div key={label} className="flex flex-col gap-1 rounded-2xl bg-panel px-3.5 py-3.5">
+              <div key={label} className="flex flex-col gap-1 rounded-[16px] bg-panel px-3.5 py-3.5">
                 <span className="text-xl leading-none font-bold">{n}</span>
                 <span className="text-[12.5px] text-sub">{label}</span>
               </div>
@@ -111,7 +113,7 @@ export default function MyPage() {
 
           <section className="flex flex-col">
             <h2 className="m-0 mb-1.5 text-[12.5px] font-bold">설정</h2>
-            <div className="flex flex-col rounded-2xl bg-panel">
+            <div className="flex flex-col rounded-[16px] bg-panel">
               <button
                 role="switch"
                 aria-checked={showKo}
@@ -135,7 +137,7 @@ export default function MyPage() {
             </div>
           </section>
 
-          <section className="rounded-2xl bg-panel px-4 py-3.5 text-[12.5px] leading-[1.6] text-sub">
+          <section className="rounded-[16px] bg-panel px-4 py-3.5 text-[12.5px] leading-[1.6] text-sub">
             <div className="font-semibold text-ink">프로토타입 도구</div>
             <div className="mt-2 flex gap-2">
               <button
@@ -195,7 +197,7 @@ export default function MyPage() {
           value={fbText}
           onChange={(e) => setFbText(e.target.value)}
           placeholder="어떤 점이 궁금하거나 아쉬웠는지 적어 주세요"
-          className="box-border w-full resize-none rounded-2xl border-[1.5px] border-ink bg-white px-3.5 py-3 text-[15px] leading-[1.6] text-ink"
+          className="box-border w-full resize-none rounded-[16px] border-[1.5px] border-ink bg-white px-3.5 py-3 text-[15px] leading-[1.6] text-ink"
         />
         <button
           onClick={sendFeedback}

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { lib } from "@/lib/content";
 import { useStore, type PromptReason } from "@/lib/store";
+import { Button } from "@/components/ui/button";
 
 const COPY: Record<PromptReason, { title: string; body: string }> = {
   manual: {
@@ -47,12 +48,13 @@ export function Overlays() {
             {COPY[sheet.reason].title}
           </h2>
           <p className="m-0 text-[14.5px] leading-[1.7] text-sub">{COPY[sheet.reason].body}</p>
-          <button
+          <Button
+            variant="accent"
             onClick={login}
-            className="mt-3 h-[52px] rounded-[26px] border-0 bg-lime text-[15.5px] font-semibold text-ink"
+            className="mt-3 h-[52px] rounded-[26px] text-[15.5px] font-semibold"
           >
             Google로 계속하기
-          </button>
+          </Button>
           <button onClick={closeSheet} className="h-12 border-0 bg-transparent text-[14.5px] font-medium text-sub">
             나중에 할게요
           </button>
@@ -79,7 +81,7 @@ export function Overlays() {
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             placeholder="이 문장을 읽고 든 생각을 적어 보세요"
-            className="box-border w-full resize-none rounded-2xl border-[1.5px] border-ink bg-white px-3.5 py-3 text-[15px] leading-[1.6] text-ink"
+            className="box-border w-full resize-none rounded-[16px] border-[1.5px] border-ink bg-white px-3.5 py-3 text-[15px] leading-[1.6] text-ink"
           />
           <div className="grid grid-cols-2 gap-2">
             <button
@@ -106,7 +108,7 @@ export function Overlays() {
             hasTabBar ? "bottom-24" : "bottom-6"
           }`}
         >
-          <div className="rounded-3xl bg-ink px-[18px] py-[13px] text-sm leading-normal font-medium text-white shadow-[0_12px_28px_rgba(17,17,17,0.28)]">
+          <div className="rounded-[24px] bg-ink px-[18px] py-[13px] text-sm leading-normal font-medium text-white shadow-[0_12px_28px_rgba(17,17,17,0.28)]">
             {toast}
           </div>
         </div>

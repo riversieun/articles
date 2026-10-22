@@ -5,6 +5,7 @@ import { articleProps, track } from "@/lib/analytics";
 import { lib } from "@/lib/content";
 import { useStore } from "@/lib/store";
 import { GuestNotice } from "@/components/GuestNotice";
+import { buttonVariants } from "@/components/ui/button";
 import { IconBookmark, IconChevron } from "@/components/icons";
 
 export default function ExpressionsPage() {
@@ -23,7 +24,10 @@ export default function ExpressionsPage() {
           </p>
           <Link
             href="/"
-            className="mt-2.5 flex h-12 items-center rounded-3xl bg-lime px-[22px] text-[15px] font-semibold text-ink no-underline"
+            className={buttonVariants({
+              variant: "accent",
+              className: "mt-2.5 flex h-12 rounded-[24px] px-[22px] text-[15px] font-semibold no-underline",
+            })}
           >
             글 읽으러 가기
           </Link>

@@ -1,4 +1,8 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
 
 /* 디자인 시안(claude_design_prototype2 · D3 라임 프라이머리)의 토큰 */
 @theme {
@@ -9,20 +13,21 @@
   --color-line-2: #dcdce1;
   --color-line-strong: #d5d5da;
   --color-sub: #5f5f66;
-  --color-muted: #5f5f66;
   --color-off: #8e8e96;
   --color-tip: #c9ced6;
   --color-lime: #d9f25c;
   --color-lilac: #e7e0ff;
   --color-lilac-strong: #cbbcff;
 
-  --font-sans: "Inter", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
-  --font-serif: "Source Serif 4", Georgia, serif;
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  /* 영어 본문도 Pretendard. font-serif 클래스는 그대로 두고 값만 sans와 같게 맞춤 */
+  --font-serif: var(--font-sans);
 }
 
 @layer base {
   html {
     background: #eeeef1;
+    @apply font-sans;
   }
 
   body {
@@ -58,7 +63,10 @@
   }
 
   textarea::placeholder {
-    color: var(--color-muted);
+    color: var(--color-sub);
+  }
+  * {
+    @apply border-border outline-ring/50;
   }
 }
 
@@ -103,4 +111,186 @@
   .pop {
     animation: none;
   }
+}
+
+@theme inline {
+  /* DESIGN.md 토큰 중 shadcn과 이름이 겹치지 않는 것만 Tailwind 클래스로 연다 (bg-surface, text-on-surface-muted, bg-danger 등) */
+  --color-on-accent: var(--ds-on-accent);
+  --color-accent-sub: var(--ds-accent-sub);
+  --color-accent-sub-strong: var(--ds-accent-sub-strong);
+  --color-surface: var(--ds-surface);
+  --color-on-surface: var(--ds-on-surface);
+  --color-surface-muted: var(--ds-surface-muted);
+  --color-on-surface-muted: var(--ds-on-surface-muted);
+  --color-subtle: var(--ds-subtle);
+  --color-border-strong: var(--ds-border-strong);
+  --color-danger: var(--ds-danger);
+  --color-on-danger: var(--ds-on-danger);
+  --color-focus-ring: var(--ds-focus-ring);
+  --color-on-primary: var(--ds-on-primary);
+  --text-display: 28px;
+  --text-headline: 20px;
+  --text-body-md: 15px;
+  --text-body-sm: 13px;
+  --text-label-md: 14px;
+  --text-label-sm: 12px;
+  --tracking-display: -0.03em;
+  --tracking-headline: -0.02em;
+  --radius-pill: 26px;
+  /* --font-sans는 위 @theme(Pretendard Variable)을 그대로 쓴다. 프리셋의 자기 참조 선언은 순환이라 제거. */
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/*
+ * DESIGN.md 토큰 원본값 (npx @google/design.md export --format css-tailwind DESIGN.md → theme.css 기준).
+ * DESIGN.md를 고치면 theme.css를 다시 내보내고 이 블록의 값만 맞춘다.
+ * shadcn 이름과 겹치는 이름(primary, accent, border)이 있어서 --ds- 접두사로 따로 둔다.
+ */
+:root {
+  --ds-primary: #111111;
+  --ds-on-primary: #ffffff;
+  --ds-accent: #d9f25c; /* 라임. Tailwind에서는 기존 bg-lime / text-lime. shadcn의 --accent(호버 배경)와 다른 값이므로 섞지 않는다. */
+  --ds-on-accent: #111111;
+  --ds-accent-sub: #e7e0ff;
+  --ds-accent-sub-strong: #cbbcff;
+  --ds-surface: #ffffff;
+  --ds-on-surface: #111111;
+  --ds-surface-muted: #f4f4f6;
+  --ds-on-surface-muted: #5f5f66;
+  --ds-subtle: #8e8e96;
+  --ds-border: #e7e7ea;
+  --ds-border-strong: #d5d5da;
+  --ds-danger: #e7000b;
+  --ds-on-danger: #ffffff;
+  --ds-focus-ring: #111111;
+
+  /* 간격은 Tailwind의 max-w-sm 같은 클래스와 이름이 겹쳐서 --ds-space-*로 둔다. */
+  --ds-space-xs: 4px;
+  --ds-space-sm: 8px;
+  --ds-space-md: 12px;
+  --ds-space-lg: 16px;
+  --ds-space-xl: 24px;
+  --ds-space-page: 20px;
+}
+
+/*
+ * shadcn 변수 ↔ DESIGN.md 토큰 대응표 (라이트 모드)
+ *  shadcn                                  → DESIGN.md
+ *  --background / --card / --popover       → surface
+ *  --foreground / --*-foreground(card 등)  → on-surface
+ *  --primary / --primary-foreground        → primary / on-primary
+ *  --secondary / --muted / --accent        → surface-muted   (shadcn의 accent는 호버 배경이라 DESIGN.md의 accent(라임)와 다름)
+ *  --secondary-foreground / --accent-foreground → on-surface
+ *  --muted-foreground                      → on-surface-muted
+ *  --destructive                           → danger
+ *  --border / --input                      → border
+ *  --ring                                  → focus-ring
+ *  --sidebar-*                             → 위와 같은 역할끼리 연결
+ *  --chart-* / --radius / 다크 모드        → DESIGN.md에 대응 토큰 없음. 기존 값 유지
+ */
+:root {
+  --background: var(--ds-surface);
+  --foreground: var(--ds-on-surface);
+  --card: var(--ds-surface);
+  --card-foreground: var(--ds-on-surface);
+  --popover: var(--ds-surface);
+  --popover-foreground: var(--ds-on-surface);
+  --primary: var(--ds-primary);
+  --primary-foreground: var(--ds-on-primary);
+  --secondary: var(--ds-surface-muted);
+  --secondary-foreground: var(--ds-on-surface);
+  --muted: var(--ds-surface-muted);
+  --muted-foreground: var(--ds-on-surface-muted);
+  --accent: var(--ds-surface-muted);
+  --accent-foreground: var(--ds-on-surface);
+  --destructive: var(--ds-danger);
+  --border: var(--ds-border);
+  --input: var(--ds-border);
+  --ring: var(--ds-focus-ring);
+  --chart-1: oklch(0.845 0.143 164.978);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.596 0.145 163.225);
+  --chart-4: oklch(0.508 0.118 165.612);
+  --chart-5: oklch(0.432 0.095 166.913);
+  --radius: 0.625rem;
+  --sidebar: var(--ds-surface);
+  --sidebar-foreground: var(--ds-on-surface);
+  --sidebar-primary: var(--ds-primary);
+  --sidebar-primary-foreground: var(--ds-on-primary);
+  --sidebar-accent: var(--ds-surface-muted);
+  --sidebar-accent-foreground: var(--ds-on-surface);
+  --sidebar-border: var(--ds-border);
+  --sidebar-ring: var(--ds-focus-ring);
+}
+
+.dark {
+  --background: oklch(0.148 0.004 228.8);
+  --foreground: oklch(0.987 0.002 197.1);
+  --card: oklch(0.218 0.008 223.9);
+  --card-foreground: oklch(0.987 0.002 197.1);
+  --popover: oklch(0.218 0.008 223.9);
+  --popover-foreground: oklch(0.987 0.002 197.1);
+  --primary: oklch(0.925 0.005 214.3);
+  --primary-foreground: oklch(0.218 0.008 223.9);
+  --secondary: oklch(0.275 0.011 216.9);
+  --secondary-foreground: oklch(0.987 0.002 197.1);
+  --muted: oklch(0.275 0.011 216.9);
+  --muted-foreground: oklch(0.723 0.014 214.4);
+  --accent: oklch(0.275 0.011 216.9);
+  --accent-foreground: oklch(0.987 0.002 197.1);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.56 0.021 213.5);
+  --chart-1: oklch(0.845 0.143 164.978);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.596 0.145 163.225);
+  --chart-4: oklch(0.508 0.118 165.612);
+  --chart-5: oklch(0.432 0.095 166.913);
+  --sidebar: oklch(0.218 0.008 223.9);
+  --sidebar-foreground: oklch(0.987 0.002 197.1);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.987 0.002 197.1);
+  --sidebar-accent: oklch(0.275 0.011 216.9);
+  --sidebar-accent-foreground: oklch(0.987 0.002 197.1);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.56 0.021 213.5);
 }
