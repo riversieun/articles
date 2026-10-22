@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 
 export const metadata: Metadata = { title: "Design System" };
 
-const BUTTON_VARIANTS = ["default", "outline", "secondary", "ghost", "destructive", "link"] as const;
+const BUTTON_VARIANTS = ["default", "outline", "secondary", "ghost", "destructive", "link", "accent"] as const;
 const BUTTON_SIZES = ["xs", "sm", "default", "lg"] as const;
 const ICON_SIZES = ["icon-xs", "icon-sm", "icon", "icon-lg"] as const;
 const BADGE_VARIANTS = ["default", "secondary", "destructive", "outline", "ghost", "link"] as const;
