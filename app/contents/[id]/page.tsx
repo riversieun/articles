@@ -12,7 +12,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const art = lib.byId[id];
-  return art ? { title: `${art.titleKo} · articles`, description: art.summary } : {};
+  return art ? { title: `${art.titleKo} · crumbit`, description: art.summary } : {};
 }
 
 export default async function ContentPage({ params }: Props) {

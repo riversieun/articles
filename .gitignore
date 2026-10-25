@@ -7,3 +7,12 @@ next-env.d.ts
 # env
 .env*
 !.env.example
+
+# 개인 결정사항 기록 (GitHub에 올리지 않음)
+docs/결정사항-히스토리/
+
+# 디자인 히스토리 기록용 (GitHub에 올리지 않음)
+design-history/
+
+# 아티클 발췌 원문 자료 (GitHub에 올리지 않음)
+article-material/

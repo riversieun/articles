@@ -2,49 +2,62 @@
 
 import Link from "next/link";
 import { articleProps, track } from "@/lib/analytics";
-import { lib } from "@/lib/content";
+import { SOURCE_LABEL, TOPIC_LABEL, formatDate } from "@/lib/content";
 import { useStore } from "@/lib/store";
 import type { Article } from "@/lib/types";
-import { IconBookmark } from "./icons";
+import { Badge } from "@/components/ui/badge";
+import { IconBookmark, IconSparkle } from "./icons";
 
-/** 피드의 글 한 줄. 오른쪽 아래 책갈피로 글을 저장한다. */
-export function ArticleRow({ a, position }: { a: Article; position: number }) {
-  const { notes, hl, savedA, toggleA } = useStore();
+/** 탐색 피드와 아카이브 "저장한 글"에서 쓰는 글 카드. 오른쪽 아래 책갈피로 글을 저장한다. */
+export function ArticleRow({
+  a,
+  position,
+  entryPoint = "feed",
+}: {
+  a: Article;
+  position: number;
+  entryPoint?: string;
+}) {
+  const { savedA, toggleA } = useStore();
 
-  // 내 기록 = 코멘트·읽고 난 생각 + 코멘트 없이 남긴 하이라이트
-  const marks =
-    notes.filter((n) => n.aid === a.id).length +
-    Object.keys(hl).filter((sid) => lib.sent[sid]?.aid === a.id && !notes.some((n) => n.sid === sid)).length;
   const saved = !!savedA[a.id];
 
   return (
-    <div className="relative border-t border-line">
+    <div>
+      {position > 0 && <div aria-hidden="true" className="mx-5 h-px bg-border" />}
       <Link
         href={`/contents/${a.id}`}
-        onClick={() => track("Article Opened", { ...articleProps(a.id), entry_point: "feed", position })}
-        className="flex flex-col gap-[7px] px-5 pt-5 pb-[18px] text-left text-ink no-underline"
+        onClick={() => track("Article Opened", { ...articleProps(a.id), entry_point: entryPoint, position })}
+        className="flex flex-col gap-2 px-5 pt-6 text-left text-on-surface no-underline"
       >
-        <span className="flex justify-between gap-2 text-[12.5px] text-sub">
-          <span>{a.sourceLine}</span>
-          <span>{a.date}</span>
+        <span className="flex">
+          <Badge variant="secondary" className="h-7 rounded-md px-3 text-label-sm">
+            {TOPIC_LABEL[a.topic]}
+          </Badge>
         </span>
-        <span lang="en" className="text-[21px] leading-[1.25] font-bold tracking-[-0.02em] [text-wrap:pretty]">
+        <span lang="en" className="text-headline font-bold tracking-headline [text-wrap:pretty]">
           {a.titleEn}
         </span>
-        <span className="text-sm leading-normal text-sub">{a.titleKo}</span>
-        <span className="mt-1 flex min-h-[26px] flex-wrap items-center gap-2 pr-11 text-[12.5px] font-medium">
-          <span className="rounded-[6px] bg-lime px-2 py-[3px]">주요 표현 {a.xs.length}개</span>
-          {marks > 0 && <span className="rounded-[6px] bg-lilac px-2 py-[3px]">내 기록 {marks}</span>}
-        </span>
+        <span className="text-body-md text-on-surface-muted">{a.titleKo}</span>
       </Link>
-      <button
-        onClick={() => toggleA(a.id)}
-        aria-label={saved ? "글 저장 해제" : "글 저장"}
-        aria-pressed={saved}
-        className="absolute right-[9px] bottom-[9px] flex size-11 items-center justify-center border-0 bg-transparent text-ink"
-      >
-        <IconBookmark filled={saved} />
-      </button>
+      <div className="flex items-center justify-between gap-3 pt-1 pr-2.5 pb-3 pl-5">
+        <span className="flex min-w-0 items-center gap-1 text-body-sm text-on-surface-muted">
+          <IconSparkle className="shrink-0 text-on-surface" />
+          <span className="truncate">
+            <span className="text-on-surface">{SOURCE_LABEL[a.src]}</span> · {formatDate(a.date)}
+          </span>
+        </span>
+        <button
+          onClick={() => toggleA(a.id)}
+          aria-label={saved ? "글 저장 해제" : "글 저장"}
+          aria-pressed={saved}
+          className={`flex size-11 shrink-0 items-center justify-center border-0 bg-transparent ${
+            saved ? "text-on-surface" : "text-on-surface-muted"
+          }`}
+        >
+          <IconBookmark filled={saved} />
+        </button>
+      </div>
     </div>
   );
 }

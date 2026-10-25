@@ -28,17 +28,18 @@
 | 이벤트 | 발생 시점 | 속성 | 코드 위치 |
 |---|---|---|---|
 | Page View | 화면(경로)이 바뀔 때. 로그인 상태를 읽은 뒤부터 보냄 | `path`, `article_id`(글 화면만) | `components/Analytics.tsx` |
-| Feed Filter Selected | 피드 출처 필터 칩 선택 | `source` (`all` 또는 출처 키) | `components/Feed.tsx` |
-| **Article Opened** | 목록·카드에서 글을 눌러 상세로 들어갈 때 | `article_id`, `source`, `content_type`, `entry_point`, `position` | `ArticleRow`, 표현 탭, 아카이브 |
+| Feed Filter Selected | 탐색 주제 필터 칩 선택 | `topic` (`all` · `process` · `collab` · `ux` · `system`) | `components/Feed.tsx` |
+| Archive Filter Selected | 아카이브 필터 칩 선택(같은 칩을 다시 누르면 보내지 않음) | `filter` (`highlights` · `comments` · `thoughts` · `articles` · `expressions`) | `app/(tabs)/archive/page.tsx` |
+| **Article Opened** | 목록·카드에서 글을 눌러 상세로 들어갈 때 | `article_id`, `source`, `content_type`, `entry_point`, `position` | `ArticleRow`, 아카이브 |
 
 `Article Opened`의 `entry_point`와 `position`(목록에서 0부터 센 순서):
 
 | entry_point | 어디서 | position 기준 |
 |---|---|---|
 | `feed` | 피드의 글 카드 | 현재 필터가 적용된 목록의 순서 |
-| `expressions` | 표현 탭 카드의 "출처 글로 이동" | 저장한 표현 목록의 순서 |
-| `archive` | 아카이브 하이라이트/코멘트 탭의 글 제목 줄 | 그 탭에 보이는 글 그룹의 순서 |
-| `saved` | 아카이브 "저장한 글" 탭의 항목 | 저장한 글 목록의 순서 |
+| `expressions` | 아카이브 "표현" 필터 카드의 "출처 글로 이동" | 저장한 표현 목록의 순서 |
+| `archive` | 아카이브 하이라이트·코멘트·내 생각 필터의 글 제목 영역 | 그 필터에 보이는 글 그룹의 순서 |
+| `saved` | 아카이브 "아티클" 필터의 글 카드 | 저장한 글 목록의 순서 |
 
 ## 읽기
 
@@ -48,11 +49,11 @@
 | Article Completed | 읽기 진행률이 **90%**에 처음 도달 (글당 1회) | `article_id`, `source`, `content_type` | `components/Reader.tsx` |
 | Translation Toggled | 한글 번역 스위치 | `article_id`(글 화면에서만), `on` | `lib/store.tsx` |
 | Expression Tooltip Opened | 주요 표현을 눌러 툴팁을 열 때 | `article_id`, `source`, `content_type`, `expression_id` | `components/Reader.tsx` |
-| Sentence Action Sheet Opened | 문장을 탭해 하이라이트/코멘트 메뉴가 열릴 때 (닫을 때는 보내지 않음) | `article_id`, `sentence_id` | `components/Reader.tsx` |
+| Sentence Action Sheet Opened | 문장을 탭해 팝오버(하이라이트·코멘트)가 열릴 때. 이름은 옛 "액션 시트"를 그대로 유지(바꾸면 기존 데이터와 끊김). 코멘트 말풍선의 수정·삭제 팝오버는 보내지 않고 `Note Edited`/`Note Deleted`로 잡힘 (닫을 때도 보내지 않음) | `article_id`, `sentence_id` | `components/Reader.tsx` |
 | Original Article Clicked | "원문 읽기" 버튼 | `article_id`, `source`, `content_type` | `components/Reader.tsx` |
 
-- 완독 기준은 `Reader.tsx`의 `COMPLETE_AT`(90) 하나다. `Article Completed`, `Article Read.completed`, 완독 후 백업 배너가 모두 같은 기준을 쓴다. (PRD F-41은 95%로 적혀 있어 PRD와 다름)
-- `Translation Toggled`는 마이페이지의 "한글 번역 기본 표시" 스위치에서도 보내며, 이때는 `article_id`가 없다.
+- 완독 기준은 `Reader.tsx`의 `COMPLETE_AT`(90) 하나다. `Article Completed`, `Article Read.completed`가 같은 기준을 쓴다. 완독했을 때 화면에 보이는 UI(배너 등)는 없다. (PRD v0.3 F-41도 90%)
+- `Translation Toggled`는 프로필의 "번역 항상 켜기" 스위치에서도 보내며, 이때는 `article_id`가 없다.
 
 ## 기록·저장
 
@@ -60,13 +61,15 @@
 |---|---|---|---|
 | Highlight Toggled | 문장 하이라이트 켜기/끄기 | `article_id`, `on` | `lib/store.tsx` |
 | Comment Saved | 문장 코멘트 저장 | `article_id` | `lib/store.tsx` |
-| Thought Added | "글을 읽고 든 생각" 저장 | `article_id` | `lib/store.tsx` |
+| Thought Added | 본문 "내 생각" 저장 | `article_id` | `lib/store.tsx` |
 | Note Edited | 코멘트/생각 수정 완료 | `article_id`, `note_type` | `lib/store.tsx` (`updateNote`) |
 | Note Deleted | 코멘트/생각 삭제 | `article_id`, `note_type` | `lib/store.tsx` (`removeNote`) |
 | Expression Saved Toggled | 표현 저장/해제 | `article_id`, `expression_id`, `on` | `lib/store.tsx` |
 | Article Saved Toggled | 글 저장/해제 | `article_id`, `on` | `lib/store.tsx` |
 
-`note_type`: 문장 코멘트면 `comment`, 글 전체 "읽고 든 생각"이면 `thought`.
+`note_type`: 문장 코멘트면 `comment`, 글 전체 "내 생각"이면 `thought`.
+
+하이라이트·글 저장·표현 저장을 **해제할 때 스낵바는 뜨지 않지만** 이벤트(`on: false`)는 그대로 보낸다. 삭제 확인 다이얼로그에서 취소하면 삭제 이벤트를 보내지 않는다.
 
 ## 로그인·백업 제안
 
@@ -74,18 +77,17 @@
 |---|---|---|---|
 | Login Button Clicked | 로그인 진입 버튼 클릭 | `trigger` | `lib/store.tsx` |
 | Login Completed | 로그인 완료 (현재는 프로토타입 목업) | `trigger`, `merged` | `lib/store.tsx` |
-| Logout | 로그아웃 버튼 | 없음 | `lib/store.tsx` |
-| Backup Prompt Shown | "기록 백업" 제안이 노출될 때 | `trigger` | `lib/store.tsx`, `components/Reader.tsx` |
+| Logout | 프로필의 로그아웃 | 없음 | `lib/store.tsx` |
+| Account Deleted | 프로필의 계정 삭제를 확인 다이얼로그에서 확정 | 없음 (현재는 이 브라우저의 기록만 지움, Supabase 연동 시 서버 삭제 후 `resetUser()`) | `lib/store.tsx` (`deleteAccount`) |
+| Feedback Sent | 프로필의 피드백 보내기 | `kind` (`satisfied` · `improvement` · `feature_request` · `bug_report` · `other`). 내용 본문은 보내지 않음 | `app/mypage/page.tsx` |
+| Backup Prompt Shown | "기록 백업" 제안이 노출될 때 | `trigger` | `lib/store.tsx` |
 | Backup Prompt Dismissed | 백업 제안 시트를 닫을 때 ("나중에 할게요", 바깥 영역, Esc) | `trigger` | `lib/store.tsx` (`closeSheet`) |
 
 **로그인 `trigger` 값** (진입 경로별):
 
 | trigger | 진입 경로 | 파일 |
 |---|---|---|
-| `app_bar` | 상단 앱바의 "로그인" 버튼 | `components/AppBar.tsx` |
-| `guest_notice` | 표현·아카이브 탭 상단 "지금 기록은 이 기기에만…" 안내의 "백업하기" | `components/GuestNotice.tsx` |
-| `mypage` | 마이페이지(비로그인)의 "Google로 계속하기" | `app/mypage/page.tsx` |
-| `reader_end_banner` | 글을 끝까지 읽은 뒤 나오는 "기록 백업하기" 배너 | `components/Reader.tsx` |
+| `profile` | 프로필 페이지(비로그인)의 "Google로 로그인하기" 버튼. 앱 바의 프로필 아이콘은 이제 로그인 시트가 아니라 프로필 페이지로 이동한다 | `app/mypage/page.tsx` |
 | `backup_prompt` | 자동으로 뜬 백업 제안 시트(표현 3개 저장 / 첫 코멘트) 안의 "Google로 계속하기" | `lib/store.tsx` |
 
 - `Login Completed.trigger`는 로그인을 시작한 진입 경로와 같은 값이다.
@@ -99,9 +101,8 @@
 |---|---|---|
 | `expressions_3` | 저장한 표현이 3개가 됐을 때 뜨는 시트 | 있음 |
 | `first_comment` | 첫 문장 코멘트를 남겼을 때 뜨는 시트 | 있음 |
-| `read_completed` | 글을 90%까지 읽었을 때 글 하단에 나오는 배너 (글마다 1회) | 없음 (배너에 닫기 버튼이 없음) |
 
-- 탭 상단의 `GuestNotice`("지금 기록은 이 기기에만 저장돼 있어요")는 항상 떠 있는 안내라 `Backup Prompt Shown`으로 보내지 않는다. 그 안의 "백업하기" 버튼은 `Login Button Clicked`(`guest_notice`)로 잡힌다.
+- 예전에 있던 `app_bar`(앱 바 아이콘으로 열던 로그인 시트), `guest_notice`(아카이브 상단 안내), `mypage`(옛 프로필의 로그인 카드), `reader_end_banner`(완독 배너), `read_completed` 제안은 화면에서 삭제돼 더 이상 보내지 않는다. 대시보드에 과거 데이터가 남아 있을 수 있다.
 - 사용자가 직접 로그인 버튼을 눌러 연 시트는 "제안"이 아니라서 Shown/Dismissed를 보내지 않는다.
 
 ## Amplitude

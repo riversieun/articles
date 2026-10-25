@@ -58,8 +58,9 @@ type Ctx = Persisted & {
   hasRecords: boolean;
   openLogin: (trigger: LoginTrigger) => void;
   closeSheet: () => void;
-  login: () => void;
+  login: (trigger?: LoginTrigger) => void;
   logout: () => void;
+  deleteAccount: () => void;
   toggleKo: (aid?: string) => void;
   toggleHl: (sid: string) => void;
   openComment: (sid: string) => void;
@@ -72,8 +73,6 @@ type Ctx = Persisted & {
   saveAllX: (aid: string) => void;
   toggleA: (aid: string) => void;
   showToast: (msg: string) => void;
-  loadSample: () => void;
-  resetAll: () => void;
 };
 
 const StoreCtx = createContext<Ctx | null>(null);
@@ -158,10 +157,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         }
         setSheet(null);
       },
-      login: () => {
-        const trigger = sheet?.type === "login" ? sheet.trigger : "unknown";
-        // 자동 제안 시트는 시트 안의 "Google로 계속하기"가 로그인 버튼이다. (직접 연 시트는 진입 버튼에서 이미 보냄)
-        if (trigger === "backup_prompt") track("Login Button Clicked", { trigger });
+      login: (direct) => {
+        const trigger = direct ?? (sheet?.type === "login" ? sheet.trigger : "unknown");
+        // 버튼이 곧 로그인인 경우(백업 제안 시트, 프로필 페이지)는 여기서 Login Button Clicked 를 보낸다.
+        if (direct || trigger === "backup_prompt") track("Login Button Clicked", { trigger });
         setGuestState(false); // Login Completed부터 is_guest=false
         // TODO(Supabase): 익명 사용자에 구글 계정을 연결(linkIdentity)할 때 기존 구글 계정에 게스트 데이터를 병합했다면 merged: true 로 보낸다.
         //   이 자리에서 identifyUser(user.id)도 호출한다. 지금은 목업이라 병합 여부를 알 수 없어 false.
@@ -176,6 +175,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         commit({ ...ref.current, loggedIn: false });
         showToast("로그아웃했어요");
       },
+      deleteAccount: () => {
+        track("Account Deleted");
+        // TODO(Supabase): 서버에서 계정과 기록을 삭제한 뒤 signOut + resetUser()를 호출한다.
+        commit({ ...EMPTY });
+        showToast("계정을 삭제했어요");
+      },
       toggleKo: (aid) => {
         track("Translation Toggled", { ...(aid ? { article_id: aid } : {}), on: !ref.current.showKo });
         commit({ ...ref.current, showKo: !ref.current.showKo });
@@ -187,7 +192,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         if (on) hl[sid] = true;
         else delete hl[sid];
         commit({ ...ref.current, hl });
-        showToast(on ? "문장을 하이라이트했어요" : "하이라이트를 해제했어요");
       },
       openComment: (sid) => setSheet({ type: "comment", sid, editId: "" }),
       editNote: (id) => {
@@ -242,7 +246,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         if (on) savedX[xid] = true;
         else delete savedX[xid];
         let next: Persisted = { ...ref.current, savedX };
-        showToast(on ? "표현을 저장했어요. 표현 탭에서 복습할 수 있어요" : "표현 저장을 해제했어요");
+        if (on) showToast("표현을 저장했어요. 표현 탭에서 복습할 수 있어요");
         if (on && Object.keys(savedX).length >= 3) next = maybePrompt(next, "expr3");
         commit(next);
       },
@@ -261,37 +265,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         if (on) savedA[aid] = true;
         else delete savedA[aid];
         commit({ ...ref.current, savedA });
-        showToast(on ? "글을 저장했어요. 아카이브에서 볼 수 있어요" : "글 저장을 해제했어요");
-      },
-      loadSample: () => {
-        const now = Date.now();
-        commit({
-          ...ref.current,
-          hl: { "a1-s2": true },
-          notes: [
-            {
-              id: "seed1",
-              aid: "a1",
-              sid: "a1-s2",
-              text: "온보딩 플로우를 새로 만들기 전에, 지금 있는 빈 화면부터 다시 살펴보자.",
-              at: now - 2000,
-            },
-            {
-              id: "seed2",
-              aid: "a2",
-              sid: "",
-              text: "우리 서비스에서 새로움을 써도 되는 단 한 곳은 어디일까? 다음 리뷰 때 팀에 물어보기.",
-              at: now - 1000,
-            },
-          ],
-          savedX: { "a1-x3": true, "a1-x4": true, "a2-x1": true },
-          savedA: { a3: true },
-        });
-        showToast("샘플 기록을 채웠어요");
-      },
-      resetAll: () => {
-        commit({ ...EMPTY });
-        showToast("기록을 모두 지웠어요");
+        if (on) showToast("글을 저장했어요. 아카이브에서 볼 수 있어요");
       },
     };
   }, [state, ready, sheet, toast, commit, showToast, maybePrompt]);
