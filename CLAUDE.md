@@ -5,7 +5,7 @@ UI 작업 전에 반드시 DESIGN.md를 먼저 읽을 것.
 
 ### 디자인 토큰
 - 글자 크기는 `text-display`·`text-headline`·`text-body-lg`·`text-body-md`·`text-body-sm`·`text-label-md`·`text-label-sm` 중에서 고른다. `text-[13.5px]` 같은 임의 크기를 쓰지 않는다. 크기·줄 높이는 이 클래스가, 굵기·자간은 `font-*`·`tracking-*`를 따로 붙여 정한다. 600 굵기는 `*-semibold` 토큰(DESIGN.md)에서만 쓴다.
-- 읽는 글자에 `text-subtle`을 쓰지 않는다. 가장 약한 글자색은 `text-on-surface-muted`다(placeholder 포함).
+- 읽는 글자에 `text-subtle`을 쓰지 않는다. 가장 약한 글자색은 `text-on-surface-muted`다(placeholder 포함). 예외는 선택 안 된 탭바 라벨(`subtle`)과 아티클 본문의 "- 중략 -" 구분 표시(`border-strong`)뿐이다.
 - 간격 이름(`sm`, `md`, `xl`…)을 CSS 토큰(`--spacing-*`)으로 만들지 않는다. Tailwind의 `max-w-md` 같은 클래스가 깨진다(실제로 다이얼로그 폭이 12px로 줄어든 적이 있다). 같은 값의 숫자 클래스(4px=`1`, 8px=`2`, 12px=`3`, 16px=`4`, 24px=`6`, 32px=`8`, 80px=`20`)를 쓴다.
 - 모서리는 `rounded-sm/md/lg/xl/card/pill/full`만 쓴다(`rounded-[16px]` 금지).
 

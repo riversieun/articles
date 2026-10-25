@@ -87,7 +87,7 @@
 
 | trigger | 진입 경로 | 파일 |
 |---|---|---|
-| `app_bar` | 상단 앱바의 프로필(비로그인) 아이콘 | `components/AppBar.tsx` |
+| `profile` | 프로필 페이지(비로그인)의 "Google로 로그인하기" 버튼. 앱 바의 프로필 아이콘은 이제 로그인 시트가 아니라 프로필 페이지로 이동한다 | `app/mypage/page.tsx` |
 | `backup_prompt` | 자동으로 뜬 백업 제안 시트(표현 3개 저장 / 첫 코멘트) 안의 "Google로 계속하기" | `lib/store.tsx` |
 
 - `Login Completed.trigger`는 로그인을 시작한 진입 경로와 같은 값이다.
@@ -102,7 +102,7 @@
 | `expressions_3` | 저장한 표현이 3개가 됐을 때 뜨는 시트 | 있음 |
 | `first_comment` | 첫 문장 코멘트를 남겼을 때 뜨는 시트 | 있음 |
 
-- 예전에 있던 `guest_notice`(아카이브 상단 안내), `mypage`(프로필의 로그인 카드), `reader_end_banner`(완독 배너), `read_completed` 제안은 화면에서 삭제돼 더 이상 보내지 않는다. 대시보드에 과거 데이터가 남아 있을 수 있다.
+- 예전에 있던 `app_bar`(앱 바 아이콘으로 열던 로그인 시트), `guest_notice`(아카이브 상단 안내), `mypage`(옛 프로필의 로그인 카드), `reader_end_banner`(완독 배너), `read_completed` 제안은 화면에서 삭제돼 더 이상 보내지 않는다. 대시보드에 과거 데이터가 남아 있을 수 있다.
 - 사용자가 직접 로그인 버튼을 눌러 연 시트는 "제안"이 아니라서 Shown/Dismissed를 보내지 않는다.
 
 ## Amplitude

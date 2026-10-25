@@ -218,8 +218,8 @@ components:
 - **Accent-strong (#C6E03E):** 라임이 선택된 상태일 때만 쓰는, accent보다 살짝 진한 라임. 본문에서 눌러 툴팁이 열린 표현의 하이라이트에 쓴다.
 - **Accent-sub (#E7E0FF), Accent-sub-strong (#CBBCFF):** 연보라. 라임과 겹치지 않는 보조 구분용으로만 쓴다. 사용자가 하이라이트한 문장은 `accent-sub`, 코멘트 말풍선은 `accent-sub-strong`.
 - **Surface (#FFFFFF) / Surface-muted (#F4F4F6):** 페이지와 팝업은 흰색, 그 위의 카드·주제 뱃지·보조 버튼·구획 배경은 연회색.
-- **On-surface-muted (#5F5F66):** 보조 설명과 메타 정보, 읽는 글자 중 한 단계 약한 것(부연설명, 안내 문구, 입력창 placeholder, 탭바의 선택 안 된 탭).
-- **Subtle (#8E8E96):** 글자에는 쓰지 않는다(흰 배경 대비 3.25:1로 읽기 기준에 못 미침). 토글 꺼짐 배경, 로그인 전 프로필 아이콘 같은 장식에만 쓴다.
+- **On-surface-muted (#5F5F66):** 보조 설명과 메타 정보, 읽는 글자 중 한 단계 약한 것(부연설명, 한글 번역, 안내 문구, 입력창 placeholder).
+- **Subtle (#8E8E96):** 읽는 글자에는 쓰지 않는다(흰 배경 대비 3.25:1로 읽기 기준에 못 미침). 토글 꺼짐 배경, 로그인 전 프로필 아이콘 같은 장식에 쓴다. 예외로 **하단 탭바의 선택 안 된 탭**(아이콘과 라벨)에는 글자색으로 쓴다(대비 3.25:1). 본문의 **"- 중략 -" 구분 표시**는 한 단계 더 약한 `border-strong`을 쓴다.
 - **Border (#E7E7EA) / Border-strong (#D5D5DA):** 구분선. 일반 구분은 `border`, 입력창 테두리와 카드 안의 구분선처럼 경계를 조금 더 또렷하게 할 때는 `border-strong`.
 - **Danger:** 삭제 등 되돌릴 수 없는 행동과 입력 오류에만 쓴다. 배경에 깔 때는 옅게(10~20%) 깔고 글자만 진하게 쓴다.
 - **Focus-ring (#111111):** 키보드 포커스 표시. 지우지 않는다.
@@ -279,9 +279,11 @@ shadcn 컴포넌트는 `components/ui`에, 서비스 전용 조합은 `component
 - **Dialog:** 중앙 팝업(`ConfirmDeleteDialog`, 피드백). 제목과 닫기 버튼이 같은 줄에 있고(닫기는 오른쪽), 설명은 한 단계 약한 색, 구획 사이 24px. 삭제 확인은 "삭제할까요?" / "삭제하면 되돌릴 수 없어요." 문구로 통일하고 취소(왼쪽)·삭제(오른쪽, danger)를 한 줄에 둔다.
 - **Bottom sheet:** 하단에서 올라오는 시트(로그인, 코멘트). 위쪽 모서리 26px, 제목은 `headline`.
 - **Toggle:** 38×22px 알약, 손잡이 18px. 켜짐은 `primary`, 꺼짐은 `subtle`. 본문의 "번역 켜기"와 프로필의 "번역 항상 켜기"가 같은 컴포넌트를 쓴다.
-- **Tab bar:** 위 Layout 참고. 선택된 탭은 `primary`, 아닌 탭은 `on-surface-muted`. 아카이브 아이콘은 북마크(채움), 탐색은 나침반.
+- **Progress bar:** 아티클 상단 고정 영역 아래 3px 막대. 트랙은 `border-strong`(읽은 부분의 라임과 대비를 주려고 한 단계 진하게), 읽은 만큼은 `accent`(라임).
+- **Tab bar:** 위 Layout 참고. 선택된 탭은 `primary`, 선택 안 된 탭은 `subtle`. 아카이브 아이콘은 북마크(채움), 탐색은 나침반.
 - **Tooltip:** 라임 배경, 검정 글자, `xl` 모서리. 영어 표현 `body-lg-semibold`, 뜻 `body-md-semibold`, 부연설명 `body-sm`(`on-surface-muted`).
 - **Popover menu:** 문장 위, 코멘트 말풍선 위에 뜨는 검정 알약 메뉴. 아이콘은 선(stroke) 형태이고 각 버튼 높이 48px.
+- **Excerpt gap marker:** 원문에서 건너뛴 자리에 문단 사이 가운데로 "- 중략 -"을 `label-sm`(12px) 이탤릭, `border-strong` 색으로 두고, 위아래 여백은 기본 문단 간격보다 8px씩 줄인다. 이어지는 문단 사이에는 두지 않고 여백만 쓴다.
 - **Comment bubble:** 문장 아래에 붙는 연보라 말풍선. 본문에서는 누르면 "수정·삭제" 팝오버가 열리고, 아카이브 카드에서는 모양만 쓴다.
 - **Save / bookmark icon:** 저장 전에는 `on-surface-muted` 테두리, 저장 후에는 `on-surface` 채움. 탐색 카드와 아카이브는 22px, 본문 상단 바는 24px.
 - **Profile avatar:** 로그인 전에는 회색 원 + 실루엣 아이콘, 로그인 후에는 구글 계정 프로필 사진(없으면 라임 이니셜 원). 앱 바에서 32px, 프로필 페이지에서 80px.
@@ -294,7 +296,7 @@ shadcn 컴포넌트는 `components/ui`에, 서비스 전용 조합은 `component
 - Don't: 라임 위에 흰 글자를 올리지 않는다. 항상 `on-accent`(검정)를 쓴다.
 - Do: 모든 색은 역할 토큰(`primary`, `danger`, `surface-muted`)으로 부른다. 화면에서 `#hex`나 임의 색을 직접 쓰지 않는다.
 - Don't: `danger`는 삭제·오류 외에는 쓰지 않는다. 강조나 장식으로 빨강을 쓰지 않는다.
-- Don't: `subtle`을 글자에 쓰지 않는다. 읽는 글자의 가장 약한 단계는 `on-surface-muted`다.
+- Don't: `subtle`을 읽는 글자에 쓰지 않는다. 읽는 글자의 가장 약한 단계는 `on-surface-muted`다(예외: 선택 안 된 탭바 라벨은 `subtle`, "- 중략 -" 구분 표시는 `border-strong`).
 - Do: 글자는 `text-display`·`text-headline`·`text-body-*`·`text-label-*` 토큰으로 정한다. `text-[13.5px]` 같은 임의 크기를 쓰지 않는다.
 - Do: 새 UI가 필요하면 `components/ui`에서 먼저 찾고, 없을 때만 `npx shadcn@latest add`로 추가한다. 같은 역할의 컴포넌트를 따로 만들지 않는다.
 - Do: 토큰 이름(글자 크기, 자간, 간격, 모서리)을 새로 만들면 `lib/utils.ts`의 클래스 병합 설정에도 같이 등록한다(자세한 이유는 `CLAUDE.md`).
