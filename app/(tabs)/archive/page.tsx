@@ -15,6 +15,15 @@ import { IconBookmark, IconChevron, IconPen, IconTrash } from "@/components/icon
 
 type Seg = "hl" | "notes" | "thoughts" | "saved" | "expr";
 
+/** Archive Filter Selected 의 filter 값 */
+const SEG_KEY: Record<Seg, string> = {
+  hl: "highlights",
+  notes: "comments",
+  thoughts: "thoughts",
+  saved: "articles",
+  expr: "expressions",
+};
+
 type Item =
   | { kind: "hl"; key: string; quote: string; ko: string; sid: string }
   | { kind: "comment"; key: string; quote: string; ko: string; text: string; id: string }
@@ -84,7 +93,10 @@ export default function ArchivePage() {
               key={key}
               variant={seg === key ? "default" : "secondary"}
               aria-pressed={seg === key}
-              onClick={() => setSeg(key)}
+              onClick={() => {
+                if (key !== seg) track("Archive Filter Selected", { filter: SEG_KEY[key] });
+                setSeg(key);
+              }}
               className="shrink-0 gap-1.5 px-4"
             >
               <span>{label}</span>

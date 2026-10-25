@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { track } from "@/lib/analytics";
 import { MOCK_PROFILE } from "@/lib/profile";
 import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { useStore } from "@/lib/store";
@@ -26,6 +27,14 @@ const ROW =
   "flex min-h-16 w-full items-center justify-between gap-3 border-0 bg-transparent px-5 text-left text-body-md font-medium text-on-surface";
 const FB_KEY = "articles:proto:feedback";
 const FB_KINDS = ["만족한 점", "개선할 점", "기능 요청", "오류 제보", "기타"] as const;
+/** Feedback Sent 의 kind 값 (피드백 본문은 보내지 않는다) */
+const FB_KIND_KEY: Record<(typeof FB_KINDS)[number], string> = {
+  "만족한 점": "satisfied",
+  "개선할 점": "improvement",
+  "기능 요청": "feature_request",
+  "오류 제보": "bug_report",
+  "기타": "other",
+};
 
 export default function MyPage() {
   const router = useRouter();
@@ -46,6 +55,7 @@ export default function MyPage() {
     } catch {
       /* 저장소를 못 써도 흐름은 계속 */
     }
+    track("Feedback Sent", { kind: FB_KIND_KEY[fbKind] });
     setFbText("");
     setFbOpen(false);
     showToast("피드백을 보냈어요. 운영자가 확인할게요");

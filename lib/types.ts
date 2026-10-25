@@ -14,8 +14,11 @@ export type RawArticle = {
   titleEn: string;
   summary: string;
   x: Record<string, [term: string, meaning: string, note: string]>;
-  paras: [en: string, ko: string][][];
+  /** 문단은 [영어, 한국어] 문장 쌍의 배열, 소제목은 { h: [영어, 한국어] } */
+  paras: RawBlock[];
 };
+
+export type RawBlock = [en: string, ko: string][] | { h: [en: string, ko: string] };
 
 export type Segment = { t: string; xid: string };
 
@@ -37,6 +40,8 @@ export type Expression = {
   ctx: Sentence | null;
 };
 
+export type Block = { type: "p"; sentences: Sentence[] } | { type: "h"; en: string; ko: string };
+
 export type Article = {
   id: string;
   src: SourceKey;
@@ -49,7 +54,10 @@ export type Article = {
   titleEn: string;
   summary: string;
   xs: Expression[];
+  /** 문장 문단만 모은 목록(아카이브·분석용). 소제목은 없다 */
   paras: Sentence[][];
+  /** 화면에 그리는 순서 그대로의 문단·소제목 */
+  blocks: Block[];
   min: number;
 };
 

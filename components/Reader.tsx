@@ -266,9 +266,17 @@ export function Reader({ aid }: { aid: string }) {
         </section>
 
         <div className="mt-8 flex flex-col gap-[18px]">
-          {art.paras.map((p, pi) => (
+          {art.blocks.map((b, pi) =>
+            b.type === "h" ? (
+              <div key={pi} className="mt-4 flex flex-col gap-1">
+                <h2 lang="en" className="m-0 text-headline font-bold tracking-headline">
+                  {b.en}
+                </h2>
+                {showKo && <p className="m-0 text-body-sm text-on-surface-muted">{b.ko}</p>}
+              </div>
+            ) : (
             <div key={pi} className="flex flex-col gap-1">
-              {p.map((st) => {
+              {b.sentences.map((st) => {
                 const tipOpen = tip?.sid === st.id;
                 const menuOpen = menu === st.id;
                 const isHl = !!hl[st.id];

@@ -73,8 +73,6 @@ type Ctx = Persisted & {
   saveAllX: (aid: string) => void;
   toggleA: (aid: string) => void;
   showToast: (msg: string) => void;
-  loadSample: () => void;
-  resetAll: () => void;
 };
 
 const StoreCtx = createContext<Ctx | null>(null);
@@ -268,36 +266,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         else delete savedA[aid];
         commit({ ...ref.current, savedA });
         if (on) showToast("글을 저장했어요. 아카이브에서 볼 수 있어요");
-      },
-      loadSample: () => {
-        const now = Date.now();
-        commit({
-          ...ref.current,
-          hl: { "a1-s2": true },
-          notes: [
-            {
-              id: "seed1",
-              aid: "a1",
-              sid: "a1-s2",
-              text: "온보딩 플로우를 새로 만들기 전에, 지금 있는 빈 화면부터 다시 살펴보자.",
-              at: now - 2000,
-            },
-            {
-              id: "seed2",
-              aid: "a2",
-              sid: "",
-              text: "우리 서비스에서 새로움을 써도 되는 단 한 곳은 어디일까? 다음 리뷰 때 팀에 물어보기.",
-              at: now - 1000,
-            },
-          ],
-          savedX: { "a1-x3": true, "a1-x4": true, "a2-x1": true },
-          savedA: { a3: true },
-        });
-        showToast("샘플 기록을 채웠어요");
-      },
-      resetAll: () => {
-        commit({ ...EMPTY });
-        showToast("기록을 모두 지웠어요");
       },
     };
   }, [state, ready, sheet, toast, commit, showToast, maybePrompt]);

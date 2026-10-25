@@ -12,7 +12,7 @@ const UNTRACKED_URL = /^https?:\/\/[^/]+\/design-system(\/|\?|#|$)/; // Amplitud
 const onUntrackedPath = () => typeof window !== "undefined" && UNTRACKED_PATH.test(window.location.pathname);
 
 /** 로그인 진입 경로. Login Button Clicked / Login Completed 의 trigger 값. */
-export type LoginTrigger = "app_bar" | "guest_notice" | "mypage" | "reader_end_banner" | "backup_prompt";
+export type LoginTrigger = "app_bar" | "backup_prompt";
 
 /** 글 단위 이벤트에 공통으로 붙이는 속성. 값은 콘텐츠 데이터에서 가져온다. */
 export function articleProps(aid: string) {
