@@ -225,9 +225,9 @@ export function Reader({ aid }: { aid: string }) {
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={progress}
-          className="h-[3px] bg-border"
+          className="h-[3px] bg-border-strong"
         >
-          <div className="h-[3px] bg-primary transition-[width] duration-100 ease-linear" style={{ width: `${progress}%` }} />
+          <div className="h-[3px] bg-lime transition-[width] duration-100 ease-linear" style={{ width: `${progress}%` }} />
         </div>
       </div>
 
@@ -262,12 +262,21 @@ export function Reader({ aid }: { aid: string }) {
 
         <section className="mt-7 flex flex-col gap-2 rounded-card bg-surface-muted px-[18px] pt-4 pb-[18px]">
           <h2 className="m-0 text-label-md font-semibold">원문 요약</h2>
-          <p className="m-0 text-body-md">{art.summary}</p>
+          <p className="m-0 text-body-md [word-break:normal]">{art.summary}</p>
         </section>
 
         <div className="mt-8 flex flex-col gap-[18px]">
           {art.blocks.map((b, pi) =>
-            b.type === "h" ? (
+            b.type === "gap" ? (
+              <p
+                key={pi}
+                role="separator"
+                aria-label="원문 중략"
+                className="m-0 -my-2 text-center text-label-sm text-border-strong italic"
+              >
+                - 중략 -
+              </p>
+            ) : b.type === "h" ? (
               <div key={pi} className="mt-4 flex flex-col gap-1">
                 <h2 lang="en" className="m-0 text-headline font-bold tracking-headline">
                   {b.en}
@@ -328,11 +337,7 @@ export function Reader({ aid }: { aid: string }) {
                     </p>
 
                     {showKo && (
-                      <p
-                        className={`pointer-events-none relative mt-1.5 mb-0 text-body-sm ${
-                          isHl ? "text-[#2e2e36]" : "text-on-surface-muted"
-                        }`}
-                      >
+                      <p className="pointer-events-none relative mt-1.5 mb-0 text-body-sm text-on-surface-muted">
                         {st.ko}
                       </p>
                     )}

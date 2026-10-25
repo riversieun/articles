@@ -58,7 +58,7 @@ type Ctx = Persisted & {
   hasRecords: boolean;
   openLogin: (trigger: LoginTrigger) => void;
   closeSheet: () => void;
-  login: () => void;
+  login: (trigger?: LoginTrigger) => void;
   logout: () => void;
   deleteAccount: () => void;
   toggleKo: (aid?: string) => void;
@@ -157,10 +157,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         }
         setSheet(null);
       },
-      login: () => {
-        const trigger = sheet?.type === "login" ? sheet.trigger : "unknown";
-        // 자동 제안 시트는 시트 안의 "Google로 계속하기"가 로그인 버튼이다. (직접 연 시트는 진입 버튼에서 이미 보냄)
-        if (trigger === "backup_prompt") track("Login Button Clicked", { trigger });
+      login: (direct) => {
+        const trigger = direct ?? (sheet?.type === "login" ? sheet.trigger : "unknown");
+        // 버튼이 곧 로그인인 경우(백업 제안 시트, 프로필 페이지)는 여기서 Login Button Clicked 를 보낸다.
+        if (direct || trigger === "backup_prompt") track("Login Button Clicked", { trigger });
         setGuestState(false); // Login Completed부터 is_guest=false
         // TODO(Supabase): 익명 사용자에 구글 계정을 연결(linkIdentity)할 때 기존 구글 계정에 게스트 데이터를 병합했다면 merged: true 로 보낸다.
         //   이 자리에서 identifyUser(user.id)도 호출한다. 지금은 목업이라 병합 여부를 알 수 없어 false.

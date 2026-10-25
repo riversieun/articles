@@ -14,11 +14,11 @@ export type RawArticle = {
   titleEn: string;
   summary: string;
   x: Record<string, [term: string, meaning: string, note: string]>;
-  /** 문단은 [영어, 한국어] 문장 쌍의 배열, 소제목은 { h: [영어, 한국어] } */
+  /** 문단은 [영어, 한국어] 문장 쌍의 배열, 소제목은 { h: [영어, 한국어] }, 원문에서 건너뛴 자리는 { gap: true } */
   paras: RawBlock[];
 };
 
-export type RawBlock = [en: string, ko: string][] | { h: [en: string, ko: string] };
+export type RawBlock = [en: string, ko: string][] | { h: [en: string, ko: string] } | { gap: true };
 
 export type Segment = { t: string; xid: string };
 
@@ -40,7 +40,7 @@ export type Expression = {
   ctx: Sentence | null;
 };
 
-export type Block = { type: "p"; sentences: Sentence[] } | { type: "h"; en: string; ko: string };
+export type Block = { type: "p"; sentences: Sentence[] } | { type: "h"; en: string; ko: string } | { type: "gap" };
 
 export type Article = {
   id: string;

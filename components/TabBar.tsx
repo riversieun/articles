@@ -27,7 +27,7 @@ export function TabBar() {
               href={href}
               aria-current={on ? "page" : undefined}
               className={`flex h-12 w-[88px] flex-col items-center justify-center gap-0.5 text-label-sm font-medium no-underline ${
-                on ? "text-primary" : "text-on-surface-muted"
+                on ? "text-primary" : "text-subtle"
               }`}
             >
               {icon}

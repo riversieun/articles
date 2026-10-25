@@ -53,7 +53,7 @@ function parse() {
     const blocks: Block[] = [];
     for (const b of r.paras) {
       if (!Array.isArray(b)) {
-        blocks.push({ type: "h", en: b.h[0], ko: b.h[1] });
+        blocks.push("gap" in b ? { type: "gap" } : { type: "h", en: b.h[0], ko: b.h[1] });
         continue;
       }
       const sentences = b.map(([en, ko]) => {

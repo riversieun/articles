@@ -51,6 +51,10 @@ export function ServiceDemos() {
         <ConfirmDeleteDialog open={confirm} onOpenChange={setConfirm} onConfirm={() => {}} />
       </Demo>
 
+      <Demo label="Excerpt gap marker — 원문에서 건너뛴 자리에만">
+        <p className="m-0 text-center text-label-sm text-subtle italic">- 중략 -</p>
+      </Demo>
+
       <Demo label="Save icon — 저장 전(회색 선) / 저장 후(검정 채움)">
         <div className="flex items-center gap-4">
           <span className="text-on-surface-muted">

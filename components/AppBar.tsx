@@ -16,7 +16,7 @@ const TITLES: Record<string, string> = {
  * 그 밖의 탭: 왼쪽에 페이지 타이틀만.
  */
 export function AppBar() {
-  const { ready, loggedIn, openLogin } = useStore();
+  const { ready, loggedIn } = useStore();
   const title = TITLES[usePathname()];
 
   if (title) {
@@ -39,24 +39,15 @@ export function AppBar() {
 
       {/* ready 전에는 자리만 확보해 로그인 ↔ 프로필 깜빡임을 막는다 */}
       <div className="flex h-11 items-center">
-        {ready &&
-          (loggedIn ? (
-            <Link
-              href="/mypage"
-              aria-label="프로필"
-              className="flex size-11 items-center justify-center no-underline"
-            >
-              <ProfileAvatar size={32} />
-            </Link>
-          ) : (
-            <button
-              aria-label="로그인"
-              onClick={() => openLogin("app_bar")}
-              className="flex size-11 items-center justify-center border-0 bg-transparent p-0"
-            >
-              <IconAvatar size={32} />
-            </button>
-          ))}
+        {ready && (
+          <Link
+            href="/mypage"
+            aria-label="프로필"
+            className="flex size-11 items-center justify-center no-underline"
+          >
+            {loggedIn ? <ProfileAvatar size={32} /> : <IconAvatar size={32} />}
+          </Link>
+        )}
       </div>
     </div>
   );

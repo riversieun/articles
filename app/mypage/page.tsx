@@ -6,6 +6,8 @@ import { useState } from "react";
 import { track } from "@/lib/analytics";
 import { MOCK_PROFILE } from "@/lib/profile";
 import { ProfileAvatar } from "@/components/ProfileAvatar";
+import { GoogleLoginButton } from "@/components/GoogleLoginButton";
+import { IconAvatar, IconBack } from "@/components/icons";
 import { useStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,7 +23,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { IconBack } from "@/components/icons";
 
 const ROW =
   "flex min-h-16 w-full items-center justify-between gap-3 border-0 bg-transparent px-5 text-left text-body-md font-medium text-on-surface";
@@ -38,7 +39,7 @@ const FB_KIND_KEY: Record<(typeof FB_KINDS)[number], string> = {
 
 export default function MyPage() {
   const router = useRouter();
-  const { ready, loggedIn, showKo, toggleKo, logout, deleteAccount, showToast } = useStore();
+  const { ready, loggedIn, showKo, toggleKo, login, logout, deleteAccount, showToast } = useStore();
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [fbOpen, setFbOpen] = useState(false);
   const [fbKind, setFbKind] = useState<(typeof FB_KINDS)[number]>(FB_KINDS[0]);
@@ -79,15 +80,27 @@ export default function MyPage() {
         <h1 className="m-0 text-headline font-bold tracking-headline">프로필</h1>
       </div>
 
-      {ready && loggedIn && (
+      {ready && (
         <section className="flex flex-col items-center gap-3 px-5 py-4">
-          <ProfileAvatar size={80} />
-          <span className="max-w-full truncate text-body-md text-on-surface">{MOCK_PROFILE.email}</span>
+          {loggedIn ? (
+            <>
+              <ProfileAvatar size={80} />
+              <span className="max-w-full truncate text-body-md text-on-surface">{MOCK_PROFILE.email}</span>
+            </>
+          ) : (
+            <>
+              <IconAvatar size={80} />
+              <GoogleLoginButton label="Google로 로그인하기" onClick={() => login("profile")} className="mt-1 px-8" />
+              <p className="m-0 text-center text-body-sm text-on-surface-muted">
+                로그인하면 다른 기기에서도 내 기록을 볼 수 있어요.
+              </p>
+            </>
+          )}
         </section>
       )}
 
       <ul className="m-0 mt-4 flex list-none flex-col p-0">
-        {ready && loggedIn && (
+        {ready && (
           <li>
             <button
               role="switch"

@@ -6,7 +6,7 @@ import { lib } from "@/lib/content";
 import { useStore, type PromptReason } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { IconGoogle } from "./icons";
+import { GoogleLoginButton } from "./GoogleLoginButton";
 
 const COPY: Record<PromptReason, { title: string; body: string }> = {
   manual: {
@@ -51,16 +51,7 @@ export function Overlays() {
             {COPY[sheet.reason].title}
           </h2>
           <p className="m-0 text-body-md text-on-surface-muted">{COPY[sheet.reason].body}</p>
-          <Button
-            variant="accent"
-            onClick={login}
-            className="mt-3 h-[52px] gap-3 rounded-pill text-body-md font-semibold"
-          >
-            <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-surface">
-              <IconGoogle size={16} />
-            </span>
-            Google로 계속하기
-          </Button>
+          <GoogleLoginButton onClick={() => login()} className="mt-3" />
           <button onClick={closeSheet} className="h-12 border-0 bg-transparent text-label-md font-medium text-on-surface-muted">
             나중에 할게요
           </button>
