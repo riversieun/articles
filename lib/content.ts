@@ -1,5 +1,5 @@
 import { RAW } from "@/data/raw";
-import type { Article, Expression, Sentence } from "./types";
+import type { Article, Expression, Sentence, SourceKey } from "./types";
 
 const EXPR_RE = /\[\[(.+?)\|(\w+)\]\]/g;
 
@@ -56,6 +56,7 @@ function parse() {
     const art: Article = {
       id: r.id,
       src: r.src,
+      topic: r.topic,
       kind: r.kind ?? "article",
       sourceLine: r.sourceLine,
       date: r.date,
@@ -75,11 +76,32 @@ function parse() {
 
 export const lib = parse();
 
-export const FILTERS: [key: string, label: string][] = [
+export const TOPICS: [key: string, label: string][] = [
   ["all", "전체"],
-  ["figma", "Figma"],
-  ["medium", "Medium"],
-  ["hn", "Hacker News"],
-  ["nng", "NN/g"],
-  ["lenny", "Lenny's Podcast"],
+  ["process", "디자인 프로세스"],
+  ["collab", "협업"],
+  ["ux", "UX 원칙"],
+  ["system", "디자인 시스템"],
 ];
+
+export const TOPIC_LABEL: Record<string, string> = Object.fromEntries(TOPICS);
+
+export const SOURCE_LABEL: Record<SourceKey, string> = {
+  figma: "Figma",
+  medium: "Medium",
+  hn: "Hacker News",
+  nng: "NN/g",
+  lenny: "Lenny's Podcast",
+};
+
+/** "2026.10.08" → "2026년 10월 8일" */
+export function formatDate(date: string) {
+  const [y, m, d] = date.split(".").map(Number);
+  return `${y}년 ${m}월 ${d}일`;
+}
+
+/** 저장 시각(ms) → "2026년 10월 8일" */
+export function formatTimestamp(at: number) {
+  const d = new Date(at);
+  return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`;
+}

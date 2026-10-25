@@ -14,6 +14,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { ServiceDemos } from "./demos";
 
 export const metadata: Metadata = { title: "Design System" };
 
@@ -24,10 +25,10 @@ const BADGE_VARIANTS = ["default", "secondary", "destructive", "outline", "ghost
 
 function Section({ id, title, note, children }: { id: string; title: string; note?: string; children: React.ReactNode }) {
   return (
-    <section id={id} className="flex flex-col gap-5 border-t border-line pt-8">
+    <section id={id} className="flex flex-col gap-5 border-t border-border pt-8">
       <div className="flex flex-col gap-1">
-        <h2 className="m-0 text-xl font-bold tracking-[-0.02em]">{title}</h2>
-        {note && <p className="m-0 text-[13px] leading-normal text-sub">{note}</p>}
+        <h2 className="m-0 text-headline font-bold tracking-headline">{title}</h2>
+        {note && <p className="m-0 text-body-sm text-on-surface-muted">{note}</p>}
       </div>
       {children}
     </section>
@@ -37,11 +38,61 @@ function Section({ id, title, note, children }: { id: string; title: string; not
 function Group({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-2.5">
-      <h3 className="m-0 text-[12.5px] font-bold text-sub">{label}</h3>
+      <h3 className="m-0 text-label-md font-semibold text-on-surface-muted">{label}</h3>
       {children}
     </div>
   );
 }
+
+const COLORS: [name: string, hex: string, token: string, hint: string][] = [
+  ["primary", "#111111", "--ds-primary", "글자·기본 버튼"],
+  ["accent", "#D9F25C", "--ds-accent", "라임. 핵심 행동·하이라이트"],
+  ["accent-strong", "#C6E03E", "--ds-accent-strong", "선택된 라임"],
+  ["accent-sub", "#E7E0FF", "--ds-accent-sub", "사용자 하이라이트"],
+  ["accent-sub-strong", "#CBBCFF", "--ds-accent-sub-strong", "코멘트 말풍선"],
+  ["surface", "#FFFFFF", "--ds-surface", "페이지·팝업"],
+  ["surface-muted", "#F4F4F6", "--ds-surface-muted", "카드·뱃지·보조 버튼"],
+  ["on-surface-muted", "#5F5F66", "--ds-on-surface-muted", "읽는 글자의 약한 단계"],
+  ["subtle", "#8E8E96", "--ds-subtle", "글자 금지. 토글 꺼짐 등 장식"],
+  ["border", "#E7E7EA", "--ds-border", "일반 구분선"],
+  ["border-strong", "#D5D5DA", "--ds-border-strong", "입력창·카드 안 구분선"],
+  ["danger", "oklch(0.577 0.245 27.325)", "--ds-danger", "삭제·오류만"],
+];
+
+const TYPE: [name: string, cls: string, spec: string, sample: string][] = [
+  ["display", "text-display font-bold tracking-display", "28 / 700 / 1.2", "Empty States Are a First Impression"],
+  ["headline", "text-headline font-bold tracking-headline", "20 / 700 / 1.4", "눈여겨볼 표현"],
+  ["headline-semibold", "text-headline font-semibold tracking-headline", "20 / 600 / 1.4", "drop off"],
+  ["body-lg", "text-body-lg", "18 / 400 / 1.6", "Most teams treat an empty screen as an edge case."],
+  ["body-lg-semibold", "text-body-lg font-semibold", "18 / 600 / 1.6", "left guessing"],
+  ["body-md", "text-body-md", "16 / 400 / 1.6", "빈 화면은 오류가 아니라 첫인상이다"],
+  ["body-md-semibold", "text-body-md font-semibold", "16 / 600 / 1.6", "예외적인 상황, 드문 경우"],
+  ["body-sm", "text-body-sm", "14 / 400 / 1.6", "일반적인 흐름에서 벗어난 상황을 가리키는 제품·개발 용어."],
+  ["label-md", "text-label-md font-medium", "14 / 500", "원문 읽기"],
+  ["label-md-semibold", "text-label-md font-semibold", "14 / 600", "원문 요약"],
+  ["label-sm", "text-label-sm font-medium", "12 / 500", "디자인 프로세스"],
+];
+
+const RADII: [name: string, cls: string, px: string][] = [
+  ["sm", "rounded-sm", "6"],
+  ["md", "rounded-md", "8"],
+  ["lg", "rounded-lg", "10"],
+  ["xl", "rounded-xl", "14"],
+  ["card", "rounded-card", "16"],
+  ["pill", "rounded-pill", "26"],
+  ["full", "rounded-full", "∞"],
+];
+
+const SPACES: [name: string, cls: string, px: string][] = [
+  ["xs", "w-1", "4"],
+  ["sm", "w-2", "8"],
+  ["md", "w-3", "12"],
+  ["lg", "w-4", "16"],
+  ["xl", "w-6", "24"],
+  ["2xl", "w-8", "32"],
+  ["3xl", "w-20", "80"],
+  ["page", "w-5", "20"],
+];
 
 const row = "flex flex-wrap items-center gap-2";
 
@@ -49,19 +100,78 @@ export default function DesignSystemPage() {
   return (
     <main className="flex flex-col gap-8 px-5 pt-8 pb-16">
       <header className="flex flex-col gap-2">
-        <h1 className="m-0 text-[28px] leading-[1.15] font-bold tracking-[-0.03em]">Design System</h1>
-        <p className="m-0 text-sm leading-[1.6] text-sub">
-          shadcn/ui(Base UI, 프리셋 b2D2mxv2w)로 추가한 컴포넌트를 variant와 상태별로 모았습니다. 호버·포커스·눌림은 직접
-          눌러서 확인하세요.
+        <h1 className="m-0 text-display font-bold tracking-display">Design System</h1>
+        <p className="m-0 text-body-sm text-on-surface-muted">
+          DESIGN.md의 토큰(색·글자·모서리·간격)과 컴포넌트를 모았습니다. shadcn/ui(Base UI, 프리셋 b2D2mxv2w) 컴포넌트는
+          variant와 상태별로, 서비스 전용 컴포넌트는 눌러서 확인하세요.
         </p>
-        <nav aria-label="컴포넌트" className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-[13.5px] font-semibold">
-          {["button", "input", "card", "badge", "dialog"].map((id) => (
+        <nav aria-label="컴포넌트" className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-label-md font-semibold">
+          {["colors", "typography", "radius-spacing", "button", "input", "card", "badge", "dialog", "service"].map((id) => (
             <a key={id} href={`#${id}`} className="underline underline-offset-4">
               {id}
             </a>
           ))}
         </nav>
       </header>
+
+      <Section id="colors" title="Colors" note="역할 이름으로 부른다. 글자에는 subtle을 쓰지 않는다.">
+        <div className="grid grid-cols-2 gap-2.5">
+          {COLORS.map(([name, hex, token, hint]) => (
+            <div key={name} className="flex items-center gap-3 rounded-card bg-surface-muted p-3">
+              <span
+                aria-hidden="true"
+                className="size-10 shrink-0 rounded-lg border border-border"
+                style={{ background: `var(${token})` }}
+              />
+              <span className="flex min-w-0 flex-col">
+                <span className="text-label-md font-semibold">{name}</span>
+                <span className="text-label-sm text-on-surface-muted">{hex}</span>
+                <span className="text-label-sm text-on-surface-muted">{hint}</span>
+              </span>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section id="typography" title="Typography" note="크기·줄 높이는 text-* 클래스, 굵기·자간은 font-*·tracking-*를 함께 붙인다. Pretendard 하나만 쓴다.">
+        <div className="flex flex-col">
+          {TYPE.map(([name, cls, spec, sample]) => (
+            <div key={name} className="flex flex-col gap-1 border-b border-border py-4 last:border-b-0">
+              <span className="text-label-sm text-on-surface-muted">
+                {name} · {spec}
+              </span>
+              <span className={cls}>{sample}</span>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section id="radius-spacing" title="Radius · Spacing" note="모서리는 rounded-* 클래스, 간격은 4px 단위 숫자 클래스(이름 대신 같은 값).">
+        <Group label="radius">
+          <div className="flex flex-wrap gap-3">
+            {RADII.map(([name, cls, px]) => (
+              <div key={name} className="flex flex-col items-center gap-1.5">
+                <span aria-hidden="true" className={`size-14 border border-border-strong bg-surface-muted ${cls}`} />
+                <span className="text-label-sm text-on-surface-muted">
+                  {name} {px}
+                </span>
+              </div>
+            ))}
+          </div>
+        </Group>
+        <Group label="spacing">
+          <div className="flex flex-col gap-2">
+            {SPACES.map(([name, cls, px]) => (
+              <div key={name} className="flex items-center gap-3">
+                <span className="w-24 text-label-sm text-on-surface-muted">
+                  {name} {px}
+                </span>
+                <span aria-hidden="true" className={`h-3 rounded-sm bg-accent-sub-strong ${cls}`} />
+              </div>
+            ))}
+          </div>
+        </Group>
+      </Section>
 
       <Section id="button" title="Button" note="variant 6종 × size 4종, 아이콘 버튼, 아이콘 포함, 비활성.">
         <Group label="variant">
@@ -289,6 +399,10 @@ export default function DesignSystemPage() {
             </Dialog>
           </div>
         </Group>
+      </Section>
+
+      <Section id="service" title="Service components" note="본문·아카이브·프로필에서 쓰는 서비스 전용 컴포넌트.">
+        <ServiceDemos />
       </Section>
     </main>
   );

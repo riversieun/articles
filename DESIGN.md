@@ -7,6 +7,7 @@ colors:
   on-primary: "#FFFFFF"
   accent: "#D9F25C"
   on-accent: "#111111"
+  accent-strong: "#C6E03E"
   accent-sub: "#E7E0FF"
   accent-sub-strong: "#CBBCFF"
   surface: "#FFFFFF"
@@ -24,24 +25,50 @@ typography:
     fontFamily: Pretendard Variable
     fontSize: 28px
     fontWeight: 700
-    lineHeight: 1.15
+    lineHeight: 1.2
     letterSpacing: -0.03em
   headline:
     fontFamily: Pretendard Variable
     fontSize: 20px
     fontWeight: 700
-    lineHeight: 1.3
+    lineHeight: 1.4
     letterSpacing: -0.02em
+  body-lg:
+    fontFamily: Pretendard Variable
+    fontSize: 18px
+    fontWeight: 400
+    lineHeight: 1.6
   body-md:
     fontFamily: Pretendard Variable
-    fontSize: 15px
+    fontSize: 16px
     fontWeight: 400
-    lineHeight: 1.5
+    lineHeight: 1.6
   body-sm:
     fontFamily: Pretendard Variable
-    fontSize: 13px
+    fontSize: 14px
     fontWeight: 400
-    lineHeight: 1.5
+    lineHeight: 1.6
+  headline-semibold:
+    fontFamily: Pretendard Variable
+    fontSize: 20px
+    fontWeight: 600
+    lineHeight: 1.4
+    letterSpacing: -0.02em
+  body-lg-semibold:
+    fontFamily: Pretendard Variable
+    fontSize: 18px
+    fontWeight: 600
+    lineHeight: 1.6
+  body-md-semibold:
+    fontFamily: Pretendard Variable
+    fontSize: 16px
+    fontWeight: 600
+    lineHeight: 1.6
+  label-md-semibold:
+    fontFamily: Pretendard Variable
+    fontSize: 14px
+    fontWeight: 600
+    lineHeight: 1
   label-md:
     fontFamily: Pretendard Variable
     fontSize: 14px
@@ -57,6 +84,7 @@ rounded:
   md: 8px
   lg: 10px
   xl: 14px
+  card: 16px
   pill: 26px
   full: 9999px
 spacing:
@@ -65,6 +93,8 @@ spacing:
   md: 12px
   lg: 16px
   xl: 24px
+  2xl: 32px
+  3xl: 80px
   page: 20px
 components:
   button-primary:
@@ -102,25 +132,73 @@ components:
     rounded: "{rounded.full}"
     height: 36px
     padding: 12px
-  card:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.on-surface}"
-    typography: "{typography.body-sm}"
-    rounded: "{rounded.xl}"
-    padding: 24px
-  badge:
-    backgroundColor: "{colors.primary}"
-    textColor: "{colors.on-primary}"
-    typography: "{typography.label-sm}"
-    rounded: "{rounded.full}"
-    height: 20px
-    padding: 8px
-  dialog:
+  textarea:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.on-surface}"
     typography: "{typography.body-md}"
     rounded: "{rounded.xl}"
+    padding: 14px
+  card:
+    backgroundColor: "{colors.surface-muted}"
+    textColor: "{colors.on-surface}"
+    typography: "{typography.body-md}"
+    rounded: "{rounded.card}"
+    padding: 14px
+  badge:
+    backgroundColor: "{colors.surface-muted}"
+    textColor: "{colors.on-surface}"
+    typography: "{typography.label-sm}"
+    rounded: "{rounded.md}"
+    height: 28px
+    padding: 12px
+  dialog:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.on-surface}"
+    typography: "{typography.body-md}"
+    rounded: "{rounded.pill}"
     padding: 24px
+  bottom-sheet:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.on-surface}"
+    typography: "{typography.body-md}"
+    rounded: "{rounded.pill}"
+    padding: 20px
+  toggle:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.surface}"
+    rounded: "{rounded.full}"
+    height: 22px
+    width: 38px
+  tab-bar:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.primary}"
+    typography: "{typography.label-sm}"
+    rounded: "{rounded.full}"
+    height: 64px
+  tooltip:
+    backgroundColor: "{colors.accent}"
+    textColor: "{colors.on-accent}"
+    typography: "{typography.body-md-semibold}"
+    rounded: "{rounded.xl}"
+    padding: 16px
+  popover-menu:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.on-primary}"
+    typography: "{typography.label-md}"
+    rounded: "{rounded.pill}"
+    height: 48px
+  comment-bubble:
+    backgroundColor: "{colors.accent-sub-strong}"
+    textColor: "{colors.on-surface}"
+    typography: "{typography.label-md}"
+    rounded: "{rounded.xl}"
+    padding: 12px
+  toast:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.on-primary}"
+    typography: "{typography.label-md}"
+    rounded: "{rounded.pill}"
+    padding: 18px
 ---
 
 # Design Insight
@@ -129,18 +207,20 @@ components:
 
 영어 아티클을 읽다가 모르는 표현을 눌러 바로 뜻을 확인하는 모바일 우선 서비스다. 화면의 주인공은 항상 본문이고, UI는 읽기를 방해하지 않아야 한다. 그래서 화면 대부분은 흰 배경과 검정 글자로 정리하고, 눈에 띄어야 하는 것(핵심 행동, 하이라이트된 표현)에만 라임색을 쓴다. 느낌은 조용하고 정돈된 편집물에 가깝고, 장식은 쓰지 않는다.
 
-컴포넌트는 shadcn/ui(Base UI, 프리셋 `b2D2mxv2w`)로 만들며 `components/ui`에 있다. 토큰은 `app/globals.css`에 정의돼 있고, 이 문서의 값은 그 파일을 기준으로 한다. 값이 다르면 `globals.css`가 우선이다.
+컴포넌트는 shadcn/ui(Base UI, 프리셋 `b2D2mxv2w`)로 만들며 `components/ui`에 있다. 토큰은 `app/globals.css`의 `@theme`에 정의돼 있고, 이 문서의 값은 그 파일과 같아야 한다. 값이 다르면 `globals.css`가 우선이다. `theme.css`는 이 문서에서 내보낸 참고용 사본이다(앱이 직접 읽지 않는다).
 
 ## Colors
 
 색 이름이 아니라 역할로 부른다.
 
 - **Primary (#111111):** 글자와 기본 버튼의 검정. 화면에서 가장 무게 있는 색이다.
-- **Accent (#D9F25C):** 라임. 서비스의 시그니처 강조색으로, 핵심 행동 버튼과 본문에서 하이라이트된 표현에만 쓴다. 위에 올리는 글자는 반드시 `on-accent`(검정)를 쓴다.
-- **Accent-sub (#E7E0FF), Accent-sub-strong (#CBBCFF):** 연보라. 라임과 겹치지 않는 보조 구분용(태그, 선택 상태 배경)으로만 쓴다.
-- **Surface (#FFFFFF) / Surface-muted (#F4F4F6):** 페이지와 카드는 흰색, 그 위의 입력창·보조 버튼·구획 배경은 연회색.
-- **On-surface-muted (#5F5F66) / Subtle (#8E8E96):** 보조 설명과 메타 정보. `subtle`은 대비가 낮으므로 장식용 아이콘이나 비활성 상태에만 쓰고 읽어야 하는 글자에는 쓰지 않는다.
-- **Border (#E7E7EA) / Border-strong (#D5D5DA):** 구분선. 카드 안팎의 일반 구분은 `border`, 입력 영역 같은 경계 강조는 `border-strong`.
+- **Accent (#D9F25C):** 라임. 서비스의 시그니처 강조색으로, 핵심 행동 버튼, 본문에서 하이라이트된 표현, 그 표현의 툴팁 배경에만 쓴다. 위에 올리는 글자는 반드시 `on-accent`(검정)를 쓴다.
+- **Accent-strong (#C6E03E):** 라임이 선택된 상태일 때만 쓰는, accent보다 살짝 진한 라임. 본문에서 눌러 툴팁이 열린 표현의 하이라이트에 쓴다.
+- **Accent-sub (#E7E0FF), Accent-sub-strong (#CBBCFF):** 연보라. 라임과 겹치지 않는 보조 구분용으로만 쓴다. 사용자가 하이라이트한 문장은 `accent-sub`, 코멘트 말풍선은 `accent-sub-strong`.
+- **Surface (#FFFFFF) / Surface-muted (#F4F4F6):** 페이지와 팝업은 흰색, 그 위의 카드·주제 뱃지·보조 버튼·구획 배경은 연회색.
+- **On-surface-muted (#5F5F66):** 보조 설명과 메타 정보, 읽는 글자 중 한 단계 약한 것(부연설명, 안내 문구, 입력창 placeholder, 탭바의 선택 안 된 탭).
+- **Subtle (#8E8E96):** 글자에는 쓰지 않는다(흰 배경 대비 3.25:1로 읽기 기준에 못 미침). 토글 꺼짐 배경, 로그인 전 프로필 아이콘 같은 장식에만 쓴다.
+- **Border (#E7E7EA) / Border-strong (#D5D5DA):** 구분선. 일반 구분은 `border`, 입력창 테두리와 카드 안의 구분선처럼 경계를 조금 더 또렷하게 할 때는 `border-strong`.
 - **Danger:** 삭제 등 되돌릴 수 없는 행동과 입력 오류에만 쓴다. 배경에 깔 때는 옅게(10~20%) 깔고 글자만 진하게 쓴다.
 - **Focus-ring (#111111):** 키보드 포커스 표시. 지우지 않는다.
 
@@ -148,34 +228,63 @@ components:
 
 ## Typography
 
-글꼴은 **Pretendard Variable** 하나로 한글과 영어 모두 쓴다(영어 본문도 같은 글꼴). 한글은 단어 단위로 줄바꿈(`word-break: keep-all`)하고, 영어(`lang="en"`)는 일반 줄바꿈으로 되돌린다.
+글꼴은 **Pretendard Variable** 하나로 한글과 영어 모두 쓴다(세리프는 쓰지 않는다). 한글은 단어 단위로 줄바꿈(`word-break: keep-all`)하고, 영어(`lang="en"`)는 일반 줄바꿈으로 되돌린다.
 
-- **Display / Headline:** 700 굵기에 자간을 좁혀(-0.02~-0.03em) 제목의 밀도를 높인다.
-- **Body:** 기본 15px, 줄 높이 1.5. 아티클 본문은 이 크기를 기준으로 한다.
-- **Label:** 버튼·배지처럼 짧은 글자. 500 굵기.
-- 한 화면에서 쓰는 굵기는 두 가지(400, 700 계열)까지만 쓴다.
+토큰은 크기와 줄 높이를 `text-*` 클래스가 정하고, 굵기와 자간은 `font-*`, `tracking-*`를 함께 붙인다.
+
+| 토큰 | 크기 / 굵기 / 줄 높이 | 쓰는 곳 |
+|---|---|---|
+| `display` | 28 / 700 / 1.2, 자간 -0.03em | 아티클 영어 제목 |
+| `headline` | 20 / 700 / 1.4, 자간 -0.02em | 앱 바 제목(Lume·아카이브·프로필), 섹션 제목(내 생각·눈여겨볼 표현), 다이얼로그·시트 제목, 카드 목록의 영어 제목 |
+| `headline-semibold` | 20 / 600 | 아카이브 저장한 표현 카드의 영어 표현 |
+| `body-lg` | 18 / 400 / 1.6 | 본문 영어 문장 |
+| `body-lg-semibold` | 18 / 600 | 툴팁·눈여겨볼 표현의 영어 표현 |
+| `body-md` | 16 / 400 / 1.6 | 한글 제목, 원문 요약, 내 생각, 입력창, 다이얼로그 설명, 문장 코멘트 시트의 영어 문장 |
+| `body-md-semibold` | 16 / 600 | 표현의 한글 뜻, 구글 로그인 버튼 |
+| `body-sm` | 14 / 400 / 1.6 | 한글 문장 번역, 부연설명, 출처·발행일, helper text |
+| `label-md` | 14 / 500 | 버튼, 필터 칩, 코멘트 말풍선, 팝오버 메뉴, 토스트 |
+| `label-md-semibold` | 14 / 600 | 원문 요약 라벨, 아카이브의 원문 링크 |
+| `label-sm` | 12 / 500 | 주제 뱃지, 탭바 라벨, 저장 날짜 |
+
+굵기는 400·500·600·700만 쓴다. 600은 위 `*-semibold` 토큰에서만 쓴다.
 
 ## Layout
 
-모바일 우선의 한 줄 세로 흐름이다. 페이지 좌우 여백은 20px(`page`)이고, 요소 간격은 4px 단위 스케일(`xs`~`xl`)을 따른다. 큰 구획은 간격과 얇은 구분선(`border`)으로 나누고, 박스를 겹겹이 쌓지 않는다. 터치 대상은 높이 36px 이상을 지킨다(`button-accent` 같은 주요 행동은 52px).
+모바일 우선의 한 줄 세로 흐름이다. 앱은 폭 430px의 가운데 한 컬럼이고, 더 넓은 화면에서도 같은 폭을 유지한다(PC용 레이아웃은 이후 단계). 페이지 좌우 여백은 20px(`page`)이고, 요소 간격은 4px 단위 스케일(`xs` 4 · `sm` 8 · `md` 12 · `lg` 16 · `xl` 24 · `2xl` 32 · `3xl` 80)을 따른다. 코드에서는 이름 대신 같은 값의 Tailwind 숫자 클래스(`1`·`2`·`3`·`4`·`6`·`8`·`20`)를 쓴다. 간격 이름을 CSS 토큰으로 만들면 `max-w-md`처럼 같은 이름의 Tailwind 클래스가 깨진다(실제로 다이얼로그 폭이 12px로 줄어든 적이 있다).
+
+- **상단 고정:** 앱 바(높이 56px)와 필터 칩이 스크롤해도 위에 붙어 있다. 칩 영역 아래에는 12px의 흰 띠가 있어 카드가 그 밑으로 잘려 지나간다. 칩에서 첫 콘텐츠까지는 24px이다.
+- **하단 탭바:** 화면 아래에 떠 있는 알약(200×64px). 탭 하나는 88×48px, 아이콘 24px, 라벨 12px.
+- **구획 간격:** 아티클에서 큰 구획(내 생각, 눈여겨볼 표현) 사이는 80px(`3xl`), 다이얼로그 안 구획 사이는 24px(`xl`)이다.
+- 큰 구획은 간격과 얇은 구분선(`border`)으로 나누고, 박스를 겹겹이 쌓지 않는다. 터치 대상은 높이 36px 이상을 지킨다(저장·닫기 같은 아이콘 버튼은 44px, 주요 행동 `button-accent`는 52px).
 
 ## Elevation & Depth
 
-그림자보다 **색 면과 구분선**으로 위계를 만든다. 흰 페이지 위에 연회색(`surface-muted`) 면을 올리고, 카드는 아주 옅은 링(`ring-foreground/5`)과 약한 그림자 하나만 쓴다. 팝업(Dialog)은 뒷배경을 어둡게 눌러서 분리한다. 그림자를 겹쳐 쓰지 않는다.
+그림자보다 **색 면과 구분선**으로 위계를 만든다. 흰 페이지 위에 연회색(`surface-muted`) 면을 올린다. 떠 있는 요소만 그림자를 쓴다: 탭바 `shadow-sm`, 툴팁 `shadow-lg`, 팝오버 메뉴·토스트는 큰 그림자 하나(`0 12px 28px`, 투명도 0.28). 팝업(Dialog)과 바텀 시트는 뒷배경을 어둡게 눌러서 분리한다. 그림자를 겹쳐 쓰지 않는다.
 
 ## Shapes
 
-둥근 모서리가 기본이다. 버튼·입력창·배지는 알약형(`full`), 카드와 팝업은 `xl`(14px), 주요 행동 버튼은 `pill`(26px). 한 화면에서 둥근 정도가 다른 모양을 섞을 때는 용도(행동 요소 = 알약, 담는 그릇 = 카드)로만 구분한다.
+둥근 모서리가 기본이다. 버튼·필터 칩은 알약형(`full`), 카드는 `card`(16px), 입력창과 툴팁은 `xl`(14px), 주제 뱃지는 `md`(8px), 다이얼로그·바텀 시트·팝오버 메뉴·토스트·주요 행동 버튼은 `pill`(26px). 한 화면에서 둥근 정도가 다른 모양을 섞을 때는 용도(행동 요소 = 알약, 담는 그릇 = 카드)로만 구분한다.
+
+토큰에 없는 예외 두 가지: 하이라이트된 문장·표현의 배경(3px)과 코멘트 말풍선(왼쪽 위만 4px, 나머지 14px).
 
 ## Components
 
-모두 `components/ui`의 shadcn 컴포넌트를 쓰고, 새로 만들기 전에 먼저 여기서 찾는다.
+shadcn 컴포넌트는 `components/ui`에, 서비스 전용 조합은 `components/`에 있다. 새로 만들기 전에 먼저 여기서 찾는다.
 
-- **Button:** `variant` 7종(`default`, `outline`, `secondary`, `ghost`, `destructive`, `link`, `accent`)과 `size` 4종(`xs`, `sm`, `default`, `lg`) + 아이콘 버튼. `default`는 검정(`primary`), `accent`는 라임 배경 + 검정 글자(`button-accent`), `destructive`는 옅은 빨강 배경 + 빨강 글자다. 화면의 라임 버튼은 `bg-lime` 클래스를 직접 붙이지 말고 `variant="accent"`를 쓴다.
-- **Input:** 연회색 배경의 알약형. 오류일 때는 `danger` 테두리와 옅은 링이 붙는다.
-- **Card:** 흰 면 + 옅은 링. 내부 여백 24px(`size="sm"`은 16px).
-- **Badge:** 높이 20px의 작은 알약. 상태 표시용이며 누르는 요소가 아니다(링크로 쓸 때만 호버 반응).
-- **Dialog:** 중앙 팝업. 닫기 버튼은 항상 오른쪽 위에 둔다.
+- **Button:** `variant` 7종(`default`, `outline`, `secondary`, `ghost`, `destructive`, `link`, `accent`)과 `size` 4종(`xs`, `sm`, `default`, `lg`) + 아이콘 버튼. 글자는 `label-md`. `default`는 검정(`primary`), `outline`은 연한 회색 테두리, `accent`는 라임 배경 + 검정 글자, `destructive`는 옅은 빨강 배경 + 빨강 글자다. 라임 버튼은 `bg-lime`을 직접 붙이지 말고 `variant="accent"`를 쓴다.
+- **Filter chip:** `Button`의 `default`(선택됨, 검정)와 `secondary`(선택 안 됨, 연회색). 가로로 스크롤되고 스크롤바는 숨긴다.
+- **Textarea:** 흰 배경, `border-strong` 테두리, `xl` 모서리. 포커스되면 바깥 링 없이 테두리만 `primary`로 바뀐다. placeholder는 `on-surface-muted`. 피드백·내 생각·코멘트 입력이 모두 이것을 쓴다.
+- **Badge:** 높이 28px, 좌우 12px, 모서리 8px, 연회색 배경의 주제 표시. 누르는 요소가 아니다.
+- **Card:** 연회색 면, 모서리 16px, 안 여백 14px. 하이라이트·코멘트·내 생각·저장한 표현·요약 카드가 모두 같은 모양이다. 카드 안 구분선은 `border-strong`.
+- **Dialog:** 중앙 팝업(`ConfirmDeleteDialog`, 피드백). 제목과 닫기 버튼이 같은 줄에 있고(닫기는 오른쪽), 설명은 한 단계 약한 색, 구획 사이 24px. 삭제 확인은 "삭제할까요?" / "삭제하면 되돌릴 수 없어요." 문구로 통일하고 취소(왼쪽)·삭제(오른쪽, danger)를 한 줄에 둔다.
+- **Bottom sheet:** 하단에서 올라오는 시트(로그인, 코멘트). 위쪽 모서리 26px, 제목은 `headline`.
+- **Toggle:** 38×22px 알약, 손잡이 18px. 켜짐은 `primary`, 꺼짐은 `subtle`. 본문의 "번역 켜기"와 프로필의 "번역 항상 켜기"가 같은 컴포넌트를 쓴다.
+- **Tab bar:** 위 Layout 참고. 선택된 탭은 `primary`, 아닌 탭은 `on-surface-muted`. 아카이브 아이콘은 북마크(채움), 탐색은 나침반.
+- **Tooltip:** 라임 배경, 검정 글자, `xl` 모서리. 영어 표현 `body-lg-semibold`, 뜻 `body-md-semibold`, 부연설명 `body-sm`(`on-surface-muted`).
+- **Popover menu:** 문장 위, 코멘트 말풍선 위에 뜨는 검정 알약 메뉴. 아이콘은 선(stroke) 형태이고 각 버튼 높이 48px.
+- **Comment bubble:** 문장 아래에 붙는 연보라 말풍선. 본문에서는 누르면 "수정·삭제" 팝오버가 열리고, 아카이브 카드에서는 모양만 쓴다.
+- **Save / bookmark icon:** 저장 전에는 `on-surface-muted` 테두리, 저장 후에는 `on-surface` 채움. 탐색 카드와 아카이브는 22px, 본문 상단 바는 24px.
+- **Profile avatar:** 로그인 전에는 회색 원 + 실루엣 아이콘, 로그인 후에는 구글 계정 프로필 사진(없으면 라임 이니셜 원). 앱 바에서 32px, 프로필 페이지에서 80px.
 
 컴포넌트 확인 페이지는 개발 서버의 `/design-system`에서 볼 수 있다. 배포 환경에서는 열리지 않는다.
 
@@ -185,4 +294,7 @@ components:
 - Don't: 라임 위에 흰 글자를 올리지 않는다. 항상 `on-accent`(검정)를 쓴다.
 - Do: 모든 색은 역할 토큰(`primary`, `danger`, `surface-muted`)으로 부른다. 화면에서 `#hex`나 임의 색을 직접 쓰지 않는다.
 - Don't: `danger`는 삭제·오류 외에는 쓰지 않는다. 강조나 장식으로 빨강을 쓰지 않는다.
+- Don't: `subtle`을 글자에 쓰지 않는다. 읽는 글자의 가장 약한 단계는 `on-surface-muted`다.
+- Do: 글자는 `text-display`·`text-headline`·`text-body-*`·`text-label-*` 토큰으로 정한다. `text-[13.5px]` 같은 임의 크기를 쓰지 않는다.
 - Do: 새 UI가 필요하면 `components/ui`에서 먼저 찾고, 없을 때만 `npx shadcn@latest add`로 추가한다. 같은 역할의 컴포넌트를 따로 만들지 않는다.
+- Do: 토큰 이름(글자 크기, 자간, 간격, 모서리)을 새로 만들면 `lib/utils.ts`의 클래스 병합 설정에도 같이 등록한다(자세한 이유는 `CLAUDE.md`).

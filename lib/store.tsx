@@ -60,6 +60,7 @@ type Ctx = Persisted & {
   closeSheet: () => void;
   login: () => void;
   logout: () => void;
+  deleteAccount: () => void;
   toggleKo: (aid?: string) => void;
   toggleHl: (sid: string) => void;
   openComment: (sid: string) => void;
@@ -176,6 +177,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         commit({ ...ref.current, loggedIn: false });
         showToast("로그아웃했어요");
       },
+      deleteAccount: () => {
+        track("Account Deleted");
+        // TODO(Supabase): 서버에서 계정과 기록을 삭제한 뒤 signOut + resetUser()를 호출한다.
+        commit({ ...EMPTY });
+        showToast("계정을 삭제했어요");
+      },
       toggleKo: (aid) => {
         track("Translation Toggled", { ...(aid ? { article_id: aid } : {}), on: !ref.current.showKo });
         commit({ ...ref.current, showKo: !ref.current.showKo });
@@ -187,7 +194,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         if (on) hl[sid] = true;
         else delete hl[sid];
         commit({ ...ref.current, hl });
-        showToast(on ? "문장을 하이라이트했어요" : "하이라이트를 해제했어요");
       },
       openComment: (sid) => setSheet({ type: "comment", sid, editId: "" }),
       editNote: (id) => {
@@ -242,7 +248,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         if (on) savedX[xid] = true;
         else delete savedX[xid];
         let next: Persisted = { ...ref.current, savedX };
-        showToast(on ? "표현을 저장했어요. 표현 탭에서 복습할 수 있어요" : "표현 저장을 해제했어요");
+        if (on) showToast("표현을 저장했어요. 표현 탭에서 복습할 수 있어요");
         if (on && Object.keys(savedX).length >= 3) next = maybePrompt(next, "expr3");
         commit(next);
       },
@@ -261,7 +267,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         if (on) savedA[aid] = true;
         else delete savedA[aid];
         commit({ ...ref.current, savedA });
-        showToast(on ? "글을 저장했어요. 아카이브에서 볼 수 있어요" : "글 저장을 해제했어요");
+        if (on) showToast("글을 저장했어요. 아카이브에서 볼 수 있어요");
       },
       loadSample: () => {
         const now = Date.now();

@@ -1,33 +1,37 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MOCK_PROFILE } from "@/lib/profile";
+import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { useStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { RiCloseLine } from "@remixicon/react";
+import { ToggleSwitch } from "@/components/ToggleSwitch";
+import { ConfirmDeleteDialog } from "@/components/ConfirmDeleteDialog";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { IconBack } from "@/components/icons";
 
+const ROW =
+  "flex min-h-16 w-full items-center justify-between gap-3 border-0 bg-transparent px-5 text-left text-body-md font-medium text-on-surface";
 const FB_KEY = "articles:proto:feedback";
-const FB_KINDS = ["불편한 점", "아이디어", "번역·표현 오류", "기타"] as const;
+const FB_KINDS = ["만족한 점", "개선할 점", "기능 요청", "오류 제보", "기타"] as const;
 
 export default function MyPage() {
   const router = useRouter();
-  const {
-    ready,
-    loggedIn,
-    showKo,
-    notes,
-    hl,
-    savedX,
-    savedA,
-    toggleKo,
-    openLogin,
-    logout,
-    loadSample,
-    resetAll,
-    showToast,
-  } = useStore();
-
+  const { ready, loggedIn, showKo, toggleKo, logout, deleteAccount, showToast } = useStore();
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [fbOpen, setFbOpen] = useState(false);
   const [fbKind, setFbKind] = useState<(typeof FB_KINDS)[number]>(FB_KINDS[0]);
   const [fbText, setFbText] = useState("");
 
@@ -43,6 +47,7 @@ export default function MyPage() {
       /* 저장소를 못 써도 흐름은 계속 */
     }
     setFbText("");
+    setFbOpen(false);
     showToast("피드백을 보냈어요. 운영자가 확인할게요");
   };
 
@@ -51,162 +56,131 @@ export default function MyPage() {
     else router.push("/");
   };
 
-  const stats = [
-    ["저장한 표현", Object.keys(savedX).length],
-    ["내 기록", notes.length + Object.keys(hl).filter((sid) => !notes.some((n) => n.sid === sid)).length],
-    ["저장한 글", Object.keys(savedA).length],
-  ] as const;
-
   return (
     <div className="min-h-dvh pb-10">
-      <div className="sticky top-0 z-30 flex h-14 items-center gap-1 bg-paper pr-5 pl-1">
+      <div className="sticky top-0 z-30 flex h-14 items-center gap-1 bg-surface pr-5 pl-1">
         <button
           onClick={goBack}
           aria-label="뒤로 가기"
-          className="flex size-11 items-center justify-center border-0 bg-transparent text-ink"
+          className="flex size-11 items-center justify-center border-0 bg-transparent text-on-surface"
         >
           <IconBack />
         </button>
-        <h1 className="m-0 text-[17px] font-bold">마이페이지</h1>
+        <h1 className="m-0 text-headline font-bold tracking-headline">프로필</h1>
       </div>
 
-      {ready && !loggedIn && (
-        <div className="mx-5 mt-2 flex flex-col items-start gap-2 rounded-[20px] bg-panel px-5 py-6">
-          <h2 className="m-0 text-lg leading-[1.4] font-bold tracking-[-0.02em]">로그인하면 기록이 계정에 남아요</h2>
-          <p className="m-0 text-[14.5px] leading-[1.65] text-sub">
-            로그인 없이도 읽고 기록할 수 있어요. 구글 로그인으로 연결하면 기록이 백업되고 다른 기기에서도
-            이어 볼 수 있어요.
-          </p>
-          <Button
-            variant="accent"
-            onClick={() => openLogin("mypage")}
-            className="mt-2.5 h-12 rounded-[24px] px-[22px] text-[15px] font-semibold"
-          >
-            Google로 계속하기
-          </Button>
-        </div>
-      )}
-
       {ready && loggedIn && (
-        <div className="flex flex-col gap-6 px-5 pt-2">
-          <section className="flex items-center gap-4 rounded-[20px] bg-panel p-5">
-            <span className="flex size-16 shrink-0 items-center justify-center rounded-full bg-lime text-2xl font-bold text-ink">
-              {MOCK_PROFILE.initial}
-            </span>
-            <div className="flex min-w-0 flex-col gap-0.5">
-              <span className="truncate text-lg leading-[1.35] font-bold">{MOCK_PROFILE.name}</span>
-              <span className="truncate text-sm text-sub">{MOCK_PROFILE.email}</span>
-              <span className="mt-1 text-[12.5px] text-sub">
-                Google 계정으로 연결됨
-              </span>
-            </div>
-          </section>
-
-          <section className="grid grid-cols-3 gap-2">
-            {stats.map(([label, n]) => (
-              <div key={label} className="flex flex-col gap-1 rounded-[16px] bg-panel px-3.5 py-3.5">
-                <span className="text-xl leading-none font-bold">{n}</span>
-                <span className="text-[12.5px] text-sub">{label}</span>
-              </div>
-            ))}
-          </section>
-
-          <section className="flex flex-col">
-            <h2 className="m-0 mb-1.5 text-[12.5px] font-bold">설정</h2>
-            <div className="flex flex-col rounded-[16px] bg-panel">
-              <button
-                role="switch"
-                aria-checked={showKo}
-                onClick={() => toggleKo()}
-                className="flex min-h-14 items-center justify-between gap-3 border-0 bg-transparent px-4 text-left text-[15px] font-medium text-ink"
-              >
-                <span>한글 번역 기본 표시</span>
-                <span
-                  aria-hidden="true"
-                  className={`relative block h-[22px] w-[38px] shrink-0 rounded-[11px] transition-colors ${
-                    showKo ? "bg-ink" : "bg-off"
-                  }`}
-                >
-                  <span
-                    className={`absolute top-0.5 block size-[18px] rounded-full bg-white transition-[left] ${
-                      showKo ? "left-[18px]" : "left-0.5"
-                    }`}
-                  />
-                </span>
-              </button>
-            </div>
-          </section>
-
-          <section className="rounded-[16px] bg-panel px-4 py-3.5 text-[12.5px] leading-[1.6] text-sub">
-            <div className="font-semibold text-ink">프로토타입 도구</div>
-            <div className="mt-2 flex gap-2">
-              <button
-                onClick={loadSample}
-                className="h-11 rounded-[22px] border border-line-strong bg-white px-3.5 text-[13px] font-medium text-ink"
-              >
-                샘플 기록 채우기
-              </button>
-              <button
-                onClick={resetAll}
-                className="h-11 rounded-[22px] border border-line-strong bg-white px-3.5 text-[13px] font-medium text-ink"
-              >
-                기록 초기화
-              </button>
-            </div>
-          </section>
-
-          <button
-            onClick={() => {
-              logout();
-              router.push("/");
-            }}
-            className="h-[50px] rounded-[25px] border-[1.5px] border-ink bg-transparent text-[15px] font-semibold text-ink"
-          >
-            로그아웃
-          </button>
-        </div>
+        <section className="flex flex-col items-center gap-3 px-5 py-4">
+          <ProfileAvatar size={80} />
+          <span className="max-w-full truncate text-body-md text-on-surface">{MOCK_PROFILE.email}</span>
+        </section>
       )}
 
-      <section className="mx-5 mt-6 flex flex-col gap-3 rounded-[20px] bg-panel px-4 pt-5 pb-4">
-        <div className="flex flex-col gap-1">
-          <h2 className="m-0 text-[17px] leading-[1.4] font-bold tracking-[-0.02em]">운영자에게 피드백 보내기</h2>
-          <p className="m-0 text-[13.5px] leading-[1.6] text-sub">
-            번역이 어색하거나 불편한 점, 바라는 기능을 알려 주세요. 로그인하지 않아도 보낼 수 있어요.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2" role="group" aria-label="피드백 종류">
-          {FB_KINDS.map((k) => (
+      <ul className="m-0 mt-4 flex list-none flex-col p-0">
+        {ready && loggedIn && (
+          <li>
             <button
-              key={k}
-              aria-pressed={fbKind === k}
-              onClick={() => setFbKind(k)}
-              className={`h-11 rounded-[22px] border px-4 text-sm font-medium ${
-                fbKind === k ? "border-ink bg-ink text-white" : "border-line-strong bg-white text-ink"
-              }`}
+              role="switch"
+              aria-checked={showKo}
+              onClick={() => toggleKo()}
+              className={ROW}
             >
-              {k}
+              <span>번역 항상 켜기</span>
+              <ToggleSwitch on={showKo} />
             </button>
-          ))}
-        </div>
-        <label htmlFor="fb-input" className="sr-only">
-          피드백 내용
-        </label>
-        <textarea
-          id="fb-input"
-          rows={4}
-          value={fbText}
-          onChange={(e) => setFbText(e.target.value)}
-          placeholder="어떤 점이 궁금하거나 아쉬웠는지 적어 주세요"
-          className="box-border w-full resize-none rounded-[16px] border-[1.5px] border-ink bg-white px-3.5 py-3 text-[15px] leading-[1.6] text-ink"
-        />
-        <button
-          onClick={sendFeedback}
-          disabled={!fbText.trim()}
-          className="h-[50px] rounded-[25px] border-0 bg-ink text-[15px] font-semibold text-white disabled:opacity-40"
-        >
-          피드백 보내기
-        </button>
-      </section>
+          </li>
+        )}
+        <li>
+          <button onClick={() => setFbOpen(true)} className={ROW}>
+            <span>피드백 보내기</span>
+          </button>
+        </li>
+        {ready && loggedIn && (
+          <>
+            <li>
+              <button
+                onClick={() => {
+                  logout();
+                  router.push("/");
+                }}
+                className={ROW}
+              >
+                <span>로그아웃</span>
+              </button>
+            </li>
+            <li>
+              <button onClick={() => setConfirmDelete(true)} className={cn(ROW, "text-danger")}>
+                <span>계정 삭제</span>
+              </button>
+            </li>
+          </>
+        )}
+      </ul>
+
+      <Dialog open={fbOpen} onOpenChange={setFbOpen}>
+        <DialogContent showCloseButton={false}>
+          <DialogHeader className="gap-2.5">
+            <div className="flex items-center justify-between gap-3">
+              <DialogTitle className="text-headline font-bold tracking-headline">
+                피드백 보내기
+              </DialogTitle>
+              <DialogClose render={<Button variant="ghost" size="icon-sm" className="shrink-0 bg-secondary" />}>
+                <RiCloseLine />
+                <span className="sr-only">닫기</span>
+              </DialogClose>
+            </div>
+            <DialogDescription className="text-body-md text-on-surface-muted">
+              의견을 자유롭게 남겨주세요.
+              <br />
+              서비스 개선에 반영하겠습니다.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-2 flex flex-col gap-2">
+            <span id="fb-kind-label" className="text-label-sm font-medium text-on-surface-muted">
+              유형
+            </span>
+            <div className="flex flex-wrap gap-2" role="group" aria-labelledby="fb-kind-label">
+              {FB_KINDS.map((k) => (
+                <Button
+                  key={k}
+                  variant={fbKind === k ? "default" : "secondary"}
+                  aria-pressed={fbKind === k}
+                  onClick={() => setFbKind(k)}
+                  className="px-4"
+                >
+                  {k}
+                </Button>
+              ))}
+            </div>
+          </div>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="fb-input" className="text-label-sm font-medium text-on-surface-muted">
+              내용
+            </label>
+            <Textarea
+              id="fb-input"
+              rows={4}
+              value={fbText}
+              onChange={(e) => setFbText(e.target.value)}
+              placeholder="의견을 자유롭게 작성해주세요"
+            />
+          </div>
+          <DialogFooter className="-mt-2">
+            <Button size="lg" onClick={sendFeedback} disabled={!fbText.trim()} className="h-12">
+              보내기
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <ConfirmDeleteDialog
+        open={confirmDelete}
+        onOpenChange={setConfirmDelete}
+        onConfirm={() => {
+          deleteAccount();
+          router.push("/");
+        }}
+      />
     </div>
   );
 }

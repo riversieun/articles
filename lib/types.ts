@@ -1,9 +1,11 @@
+export type TopicKey = "process" | "collab" | "ux" | "system";
 export type SourceKey = "figma" | "medium" | "hn" | "nng" | "lenny";
 
 /** data/raw.ts 의 원본 형태. 문장은 [영어, 한국어] 쌍이며 영어 안의 [[표현|키]] 가 주요 표현 */
 export type RawArticle = {
   id: string;
   src: SourceKey;
+  topic: TopicKey;
   kind?: "video";
   sourceLine: string;
   date: string;
@@ -38,6 +40,7 @@ export type Expression = {
 export type Article = {
   id: string;
   src: SourceKey;
+  topic: TopicKey;
   kind: "article" | "video";
   sourceLine: string;
   date: string;

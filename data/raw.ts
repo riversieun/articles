@@ -4,7 +4,7 @@ import type { RawArticle } from "@/lib/types";
 
 export const RAW: RawArticle[] = [
   {
-    id: 'a1', src: 'nng', sourceLine: 'NN/g · Hana Whitfield', date: '2026.10.08', url: 'https://www.nngroup.com/articles/',
+    id: 'a1', src: 'nng', topic: 'process', sourceLine: 'NN/g · Hana Whitfield', date: '2026.10.08', url: 'https://www.nngroup.com/articles/',
     titleKo: '빈 화면은 오류가 아니라 첫인상이다',
     titleEn: 'Empty States Are a First Impression, Not an Error',
     summary: '빈 화면을 오류나 예외로 다루지 말고, 신규 사용자가 처음 만나는 제품 경험으로 설계하라는 글. 무엇이 들어갈 자리인지, 왜 중요한지, 다음에 무엇을 하면 되는지 세 가지를 갖추라고 제안한다.',
@@ -32,7 +32,7 @@ export const RAW: RawArticle[] = [
     ]
   },
   {
-    id: 'a4', src: 'figma', sourceLine: 'X · Figma', date: '2026.10.06', url: 'https://x.com/figma',
+    id: 'a4', src: 'figma', topic: 'collab', sourceLine: 'X · Figma', date: '2026.10.06', url: 'https://x.com/figma',
     titleKo: '내일 누군가 이 파일을 연다고 생각하고 이름 짓기',
     titleEn: 'Name Your Layers Like Someone Will Open the File Tomorrow',
     summary: '핸드오프 전에 레이어 이름을 정리하자는 짧은 게시글. 명확한 이름이 개발자의 질문을 줄이고, 나중에 파일을 다시 열 자신에게도 도움이 된다는 내용이다.',
@@ -57,7 +57,7 @@ export const RAW: RawArticle[] = [
     ]
   },
   {
-    id: 'a2', src: 'medium', sourceLine: 'Medium · Theo Marsh', date: '2026.10.02', url: 'https://medium.com/tag/product-design',
+    id: 'a2', src: 'medium', topic: 'ux', sourceLine: 'Medium · Theo Marsh', date: '2026.10.02', url: 'https://medium.com/tag/product-design',
     titleKo: '지루한 인터페이스를 위한 변론',
     titleEn: 'The Case for Boring Interfaces',
     summary: '새로운 인터랙션보다 익숙한 패턴이 사용자의 주의를 과업에 쓰게 해준다는 주장. 새로움은 제품이 정말 차별화되는 한 곳에만 쓰자고 말한다.',
@@ -83,7 +83,7 @@ export const RAW: RawArticle[] = [
     ]
   },
   {
-    id: 'a6', src: 'lenny', kind: 'video', sourceLine: 'YouTube · Lenny\'s Podcast', date: '2026.09.30', url: 'https://www.youtube.com/@LennysPodcast',
+    id: 'a6', src: 'lenny', topic: 'collab', kind: 'video', sourceLine: 'YouTube · Lenny\'s Podcast', date: '2026.09.30', url: 'https://www.youtube.com/@LennysPodcast',
     titleKo: '상대에게 닿는 디자인 피드백',
     titleEn: 'Giving Design Feedback That Lands',
     summary: '디자인 피드백이 실제로 받아들여지려면 어떻게 해야 하는지에 대한 대화 일부. 원하는 피드백의 범위를 먼저 묻고, 가장 중요한 한 가지에 집중하라고 말한다.',
@@ -109,7 +109,7 @@ export const RAW: RawArticle[] = [
     ]
   },
   {
-    id: 'a3', src: 'hn', sourceLine: 'Hacker News · pixelnomad', date: '2026.09.28', url: 'https://news.ycombinator.com/',
+    id: 'a3', src: 'hn', topic: 'system', sourceLine: 'Hacker News · pixelnomad', date: '2026.09.28', url: 'https://news.ycombinator.com/',
     titleKo: '디자인 시스템은 조용히 무너진다',
     titleEn: 'Design Systems Fail Quietly',
     summary: '디자인 시스템은 한 번의 큰 사건이 아니라 그럴듯한 예외가 쌓이며 무너진다는 글. 문서보다 기본값과 이름, 잘못 쓰기 어려운 컴포넌트가 시스템을 지킨다고 본다.',
@@ -135,7 +135,7 @@ export const RAW: RawArticle[] = [
     ]
   },
   {
-    id: 'a5', src: 'figma', sourceLine: 'LinkedIn · Figma', date: '2026.09.25', url: 'https://www.linkedin.com/company/figma/',
+    id: 'a5', src: 'figma', topic: 'process', sourceLine: 'LinkedIn · Figma', date: '2026.09.25', url: 'https://www.linkedin.com/company/figma/',
     titleKo: '프로토타입은 답이 아니라 질문이다',
     titleEn: 'A Prototype Is a Question, Not an Answer',
     summary: '프로토타입은 완성품의 축소판이 아니라 사람들에게 던지는 질문이라는 게시글. 얼마나 다듬을지보다 무엇을 배울지를 먼저 정하라고 조언한다.',
