@@ -104,10 +104,10 @@ export default function ArchivePage() {
         </div>
 
         {seg === "hl" && ready && hlGroups.length === 0 && (
-          <Empty title="아직 하이라이트한 문장이 없어요" />
+          <Empty title="아직 하이라이트한 문장이 없어요" body="아티클에서 기억하고 싶은 문장을 눌러 하이라이트해 보세요." />
         )}
         {seg === "notes" && ready && commentGroups.length === 0 && (
-          <Empty title="아직 남긴 코멘트가 없어요" />
+          <Empty title="아직 남긴 코멘트가 없어요" body="아티클에서 생각을 남기고 싶은 문장을 눌러 코멘트해 보세요." />
         )}
         {seg === "thoughts" && ready && thoughtGroups.length === 0 && (
           <Empty title="아직 남긴 생각이 없어요" />
@@ -273,10 +273,13 @@ export default function ArchivePage() {
   );
 }
 
-function Empty({ title }: { title: string }) {
+function Empty({ title, body }: { title: string; body?: string }) {
   return (
     <div className="flex min-h-[55dvh] flex-col items-center justify-center gap-5 text-center">
-      <h2 className="m-0 text-body-lg font-semibold">{title}</h2>
+      <div className="flex flex-col items-center gap-2">
+        <h2 className="m-0 text-body-lg font-semibold">{title}</h2>
+        {body && <p className="m-0 text-body-sm text-on-surface-muted">{body}</p>}
+      </div>
       <Link
         href="/"
         className={buttonVariants({

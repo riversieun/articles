@@ -284,6 +284,7 @@ shadcn 컴포넌트는 `components/ui`에, 서비스 전용 조합은 `component
 - **Tooltip:** 라임 배경, 검정 글자, `xl` 모서리. 영어 표현 `body-lg-semibold`, 뜻 `body-md-semibold`, 부연설명 `body-sm`(`on-surface-muted`).
 - **Popover menu:** 문장 위, 코멘트 말풍선 위에 뜨는 검정 알약 메뉴. 아이콘은 선(stroke) 형태이고 각 버튼 높이 48px.
 - **Excerpt gap marker:** 원문에서 건너뛴 자리에 문단 사이 가운데로 "- 중략 -"을 `label-sm`(12px) 이탤릭, `border-strong` 색으로 두고, 위아래 여백은 기본 문단 간격보다 8px씩 줄인다. 이어지는 문단 사이에는 두지 않고 여백만 쓴다.
+- **Empty state:** 카드 배경 없이 가운데 정렬. 제목 `body-lg-semibold`(18px/600), 필요한 경우에만 제목 아래 8px에 안내 `body-sm`(`on-surface-muted`), 그 아래 20px에 라임 "글 읽으러 가기" 버튼. 칩 아래 빈 영역의 가로·세로 가운데에 둔다.
 - **Comment bubble:** 문장 아래에 붙는 연보라 말풍선. 본문에서는 누르면 "수정·삭제" 팝오버가 열리고, 아카이브 카드에서는 모양만 쓴다.
 - **Save / bookmark icon:** 저장 전에는 `on-surface-muted` 테두리, 저장 후에는 `on-surface` 채움. 탐색 카드와 아카이브는 22px, 본문 상단 바는 24px.
 - **Profile avatar:** 로그인 전에는 회색 원 + 실루엣 아이콘, 로그인 후에는 구글 계정 프로필 사진(없으면 라임 이니셜 원). 앱 바에서 32px, 프로필 페이지에서 80px.
