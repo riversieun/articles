@@ -31,10 +31,10 @@ export function AppBar() {
     <div className="sticky top-0 z-30 flex h-14 items-center justify-between bg-surface px-5">
       <Link
         href="/"
-        aria-label="Lume 홈"
+        aria-label="crumbit 홈"
         className="text-headline font-bold tracking-headline text-on-surface no-underline"
       >
-        Lume
+        crumbit
       </Link>
 
       {/* ready 전에는 자리만 확보해 로그인 ↔ 프로필 깜빡임을 막는다 */}

@@ -1,6 +1,6 @@
 ---
 version: alpha
-name: Design Insight
+name: crumbit
 description: 영어 아티클을 읽으며 모르는 표현을 바로 확인하는 모바일 우선 리더. 흑백 중심 화면에 라임 한 가지로만 강조한다.
 colors:
   primary: "#111111"
@@ -201,7 +201,7 @@ components:
     padding: 18px
 ---
 
-# Design Insight
+# crumbit
 
 ## Overview
 
@@ -235,7 +235,7 @@ components:
 | 토큰 | 크기 / 굵기 / 줄 높이 | 쓰는 곳 |
 |---|---|---|
 | `display` | 28 / 700 / 1.2, 자간 -0.03em | 아티클 영어 제목 |
-| `headline` | 20 / 700 / 1.4, 자간 -0.02em | 앱 바 제목(Lume·아카이브·프로필), 섹션 제목(내 생각·눈여겨볼 표현), 다이얼로그·시트 제목, 카드 목록의 영어 제목 |
+| `headline` | 20 / 700 / 1.4, 자간 -0.02em | 앱 바 제목(crumbit·아카이브·프로필), 섹션 제목(내 생각·눈여겨볼 표현), 다이얼로그·시트 제목, 카드 목록의 영어 제목 |
 | `headline-semibold` | 20 / 600 | 아카이브 저장한 표현 카드의 영어 표현 |
 | `body-lg` | 18 / 400 / 1.6 | 본문 영어 문장 |
 | `body-lg-semibold` | 18 / 600 | 툴팁·눈여겨볼 표현의 영어 표현 |
