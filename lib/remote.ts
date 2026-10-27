@@ -208,10 +208,12 @@ export async function startGoogleLogin(forceSignIn = false): Promise<void> {
   }
   const link = !!data.session?.user.is_anonymous && !forceSignIn && !seen;
   logAuth(`구글로 이동: ${link ? "연결(link)" : "로그인(signIn)"}, 현재 세션=${data.session ? (data.session.user.is_anonymous ? "익명" : "구글") : "없음"}, forceSignIn=${forceSignIn}, 이전 구글 로그인=${seen}`);
-  const res =
-    link
-      ? await sb.auth.linkIdentity({ provider: "google", options: { redirectTo } })
-      : await sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo } });
+  // 브라우저에 구글 계정이 하나만 로그인돼 있으면 구글이 선택 화면 없이 그 계정으로 바로 진행한다.
+  // 다른 계정으로 로그인하려는 사람이 의도와 다른 계정으로 들어가지 않게 항상 계정 선택 화면을 띄운다.
+  const options = { redirectTo, queryParams: { prompt: "select_account" } };
+  const res = link
+    ? await sb.auth.linkIdentity({ provider: "google", options })
+    : await sb.auth.signInWithOAuth({ provider: "google", options });
   if (res.error) throw res.error;
 }
 
