@@ -4,10 +4,12 @@ import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { track } from "@/lib/analytics";
-import { MOCK_PROFILE } from "@/lib/profile";
+import { sendFeedbackRemote } from "@/lib/remote";
+import { supabaseEnabled } from "@/lib/supabase";
 import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { GoogleLoginButton } from "@/components/GoogleLoginButton";
 import { IconAvatar, IconBack } from "@/components/icons";
+import { goBackInApp } from "@/lib/nav";
 import { useStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -39,22 +41,31 @@ const FB_KIND_KEY: Record<(typeof FB_KINDS)[number], string> = {
 
 export default function MyPage() {
   const router = useRouter();
-  const { ready, loggedIn, showKo, toggleKo, login, logout, deleteAccount, showToast } = useStore();
+  const { ready, loggedIn, profile, showKo, toggleKo, login, logout, deleteAccount, showToast } = useStore();
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [fbOpen, setFbOpen] = useState(false);
   const [fbKind, setFbKind] = useState<(typeof FB_KINDS)[number]>(FB_KINDS[0]);
   const [fbText, setFbText] = useState("");
 
-  // 프로토타입: 실제 전송 대신 이 브라우저에 보관한다. (서비스에서는 Supabase feedback 테이블 → 어드민에서 확인)
-  const sendFeedback = () => {
+  // Supabase 연결 시 feedback 표에 저장한다. (운영자는 대시보드에서 확인) 키가 없으면 이 브라우저에만 보관한다.
+  const sendFeedback = async () => {
     const text = fbText.trim();
     if (!text) return;
-    try {
-      const list = JSON.parse(localStorage.getItem(FB_KEY) ?? "[]") as unknown[];
-      list.push({ kind: fbKind, text, at: Date.now() });
-      localStorage.setItem(FB_KEY, JSON.stringify(list));
-    } catch {
-      /* 저장소를 못 써도 흐름은 계속 */
+    if (supabaseEnabled) {
+      try {
+        await sendFeedbackRemote(fbKind, text);
+      } catch {
+        showToast("피드백을 보내지 못했어요. 잠시 후 다시 시도해주세요");
+        return; // 입력한 내용은 그대로 둔다
+      }
+    } else {
+      try {
+        const list = JSON.parse(localStorage.getItem(FB_KEY) ?? "[]") as unknown[];
+        list.push({ kind: fbKind, text, at: Date.now() });
+        localStorage.setItem(FB_KEY, JSON.stringify(list));
+      } catch {
+        /* 저장소를 못 써도 흐름은 계속 */
+      }
     }
     track("Feedback Sent", { kind: FB_KIND_KEY[fbKind] });
     setFbText("");
@@ -62,10 +73,7 @@ export default function MyPage() {
     showToast("피드백을 보냈어요. 운영자가 확인할게요");
   };
 
-  const goBack = () => {
-    if (window.history.length > 1) router.back();
-    else router.push("/");
-  };
+  const goBack = () => goBackInApp(router);
 
   return (
     <div className="min-h-dvh pb-10">
@@ -85,7 +93,7 @@ export default function MyPage() {
           {loggedIn ? (
             <>
               <ProfileAvatar size={80} />
-              <span className="max-w-full truncate text-body-md text-on-surface">{MOCK_PROFILE.email}</span>
+              <span className="max-w-full truncate text-body-md text-on-surface">{profile.email}</span>
             </>
           ) : (
             <>

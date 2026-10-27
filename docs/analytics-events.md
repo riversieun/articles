@@ -29,7 +29,7 @@
 |---|---|---|---|
 | Page View | 화면(경로)이 바뀔 때. 로그인 상태를 읽은 뒤부터 보냄 | `path`, `article_id`(글 화면만) | `components/Analytics.tsx` |
 | Feed Filter Selected | 탐색 주제 필터 칩 선택 | `topic` (`all` · `process` · `collab` · `ux` · `system`) | `components/Feed.tsx` |
-| Archive Filter Selected | 아카이브 필터 칩 선택(같은 칩을 다시 누르면 보내지 않음) | `filter` (`highlights` · `comments` · `thoughts` · `articles` · `expressions`) | `app/(tabs)/archive/page.tsx` |
+| Archive Filter Selected | 아카이브 필터 칩 선택(같은 칩을 다시 누르면 보내지 않음) | `filter` (`highlights` · `comments` · `thoughts` · `articles`) | `app/(tabs)/archive/page.tsx` |
 | **Article Opened** | 목록·카드에서 글을 눌러 상세로 들어갈 때 | `article_id`, `source`, `content_type`, `entry_point`, `position` | `ArticleRow`, 아카이브 |
 
 `Article Opened`의 `entry_point`와 `position`(목록에서 0부터 센 순서):
@@ -37,7 +37,6 @@
 | entry_point | 어디서 | position 기준 |
 |---|---|---|
 | `feed` | 피드의 글 카드 | 현재 필터가 적용된 목록의 순서 |
-| `expressions` | 아카이브 "표현" 필터 카드의 "출처 글로 이동" | 저장한 표현 목록의 순서 |
 | `archive` | 아카이브 하이라이트·코멘트·내 생각 필터의 글 제목 영역 | 그 필터에 보이는 글 그룹의 순서 |
 | `saved` | 아카이브 "아티클" 필터의 글 카드 | 저장한 글 목록의 순서 |
 
@@ -48,7 +47,6 @@
 | Article Read | 글을 떠나거나 탭/앱을 닫을 때 1회. 화면을 본 시간이 1초 미만이면 보내지 않음 | `article_id`, `source`, `content_type`, `seconds_visible`(탭이 보이던 초), `max_scroll_pct`(가장 깊이 읽은 위치 0~100), `completed` | `components/Reader.tsx` |
 | Article Completed | 읽기 진행률이 **90%**에 처음 도달 (글당 1회) | `article_id`, `source`, `content_type` | `components/Reader.tsx` |
 | Translation Toggled | 한글 번역 스위치 | `article_id`(글 화면에서만), `on` | `lib/store.tsx` |
-| Expression Tooltip Opened | 주요 표현을 눌러 툴팁을 열 때 | `article_id`, `source`, `content_type`, `expression_id` | `components/Reader.tsx` |
 | Sentence Action Sheet Opened | 문장을 탭해 팝오버(하이라이트·코멘트)가 열릴 때. 이름은 옛 "액션 시트"를 그대로 유지(바꾸면 기존 데이터와 끊김). 코멘트 말풍선의 수정·삭제 팝오버는 보내지 않고 `Note Edited`/`Note Deleted`로 잡힘 (닫을 때도 보내지 않음) | `article_id`, `sentence_id` | `components/Reader.tsx` |
 | Original Article Clicked | "원문 읽기" 버튼 | `article_id`, `source`, `content_type` | `components/Reader.tsx` |
 
@@ -64,21 +62,20 @@
 | Thought Added | 본문 "내 생각" 저장 | `article_id` | `lib/store.tsx` |
 | Note Edited | 코멘트/생각 수정 완료 | `article_id`, `note_type` | `lib/store.tsx` (`updateNote`) |
 | Note Deleted | 코멘트/생각 삭제 | `article_id`, `note_type` | `lib/store.tsx` (`removeNote`) |
-| Expression Saved Toggled | 표현 저장/해제 | `article_id`, `expression_id`, `on` | `lib/store.tsx` |
 | Article Saved Toggled | 글 저장/해제 | `article_id`, `on` | `lib/store.tsx` |
 
 `note_type`: 문장 코멘트면 `comment`, 글 전체 "내 생각"이면 `thought`.
 
-하이라이트·글 저장·표현 저장을 **해제할 때 스낵바는 뜨지 않지만** 이벤트(`on: false`)는 그대로 보낸다. 삭제 확인 다이얼로그에서 취소하면 삭제 이벤트를 보내지 않는다.
+하이라이트·글 저장을 **해제할 때 스낵바는 뜨지 않지만** 이벤트(`on: false`)는 그대로 보낸다. 삭제 확인 다이얼로그에서 취소하면 삭제 이벤트를 보내지 않는다.
 
 ## 로그인·백업 제안
 
 | 이벤트 | 발생 시점 | 속성 | 코드 위치 |
 |---|---|---|---|
 | Login Button Clicked | 로그인 진입 버튼 클릭 | `trigger` | `lib/store.tsx` |
-| Login Completed | 로그인 완료 (현재는 프로토타입 목업) | `trigger`, `merged` | `lib/store.tsx` |
+| Login Completed | 구글 로그인을 마치고 앱으로 돌아왔을 때 (Supabase 키가 없는 프로토타입 모드에서는 버튼 클릭 즉시 목업) | `trigger`, `merged` | `lib/store.tsx` |
 | Logout | 프로필의 로그아웃 | 없음 | `lib/store.tsx` |
-| Account Deleted | 프로필의 계정 삭제를 확인 다이얼로그에서 확정 | 없음 (현재는 이 브라우저의 기록만 지움, Supabase 연동 시 서버 삭제 후 `resetUser()`) | `lib/store.tsx` (`deleteAccount`) |
+| Account Deleted | 프로필의 계정 삭제를 확인 다이얼로그에서 확정 | 없음 (서버 함수 `delete_my_account()`로 계정·기록 삭제 후 `resetUser()`. 삭제에 실패하면 이벤트는 이미 나간 상태) | `lib/store.tsx` (`deleteAccount`) |
 | Feedback Sent | 프로필의 피드백 보내기 | `kind` (`satisfied` · `improvement` · `feature_request` · `bug_report` · `other`). 내용 본문은 보내지 않음 | `app/mypage/page.tsx` |
 | Backup Prompt Shown | "기록 백업" 제안이 노출될 때 | `trigger` | `lib/store.tsx` |
 | Backup Prompt Dismissed | 백업 제안 시트를 닫을 때 ("나중에 할게요", 바깥 영역, Esc) | `trigger` | `lib/store.tsx` (`closeSheet`) |
@@ -88,22 +85,34 @@
 | trigger | 진입 경로 | 파일 |
 |---|---|---|
 | `profile` | 프로필 페이지(비로그인)의 "Google로 로그인하기" 버튼. 앱 바의 프로필 아이콘은 이제 로그인 시트가 아니라 프로필 페이지로 이동한다 | `app/mypage/page.tsx` |
-| `backup_prompt` | 자동으로 뜬 백업 제안 시트(표현 3개 저장 / 첫 코멘트) 안의 "Google로 계속하기" | `lib/store.tsx` |
+| `backup_prompt` | 자동으로 뜬 백업 제안 시트(첫 코멘트) 안의 "Google로 계속하기" | `lib/store.tsx` |
 
 - `Login Completed.trigger`는 로그인을 시작한 진입 경로와 같은 값이다.
 - `backup_prompt`는 시트 안의 버튼이 곧 로그인 버튼이라, `Login Button Clicked`를 그 버튼을 누를 때 보낸다. 나머지 경로는 진입 버튼을 누를 때 보낸다. (이후 시트의 "Google로 계속하기"는 `Login Completed`로 이어진다)
-- `merged`: 기존 구글 계정에 게스트 데이터를 병합했는지. 지금은 목업이라 항상 `false`. **Supabase 연동 시** `lib/store.tsx`의 `login()` 안 TODO 위치에서 실제 값으로 바꾼다.
-- `Logout`은 `resetUser()`보다 먼저 보낸다. 지금은 사용자 ID가 없어서 `resetUser()`를 부르지 않고, 같은 위치(`logout()`)에 TODO를 남겼다.
+- `Login Completed`는 구글 화면에 다녀온 뒤 새로 열린 페이지에서 보낸다. 진입 경로(`trigger`)는 나가기 전에 `sessionStorage`에 남겨 두었다가 읽는다. 구글 화면에서 취소하고 돌아오면 이 이벤트는 없다(`Login Button Clicked`만 있음).
+- `merged`: 이미 있던 구글 계정에 이 기기의 게스트 기록을 합쳤으면 `true`, 게스트 사용자에 구글 계정을 그대로 연결했으면 `false`. (`lib/store.tsx`의 `syncSession`)
+- `Logout`은 `resetUser()`보다 먼저 보낸다(`lib/store.tsx`의 `logout()`).
 
 **Backup Prompt `trigger` 값**:
 
 | trigger | 노출 | 닫기 이벤트 |
 |---|---|---|
-| `expressions_3` | 저장한 표현이 3개가 됐을 때 뜨는 시트 | 있음 |
 | `first_comment` | 첫 문장 코멘트를 남겼을 때 뜨는 시트 | 있음 |
 
-- 예전에 있던 `app_bar`(앱 바 아이콘으로 열던 로그인 시트), `guest_notice`(아카이브 상단 안내), `mypage`(옛 프로필의 로그인 카드), `reader_end_banner`(완독 배너), `read_completed` 제안은 화면에서 삭제돼 더 이상 보내지 않는다. 대시보드에 과거 데이터가 남아 있을 수 있다.
+- 예전에 있던 `expressions_3`(표현 3개 저장 시 제안, v0.4 삭제), `app_bar`(앱 바 아이콘으로 열던 로그인 시트), `guest_notice`(아카이브 상단 안내), `mypage`(옛 프로필의 로그인 카드), `reader_end_banner`(완독 배너), `read_completed` 제안은 화면에서 삭제돼 더 이상 보내지 않는다. 대시보드에 과거 데이터가 남아 있을 수 있다.
 - 사용자가 직접 로그인 버튼을 눌러 연 시트는 "제안"이 아니라서 Shown/Dismissed를 보내지 않는다.
+
+## 삭제된 이벤트 (v0.4)
+
+표현 기능 삭제(PRD v0.4)로 아래 이벤트·값은 더 보내지 않는다. 대시보드에 과거 데이터는 남아 있을 수 있다.
+
+| 삭제된 것 | 원래 의미 |
+|---|---|
+| `Expression Tooltip Opened` | 주요 표현 툴팁 열기 |
+| `Expression Saved Toggled` | 표현 저장/해제 |
+| `Archive Filter Selected`의 `filter=expressions` | 아카이브 "표현" 필터 선택 |
+| `Article Opened`의 `entry_point=expressions` | 저장한 표현 카드에서 출처 글로 이동 |
+| `Backup Prompt Shown/Dismissed`의 `trigger=expressions_3` | 표현 3개 저장 시 백업 제안 |
 
 ## Amplitude
 
@@ -114,13 +123,13 @@
 - 그래서 Amplitude에는 직접 정의한 `Page View`와 자동 수집 `[Amplitude] Page Viewed`가 둘 다 보인다. 분석할 때 하나만 기준으로 삼는다.
 - `is_guest`는 Amplitude에서 이벤트 속성이 아니라 **사용자 속성**이다. 차트에서 사용자 속성으로 필터/그룹하세요.
 
-## 사용자 ID (Supabase 연동 시)
+## 사용자 ID
 
 로그인하면 `identifyUser(user.id)`, 로그아웃하면 `resetUser()`를 호출한다. 두 도구에 같은 ID가 들어가므로 사용자 단위로 비교할 수 있다. (`resetUser()`는 `is_guest`를 true로 다시 등록한다)
 
 - ID는 Supabase의 `user.id`(내부 UUID)만 쓴다. 이메일·이름은 보내지 않는다.
 - 로그인 전 기록(기기 ID)은 Mixpanel이 `identify`로 자동 연결한다. Amplitude도 같은 기기의 기록이 이어진다.
-- `lib/store.tsx`의 `login()`·`logout()` 안 TODO 주석 위치에서 연결한다.
+- 구글 로그인을 마친 사용자(익명 세션 제외)에 대해서만 `identifyUser`를 부른다(`lib/store.tsx`의 `syncSession`). 익명 사용자는 도구의 기기 ID 그대로 둔다.
 
 ## 참고
 
