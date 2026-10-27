@@ -107,6 +107,8 @@ const PROMPT_TRIGGER = { comment: "first_comment" } as const;
 export type Sheet =
   | { type: "login"; reason: PromptReason; trigger: LoginTrigger }
   | { type: "comment"; sid: string; editId: string }
+  /** 앱 안 브라우저(카카오톡·인스타그램 등)라 구글 로그인이 막혀 있을 때 기본 브라우저로 옮기도록 안내 */
+  | { type: "inapp"; app: string; reason: "manual" | "comment" }
   | null;
 
 type Ctx = Persisted & {
@@ -309,7 +311,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     (next: Persisted, key: Exclude<PromptReason, "manual">): Persisted => {
       if (!loginEnabled || next.loggedIn || next.prompted[key]) return next;
       track("Backup Prompt Shown", { trigger: PROMPT_TRIGGER[key] });
-      setSheet({ type: "login", reason: key, trigger: "backup_prompt" });
+      // 앱 안 브라우저에서는 구글 로그인이 막혀 있어서, 로그인 시트 대신 기본 브라우저로 옮기도록 안내한다.
+      const app = inAppBrowserName();
+      if (app) setSheet({ type: "inapp", app, reason: key });
+      else setSheet({ type: "login", reason: key, trigger: "backup_prompt" });
       return { ...next, prompted: { ...next.prompted, [key]: true } };
     },
     [],
@@ -356,8 +361,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         // 구글은 앱 안 브라우저에서의 로그인을 막는다. 구글 화면으로 보내기 전에 안내한다.
         const inApp = inAppBrowserName();
         if (inApp) {
-          setSheet(null);
-          showToast("이 앱 안에서는 구글 로그인이 막혀 있어요. 메뉴에서 '다른 브라우저로 열기'를 눌러주세요");
+          logAuth(`앱 안 브라우저라 로그인 대신 안내: ${inApp}`);
+          setSheet({ type: "inapp", app: inApp, reason: "manual" });
           return;
         }
         ssSet(TRIGGER_KEY, trigger);

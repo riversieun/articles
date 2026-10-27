@@ -87,6 +87,7 @@
 | `profile` | 프로필 페이지(비로그인)의 "Google로 로그인하기" 버튼. 앱 바의 프로필 아이콘은 이제 로그인 시트가 아니라 프로필 페이지로 이동한다 | `app/mypage/page.tsx` |
 | `backup_prompt` | 자동으로 뜬 백업 제안 시트(첫 코멘트) 안의 "Google로 계속하기" | `lib/store.tsx` |
 
+- 앱 안 브라우저(카카오톡·인스타그램 등)에서는 첫 코멘트 직후 로그인 시트 대신 "기본 브라우저에서 열어주세요" 시트가 뜬다. 이때도 `Backup Prompt Shown`(`trigger=first_comment`)은 보내지만, 이 시트를 닫을 때 `Backup Prompt Dismissed`는 보내지 않는다. 로그인 버튼을 눌렀을 때도 같은 시트가 뜨고 `Login Button Clicked`는 보내지만 `Login Completed`는 나오지 않는다.
 - 로그인 화면을 숨긴 빌드(`NEXT_PUBLIC_LOGIN_ENABLED=false`)에서는 `Login Button Clicked`, `Backup Prompt Shown/Dismissed`, `Login Completed`가 나오지 않는다. 이때 대시보드의 로그인 전환 지표는 비어 있는 게 정상이다.
 - `Login Completed.trigger`는 로그인을 시작한 진입 경로와 같은 값이다.
 - `backup_prompt`는 시트 안의 버튼이 곧 로그인 버튼이라, `Login Button Clicked`를 그 버튼을 누를 때 보낸다. 나머지 경로는 진입 버튼을 누를 때 보낸다. (이후 시트의 "Google로 계속하기"는 `Login Completed`로 이어진다)
