@@ -28,6 +28,7 @@ import {
   type Pulled,
 } from "./remote";
 import { logAuth } from "./authlog";
+import { loginEnabled } from "./flags";
 import { supabase, supabaseEnabled } from "./supabase";
 import type { Note } from "./types";
 import type { Session } from "@supabase/supabase-js";
@@ -306,7 +307,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   /** 게스트에게 가치가 쌓인 시점에 한 번만 "기록 백업"을 제안한다. (PRD F-72) */
   const maybePrompt = useCallback(
     (next: Persisted, key: Exclude<PromptReason, "manual">): Persisted => {
-      if (next.loggedIn || next.prompted[key]) return next;
+      if (!loginEnabled || next.loggedIn || next.prompted[key]) return next;
       track("Backup Prompt Shown", { trigger: PROMPT_TRIGGER[key] });
       setSheet({ type: "login", reason: key, trigger: "backup_prompt" });
       return { ...next, prompted: { ...next.prompted, [key]: true } };

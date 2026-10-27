@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { track } from "@/lib/analytics";
 import { sendFeedbackRemote } from "@/lib/remote";
+import { loginEnabled } from "@/lib/flags";
 import { supabaseEnabled } from "@/lib/supabase";
 import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { GoogleLoginButton } from "@/components/GoogleLoginButton";
@@ -88,7 +89,7 @@ export default function MyPage() {
         <h1 className="m-0 text-headline font-bold tracking-headline">프로필</h1>
       </div>
 
-      {ready && (
+      {ready && (loggedIn || loginEnabled) && (
         <section className="flex flex-col items-center gap-3 px-5 py-4">
           {loggedIn ? (
             <>

@@ -87,6 +87,7 @@
 | `profile` | 프로필 페이지(비로그인)의 "Google로 로그인하기" 버튼. 앱 바의 프로필 아이콘은 이제 로그인 시트가 아니라 프로필 페이지로 이동한다 | `app/mypage/page.tsx` |
 | `backup_prompt` | 자동으로 뜬 백업 제안 시트(첫 코멘트) 안의 "Google로 계속하기" | `lib/store.tsx` |
 
+- 로그인 화면을 숨긴 빌드(`NEXT_PUBLIC_LOGIN_ENABLED=false`)에서는 `Login Button Clicked`, `Backup Prompt Shown/Dismissed`, `Login Completed`가 나오지 않는다. 이때 대시보드의 로그인 전환 지표는 비어 있는 게 정상이다.
 - `Login Completed.trigger`는 로그인을 시작한 진입 경로와 같은 값이다.
 - `backup_prompt`는 시트 안의 버튼이 곧 로그인 버튼이라, `Login Button Clicked`를 그 버튼을 누를 때 보낸다. 나머지 경로는 진입 버튼을 누를 때 보낸다. (이후 시트의 "Google로 계속하기"는 `Login Completed`로 이어진다)
 - `Login Completed`는 구글 화면에 다녀온 뒤 새로 열린 페이지에서 보낸다. 진입 경로(`trigger`)는 나가기 전에 `sessionStorage`에 남겨 두었다가 읽는다. 구글 화면에서 취소하고 돌아오면 이 이벤트는 없다(`Login Button Clicked`만 있음).
