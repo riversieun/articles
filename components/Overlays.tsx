@@ -16,7 +16,7 @@ const COPY: Record<"manual" | "record", { title: string; body: string }> = {
   },
   // 기록이 남는 첫 행동(코멘트·하이라이트·글 저장·내 생각) 직후
   record: {
-    title: "기록을 잃지 않게\n로그인 해주세요",
+    title: "기록을 잃지 않게 로그인 해주세요",
     body: "로그인하면 내 기록을 계속 남길 수 있어요.",
   },
 };

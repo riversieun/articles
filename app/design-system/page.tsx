@@ -340,12 +340,12 @@ export default function DesignSystemPage() {
               <DialogTrigger render={<Button variant="outline" />}>기본 다이얼로그</DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>기록을 백업할까요?</DialogTitle>
-                  <DialogDescription>구글 로그인으로 연결하면 다른 기기에서도 이어 볼 수 있어요.</DialogDescription>
+                  <DialogTitle>기록을 잃지 않게 로그인 해주세요</DialogTitle>
+                  <DialogDescription>로그인하면 내 기록을 계속 남길 수 있어요.</DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
                   <DialogClose render={<Button variant="outline" />}>나중에 할게요</DialogClose>
-                  <DialogClose render={<Button />}>백업하기</DialogClose>
+                  <DialogClose render={<Button />}>로그인</DialogClose>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
