@@ -341,7 +341,7 @@ export default function DesignSystemPage() {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>기록을 잃지 않게 로그인 해주세요</DialogTitle>
-                  <DialogDescription>로그인하면 내 기록을 계속 남길 수 있어요.</DialogDescription>
+                  <DialogDescription>로그인하고 내 기록을 안전하게 쌓아가요. 비로그인 상태에서는 기록이 없어질 위험이 있어요.</DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
                   <DialogClose render={<Button variant="outline" />}>나중에 할게요</DialogClose>

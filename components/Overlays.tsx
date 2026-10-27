@@ -9,16 +9,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { copyLink } from "@/lib/inapp";
 import { GoogleLoginButton } from "./GoogleLoginButton";
 
-const COPY: Record<"manual" | "record", { title: string; body: string }> = {
-  manual: {
-    title: "로그인하기",
-    body: "로그인하면 다른 기기에서도 내 저장된 기록을 볼 수 있어요.",
-  },
-  // 기록이 남는 첫 행동(코멘트·하이라이트·글 저장·내 생각) 직후
-  record: {
-    title: "기록을 잃지 않게 로그인 해주세요",
-    body: "로그인하면 내 기록을 계속 남길 수 있어요.",
-  },
+// 기록이 남는 첫 행동(코멘트·하이라이트·글 저장·내 생각) 직후에 뜨는 로그인 시트
+const LOGIN_COPY = {
+  title: "기록을 잃지 않게 로그인 해주세요",
+  body: "로그인하고 내 기록을 안전하게 쌓아가요. 비로그인 상태에서는 기록이 없어질 위험이 있어요.",
 };
 
 // 앱 안 브라우저 안내 시트. 글자·버튼 스타일은 같고 문구만 다르다.
@@ -59,9 +53,9 @@ export function Overlays() {
       {sheet?.type === "login" && (
         <Sheet onClose={closeSheet} labelledBy="login-title">
           <h2 id="login-title" className="m-0 text-headline font-bold tracking-headline whitespace-pre-line">
-            {COPY[sheet.reason === "manual" ? "manual" : "record"].title}
+            {LOGIN_COPY.title}
           </h2>
-          <p className="m-0 text-body-md text-on-surface-muted">{COPY[sheet.reason === "manual" ? "manual" : "record"].body}</p>
+          <p className="m-0 text-body-md text-on-surface-muted">{LOGIN_COPY.body}</p>
           <GoogleLoginButton onClick={() => login()} className="mt-3" />
           <button onClick={closeSheet} className="h-12 border-0 bg-transparent text-label-md font-medium text-on-surface-muted">
             나중에 할게요
