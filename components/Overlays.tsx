@@ -21,14 +21,16 @@ const COPY: Record<"manual" | "record", { title: string; body: string }> = {
   },
 };
 
+// 앱 안 브라우저 안내 시트. 글자·버튼 스타일은 같고 문구만 다르다.
+// manual: 프로필에서 구글 로그인 버튼을 눌렀을 때 / record: 기록이 남는 첫 행동 직후
 const INAPP_COPY = {
   manual: {
     title: "외부 브라우저에서 열어주세요",
     body: "앱 안에서는 구글 로그인이 불가해요. Safari나 Chrome 같은 외부 브라우저에서 열어주세요.",
   },
   record: {
-    title: "기록을 잃지 않게\n외부 브라우저에서 열어주세요",
-    body: "앱 안에서는 구글 로그인이 불가해요. Safari나 Chrome 같은 외부 브라우저에서 열어 로그인하면 기록이 계속 보관돼요.",
+    title: "기록을 잃지 않게\n외부 브라우저에서 로그인 해주세요",
+    body: "앱 안에서는 구글 로그인이 불가해요. 외부 브라우저에서 로그인하면 내 기록을 계속 남길 수 있어요.",
   },
 } as const;
 
@@ -81,7 +83,7 @@ export function Overlays() {
               closeSheet(); // 토스트는 시트가 닫혀 있을 때만 보인다
               showToast("링크가 복사됐어요");
             }}
-            className="mt-3 h-[52px] text-body-md font-semibold"
+            className="mt-3 h-[52px] rounded-pill text-body-md font-semibold"
           >
             링크 복사하기
           </Button>
