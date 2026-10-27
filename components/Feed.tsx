@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { TOPICS, lib } from "@/lib/content";
 import { track } from "@/lib/analytics";
@@ -45,11 +44,6 @@ export function Feed() {
         ))}
       </div>
 
-      <footer className="px-5 pb-6">
-        <Link href="/privacy" className="text-body-sm text-on-surface-muted underline underline-offset-2">
-          개인정보처리방침
-        </Link>
-      </footer>
     </div>
   );
 }
