@@ -101,9 +101,6 @@ export default function MyPage() {
             <>
               <IconAvatar size={80} />
               <GoogleLoginButton label="Google로 로그인하기" onClick={() => login("profile")} className="mt-1 px-8" />
-              <p className="m-0 text-center text-body-sm text-on-surface-muted">
-                로그인하면 다른 기기에서도 내 기록을 볼 수 있어요.
-              </p>
             </>
           )}
         </section>

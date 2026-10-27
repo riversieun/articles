@@ -22,7 +22,7 @@ const COPY: Record<PromptReason, { title: string; body: string }> = {
 
 const INAPP_COPY = {
   manual: {
-    title: "외부 브라우저에서\n열어주세요",
+    title: "외부 브라우저에서 열어주세요",
     body: "앱 안에서는 구글 로그인이 불가해요. Safari나 Chrome 같은 외부 브라우저에서 열어주세요.",
   },
   comment: {
@@ -80,7 +80,7 @@ export function Overlays() {
               closeSheet(); // 토스트는 시트가 닫혀 있을 때만 보인다
               showToast("링크가 복사됐어요");
             }}
-            className="mt-3 h-12 text-body-md font-semibold"
+            className="mt-3 h-[52px] text-body-md font-semibold"
           >
             링크 복사하기
           </Button>
