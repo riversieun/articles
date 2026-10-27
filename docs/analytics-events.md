@@ -85,9 +85,9 @@
 | trigger | 진입 경로 | 파일 |
 |---|---|---|
 | `profile` | 프로필 페이지(비로그인)의 "Google로 로그인하기" 버튼. 앱 바의 프로필 아이콘은 이제 로그인 시트가 아니라 프로필 페이지로 이동한다 | `app/mypage/page.tsx` |
-| `backup_prompt` | 자동으로 뜬 백업 제안 시트(첫 코멘트) 안의 "Google로 계속하기" | `lib/store.tsx` |
+| `backup_prompt` | 자동으로 뜬 백업 제안 시트(기록이 남는 첫 행동 직후) 안의 "Google로 계속하기" | `lib/store.tsx` |
 
-- 앱 안 브라우저(카카오톡·인스타그램 등)에서는 첫 코멘트 직후 로그인 시트 대신 "기본 브라우저에서 열어주세요" 시트가 뜬다. 이때도 `Backup Prompt Shown`(`trigger=first_comment`)은 보내지만, 이 시트를 닫을 때 `Backup Prompt Dismissed`는 보내지 않는다. 로그인 버튼을 눌렀을 때도 같은 시트가 뜨고 `Login Button Clicked`는 보내지만 `Login Completed`는 나오지 않는다.
+- 앱 안 브라우저(카카오톡·인스타그램 등)에서는 기록이 남는 첫 행동 직후 로그인 시트 대신 "기본 브라우저에서 열어주세요" 시트가 뜬다. 이때도 `Backup Prompt Shown`(`trigger=first_comment` 등)은 보내지만, 이 시트를 닫을 때 `Backup Prompt Dismissed`는 보내지 않는다. 로그인 버튼을 눌렀을 때도 같은 시트가 뜨고 `Login Button Clicked`는 보내지만 `Login Completed`는 나오지 않는다.
 - 로그인 화면을 숨긴 빌드(`NEXT_PUBLIC_LOGIN_ENABLED=false`)에서는 `Login Button Clicked`, `Backup Prompt Shown/Dismissed`, `Login Completed`가 나오지 않는다. 이때 대시보드의 로그인 전환 지표는 비어 있는 게 정상이다.
 - `Login Completed.trigger`는 로그인을 시작한 진입 경로와 같은 값이다.
 - `backup_prompt`는 시트 안의 버튼이 곧 로그인 버튼이라, `Login Button Clicked`를 그 버튼을 누를 때 보낸다. 나머지 경로는 진입 버튼을 누를 때 보낸다. (이후 시트의 "Google로 계속하기"는 `Login Completed`로 이어진다)
@@ -99,7 +99,12 @@
 
 | trigger | 노출 | 닫기 이벤트 |
 |---|---|---|
-| `first_comment` | 첫 문장 코멘트를 남겼을 때 뜨는 시트 | 있음 |
+| `first_comment` | 기록이 남는 첫 행동이 문장 코멘트일 때 뜨는 시트 | 있음 |
+| `first_highlight` | 첫 행동이 하이라이트 켜기일 때 | 있음 |
+| `first_save` | 첫 행동이 글 저장 켜기일 때 | 있음 |
+| `first_thought` | 첫 행동이 글 아래 "내 생각" 작성일 때 | 있음 |
+
+시트는 이 기기에서 **한 번만** 뜬다(어느 행동이 먼저든). 예전에 `first_comment`로 이미 본 기기도 다시 뜨지 않는다.
 
 - 예전에 있던 `expressions_3`(표현 3개 저장 시 제안, v0.4 삭제), `app_bar`(앱 바 아이콘으로 열던 로그인 시트), `guest_notice`(아카이브 상단 안내), `mypage`(옛 프로필의 로그인 카드), `reader_end_banner`(완독 배너), `read_completed` 제안은 화면에서 삭제돼 더 이상 보내지 않는다. 대시보드에 과거 데이터가 남아 있을 수 있다.
 - 사용자가 직접 로그인 버튼을 눌러 연 시트는 "제안"이 아니라서 Shown/Dismissed를 보내지 않는다.
