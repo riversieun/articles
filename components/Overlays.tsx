@@ -6,7 +6,7 @@ import { lib } from "@/lib/content";
 import { useStore, type PromptReason } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { canOpenExternal, copyLink, openExternal } from "@/lib/inapp";
+import { copyLink } from "@/lib/inapp";
 import { GoogleLoginButton } from "./GoogleLoginButton";
 
 const COPY: Record<PromptReason, { title: string; body: string }> = {
@@ -72,18 +72,15 @@ export function Overlays() {
             {INAPP_COPY[sheet.reason].title}
           </h2>
           <p className="m-0 text-body-md text-on-surface-muted">{INAPP_COPY[sheet.reason].body}</p>
-          {canOpenExternal(sheet.app) && (
-            <Button variant="accent" size="lg" onClick={openExternal} className="mt-3 h-12">
-              외부 브라우저로 열기
-            </Button>
-          )}
           <Button
-            variant={canOpenExternal(sheet.app) ? "outline" : "accent"}
+            variant="accent"
             size="lg"
             onClick={async () => {
-              if (await copyLink()) showToast("링크를 복사했어요. Safari나 Chrome에 붙여넣어 주세요");
+              if (!(await copyLink())) return;
+              closeSheet(); // 토스트는 시트가 닫혀 있을 때만 보인다
+              showToast("링크가 복사됐어요");
             }}
-            className={canOpenExternal(sheet.app) ? "h-12" : "mt-3 h-12"}
+            className="mt-3 h-12 text-body-md font-semibold"
           >
             링크 복사하기
           </Button>

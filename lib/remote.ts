@@ -236,6 +236,8 @@ export async function sendFeedbackRemote(kind: string, body: string) {
 /** 구글이 앱 안 브라우저(웹뷰)에서의 로그인을 막기 때문에 미리 알아본다. */
 export function inAppBrowserName(): string | null {
   if (typeof navigator === "undefined") return null;
+  // 개발 서버에서만: 주소에 ?inapp=1 을 붙이면 앱 안 브라우저처럼 동작해 안내 시트를 확인할 수 있다. (배포 빌드에는 들어가지 않는다)
+  if (process.env.NODE_ENV !== "production" && new URLSearchParams(window.location.search).has("inapp")) return "DEV";
   const ua = navigator.userAgent;
   const m = ua.match(/Instagram|FBAN|FBAV|KAKAOTALK|NAVER\(inapp|DaumApps|Line\//i);
   return m ? m[0] : null;
