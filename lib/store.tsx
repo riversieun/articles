@@ -101,7 +101,7 @@ const ssSet = (k: string, v: string | null) => {
   }
 };
 
-export type PromptReason = "manual" | "comment" | "highlight" | "save" | "thought";
+export type PromptReason = "comment" | "highlight" | "save" | "thought";
 /** 자동으로 뜬 "기록 백업" 제안의 분석용 trigger 값 */
 const PROMPT_TRIGGER = {
   comment: "first_comment",
@@ -122,7 +122,6 @@ type Ctx = Persisted & {
   sheet: Sheet;
   toast: string;
   hasRecords: boolean;
-  openLogin: (trigger: LoginTrigger) => void;
   closeSheet: () => void;
   login: (trigger?: LoginTrigger) => void;
   logout: () => void;
@@ -313,7 +312,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   /** 게스트에게 가치가 쌓인 시점에 한 번만 "기록 백업"을 제안한다. (PRD F-72) */
   const maybePrompt = useCallback(
-    (next: Persisted, key: Exclude<PromptReason, "manual">): Persisted => {
+    (next: Persisted, key: PromptReason): Persisted => {
       // 기록이 남는 첫 행동(코멘트·하이라이트·글 저장·내 생각) 직후에 한 번만. 예전에 "comment"로 이미 보여 준 기기도 건너뛴다.
       if (!loginEnabled || next.loggedIn || next.prompted.record || next.prompted.comment) return next;
       track("Backup Prompt Shown", { trigger: PROMPT_TRIGGER[key] });
@@ -339,12 +338,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         Object.keys(state.hl).length > 0 ||
         Object.keys(state.savedA).length > 0,
       showToast,
-      openLogin: (trigger) => {
-        track("Login Button Clicked", { trigger });
-        setSheet({ type: "login", reason: "manual", trigger });
-      },
       closeSheet: () => {
-        if (sheet?.type === "login" && sheet.reason !== "manual") {
+        if (sheet?.type === "login") {
           track("Backup Prompt Dismissed", { trigger: PROMPT_TRIGGER[sheet.reason] });
         }
         setSheet(null);
