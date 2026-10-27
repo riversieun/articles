@@ -22,12 +22,12 @@ const COPY: Record<PromptReason, { title: string; body: string }> = {
 
 const INAPP_COPY = {
   manual: {
-    title: "기본 브라우저에서\n열어주세요",
-    body: "이 앱 안에서는 구글 로그인이 막혀 있어요. Safari나 Chrome에서 열면 로그인할 수 있어요.",
+    title: "외부 브라우저에서\n열어주세요",
+    body: "앱 안에서는 구글 로그인이 불가해요. Safari나 Chrome 같은 외부 브라우저에서 열어주세요.",
   },
   comment: {
-    title: "기록을 잃어버리지 않게\n기본 브라우저에서 열어주세요",
-    body: "이 앱 안에서는 기록이 사라질 수 있고 구글 로그인도 막혀 있어요. Safari나 Chrome에서 열어 로그인하면 계속 보관돼요.",
+    title: "기록을 잃어버리지 않게\n외부 브라우저에서 열어주세요",
+    body: "앱 안에서는 구글 로그인이 불가해요. Safari나 Chrome 같은 외부 브라우저에서 열어 로그인하면 기록이 계속 보관돼요.",
   },
 } as const;
 
@@ -72,14 +72,9 @@ export function Overlays() {
             {INAPP_COPY[sheet.reason].title}
           </h2>
           <p className="m-0 text-body-md text-on-surface-muted">{INAPP_COPY[sheet.reason].body}</p>
-          {!canOpenExternal(sheet.app) && (
-            <p className="m-0 text-body-sm text-on-surface-muted">
-              화면 위나 아래의 메뉴(···)에서 &lsquo;Safari로 열기&rsquo; 또는 &lsquo;다른 브라우저로 열기&rsquo;를 눌러도 돼요.
-            </p>
-          )}
           {canOpenExternal(sheet.app) && (
             <Button variant="accent" size="lg" onClick={openExternal} className="mt-3 h-12">
-              기본 브라우저로 열기
+              외부 브라우저로 열기
             </Button>
           )}
           <Button
