@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { track } from "@/lib/analytics";
@@ -126,6 +127,11 @@ export default function MyPage() {
           <button onClick={() => setFbOpen(true)} className={ROW}>
             <span>피드백 보내기</span>
           </button>
+        </li>
+        <li>
+          <Link href="/privacy" className={cn(ROW, "no-underline")}>
+            <span>개인정보처리방침</span>
+          </Link>
         </li>
         {ready && loggedIn && (
           <>
