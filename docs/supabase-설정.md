@@ -33,6 +33,11 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon public 키>
 - anon 키는 공개돼도 되는 키다. 접근은 RLS가 막는다. **service_role 키는 절대 넣지 않는다.**
 - 개발 서버(`npm run dev`)는 환경변수를 바꾸면 다시 시작해야 한다.
 
+## 4-1. 구글 로그인 화면 켜고 끄기
+`NEXT_PUBLIC_LOGIN_ENABLED`가 `false`이면 프로필의 구글 로그인 버튼과 "기록 백업" 시트가 숨겨진다(로그인 없이 쓰는 버전). 비우거나 다른 값이면 보인다. 기록은 숨겨도 익명 세션으로 서버에 저장된다.
+- 운영(Production)에만 `false`를 넣고, Preview에는 넣지 않으면 "운영 = 로그인 없음, Preview = 로그인 있음"이 된다.
+- 값은 빌드할 때 박히므로 바꾼 뒤에는 다시 배포해야 한다.
+
 ## 5. 확인할 것 (실기기)
 - [x] 코멘트 하나 남기기 → Table Editor `notes`에 행이 생기고, `Authentication → Users`에 Anonymous 사용자 1명
 - [ ] 아무것도 안 하고 방문만 → 사용자가 늘지 않음
