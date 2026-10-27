@@ -114,7 +114,6 @@
 @theme inline {
   /* DESIGN.md 토큰 중 shadcn과 이름이 겹치지 않는 것만 Tailwind 클래스로 연다 (bg-surface, text-on-surface-muted, bg-danger 등) */
   --color-on-accent: var(--ds-on-accent);
-  --color-accent-strong: var(--ds-accent-strong);
   --color-accent-sub: var(--ds-accent-sub);
   --color-accent-sub-strong: var(--ds-accent-sub-strong);
   --color-surface: var(--ds-surface);
@@ -196,7 +195,6 @@
   --ds-on-primary: #ffffff;
   --ds-accent: #d9f25c; /* 라임. Tailwind에서는 기존 bg-lime / text-lime. shadcn의 --accent(호버 배경)와 다른 값이므로 섞지 않는다. */
   --ds-on-accent: #111111;
-  --ds-accent-strong: #c6e03e; /* 라임 위에서 선택된 상태. accent보다 살짝 진하다. */
   --ds-accent-sub: #e7e0ff;
   --ds-accent-sub-strong: #cbbcff;
   --ds-surface: #ffffff;

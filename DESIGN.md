@@ -1,13 +1,12 @@
 ---
 version: alpha
 name: crumbit
-description: 영어 아티클을 읽으며 모르는 표현을 바로 확인하는 모바일 우선 리더. 흑백 중심 화면에 라임 한 가지로만 강조한다.
+description: 영어 아티클을 읽으며 인사이트를 얻고 내 생각을 남기는 모바일 우선 리더. 흑백 중심 화면에 라임 한 가지로만 강조한다.
 colors:
   primary: "#111111"
   on-primary: "#FFFFFF"
   accent: "#D9F25C"
   on-accent: "#111111"
-  accent-strong: "#C6E03E"
   accent-sub: "#E7E0FF"
   accent-sub-strong: "#CBBCFF"
   surface: "#FFFFFF"
@@ -48,12 +47,6 @@ typography:
     fontSize: 14px
     fontWeight: 400
     lineHeight: 1.6
-  headline-semibold:
-    fontFamily: Pretendard Variable
-    fontSize: 20px
-    fontWeight: 600
-    lineHeight: 1.4
-    letterSpacing: -0.02em
   body-lg-semibold:
     fontFamily: Pretendard Variable
     fontSize: 18px
@@ -175,12 +168,6 @@ components:
     typography: "{typography.label-sm}"
     rounded: "{rounded.full}"
     height: 64px
-  tooltip:
-    backgroundColor: "{colors.accent}"
-    textColor: "{colors.on-accent}"
-    typography: "{typography.body-md-semibold}"
-    rounded: "{rounded.xl}"
-    padding: 16px
   popover-menu:
     backgroundColor: "{colors.primary}"
     textColor: "{colors.on-primary}"
@@ -205,7 +192,7 @@ components:
 
 ## Overview
 
-영어 아티클을 읽다가 모르는 표현을 눌러 바로 뜻을 확인하는 모바일 우선 서비스다. 화면의 주인공은 항상 본문이고, UI는 읽기를 방해하지 않아야 한다. 그래서 화면 대부분은 흰 배경과 검정 글자로 정리하고, 눈에 띄어야 하는 것(핵심 행동, 하이라이트된 표현)에만 라임색을 쓴다. 느낌은 조용하고 정돈된 편집물에 가깝고, 장식은 쓰지 않는다.
+영어 아티클을 읽으며 인사이트를 얻고 내 생각을 남기는 모바일 우선 서비스다. 화면의 주인공은 항상 본문이고, UI는 읽기를 방해하지 않아야 한다. 그래서 화면 대부분은 흰 배경과 검정 글자로 정리하고, 눈에 띄어야 하는 것(핵심 행동)에만 라임색을 쓴다. 느낌은 조용하고 정돈된 편집물에 가깝고, 장식은 쓰지 않는다.
 
 컴포넌트는 shadcn/ui(Base UI, 프리셋 `b2D2mxv2w`)로 만들며 `components/ui`에 있다. 토큰은 `app/globals.css`의 `@theme`에 정의돼 있고, 이 문서의 값은 그 파일과 같아야 한다. 값이 다르면 `globals.css`가 우선이다. `theme.css`는 이 문서에서 내보낸 참고용 사본이다(앱이 직접 읽지 않는다).
 
@@ -214,8 +201,7 @@ components:
 색 이름이 아니라 역할로 부른다.
 
 - **Primary (#111111):** 글자와 기본 버튼의 검정. 화면에서 가장 무게 있는 색이다.
-- **Accent (#D9F25C):** 라임. 서비스의 시그니처 강조색으로, 핵심 행동 버튼, 본문에서 하이라이트된 표현, 그 표현의 툴팁 배경에만 쓴다. 위에 올리는 글자는 반드시 `on-accent`(검정)를 쓴다.
-- **Accent-strong (#C6E03E):** 라임이 선택된 상태일 때만 쓰는, accent보다 살짝 진한 라임. 본문에서 눌러 툴팁이 열린 표현의 하이라이트에 쓴다.
+- **Accent (#D9F25C):** 라임. 서비스의 시그니처 강조색으로, 핵심 행동 버튼과 읽기 진행 바에만 쓴다. 위에 올리는 글자는 반드시 `on-accent`(검정)를 쓴다.
 - **Accent-sub (#E7E0FF), Accent-sub-strong (#CBBCFF):** 연보라. 라임과 겹치지 않는 보조 구분용으로만 쓴다. 사용자가 하이라이트한 문장은 `accent-sub`, 코멘트 말풍선은 `accent-sub-strong`.
 - **Surface (#FFFFFF) / Surface-muted (#F4F4F6):** 페이지와 팝업은 흰색, 그 위의 카드·주제 뱃지·보조 버튼·구획 배경은 연회색.
 - **On-surface-muted (#5F5F66):** 보조 설명과 메타 정보, 읽는 글자 중 한 단계 약한 것(부연설명, 한글 번역, 안내 문구, 입력창 placeholder).
@@ -235,13 +221,12 @@ components:
 | 토큰 | 크기 / 굵기 / 줄 높이 | 쓰는 곳 |
 |---|---|---|
 | `display` | 28 / 700 / 1.2, 자간 -0.03em | 아티클 영어 제목 |
-| `headline` | 20 / 700 / 1.4, 자간 -0.02em | 앱 바 제목(crumbit·아카이브·프로필), 섹션 제목(내 생각·눈여겨볼 표현), 다이얼로그·시트 제목, 카드 목록의 영어 제목 |
-| `headline-semibold` | 20 / 600 | 아카이브 저장한 표현 카드의 영어 표현 |
+| `headline` | 20 / 700 / 1.4, 자간 -0.02em | 앱 바 제목(crumbit·아카이브·프로필), 섹션 제목(내 생각), 다이얼로그·시트 제목, 카드 목록의 영어 제목 |
 | `body-lg` | 18 / 400 / 1.6 | 본문 영어 문장 |
-| `body-lg-semibold` | 18 / 600 | 툴팁·눈여겨볼 표현의 영어 표현 |
+| `body-lg-semibold` | 18 / 600 | 빈 상태 제목 |
 | `body-md` | 16 / 400 / 1.6 | 한글 제목, 원문 요약, 내 생각, 입력창, 다이얼로그 설명, 문장 코멘트 시트의 영어 문장 |
-| `body-md-semibold` | 16 / 600 | 표현의 한글 뜻, 구글 로그인 버튼 |
-| `body-sm` | 14 / 400 / 1.6 | 한글 문장 번역, 부연설명, 출처·발행일, helper text |
+| `body-md-semibold` | 16 / 600 | 구글 로그인 버튼, 빈 상태 버튼 |
+| `body-sm` | 14 / 400 / 1.6 | 한글 문장 번역, 안내 문구, 출처·발행일, helper text |
 | `label-md` | 14 / 500 | 버튼, 필터 칩, 코멘트 말풍선, 팝오버 메뉴, 토스트 |
 | `label-md-semibold` | 14 / 600 | 원문 요약 라벨, 아카이브의 원문 링크 |
 | `label-sm` | 12 / 500 | 주제 뱃지, 탭바 라벨, 저장 날짜 |
@@ -254,18 +239,18 @@ components:
 
 - **상단 고정:** 앱 바(높이 56px)와 필터 칩이 스크롤해도 위에 붙어 있다. 칩 영역 아래에는 12px의 흰 띠가 있어 카드가 그 밑으로 잘려 지나간다. 칩에서 첫 콘텐츠까지는 24px이다.
 - **하단 탭바:** 화면 아래에 떠 있는 알약(200×64px). 탭 하나는 88×48px, 아이콘 24px, 라벨 12px.
-- **구획 간격:** 아티클에서 큰 구획(내 생각, 눈여겨볼 표현) 사이는 80px(`3xl`), 다이얼로그 안 구획 사이는 24px(`xl`)이다.
+- **구획 간격:** 아티클에서 큰 구획(본문과 내 생각) 사이는 80px(`3xl`), 다이얼로그 안 구획 사이는 24px(`xl`)이다.
 - 큰 구획은 간격과 얇은 구분선(`border`)으로 나누고, 박스를 겹겹이 쌓지 않는다. 터치 대상은 높이 36px 이상을 지킨다(저장·닫기 같은 아이콘 버튼은 44px, 주요 행동 `button-accent`는 52px).
 
 ## Elevation & Depth
 
-그림자보다 **색 면과 구분선**으로 위계를 만든다. 흰 페이지 위에 연회색(`surface-muted`) 면을 올린다. 떠 있는 요소만 그림자를 쓴다: 탭바 `shadow-sm`, 툴팁 `shadow-lg`, 팝오버 메뉴·토스트는 큰 그림자 하나(`0 12px 28px`, 투명도 0.28). 팝업(Dialog)과 바텀 시트는 뒷배경을 어둡게 눌러서 분리한다. 그림자를 겹쳐 쓰지 않는다.
+그림자보다 **색 면과 구분선**으로 위계를 만든다. 흰 페이지 위에 연회색(`surface-muted`) 면을 올린다. 떠 있는 요소만 그림자를 쓴다: 탭바 `shadow-sm`, 팝오버 메뉴·토스트는 큰 그림자 하나(`0 12px 28px`, 투명도 0.28). 팝업(Dialog)과 바텀 시트는 뒷배경을 어둡게 눌러서 분리한다. 그림자를 겹쳐 쓰지 않는다.
 
 ## Shapes
 
-둥근 모서리가 기본이다. 버튼·필터 칩은 알약형(`full`), 카드는 `card`(16px), 입력창과 툴팁은 `xl`(14px), 주제 뱃지는 `md`(8px), 다이얼로그·바텀 시트·팝오버 메뉴·토스트·주요 행동 버튼은 `pill`(26px). 한 화면에서 둥근 정도가 다른 모양을 섞을 때는 용도(행동 요소 = 알약, 담는 그릇 = 카드)로만 구분한다.
+둥근 모서리가 기본이다. 버튼·필터 칩은 알약형(`full`), 카드는 `card`(16px), 입력창은 `xl`(14px), 주제 뱃지는 `md`(8px), 다이얼로그·바텀 시트·팝오버 메뉴·토스트·주요 행동 버튼은 `pill`(26px). 한 화면에서 둥근 정도가 다른 모양을 섞을 때는 용도(행동 요소 = 알약, 담는 그릇 = 카드)로만 구분한다.
 
-토큰에 없는 예외 두 가지: 하이라이트된 문장·표현의 배경(3px)과 코멘트 말풍선(왼쪽 위만 4px, 나머지 14px).
+토큰에 없는 예외 두 가지: 하이라이트된 문장의 배경(3px)과 코멘트 말풍선(왼쪽 위만 4px, 나머지 14px).
 
 ## Components
 
@@ -275,13 +260,12 @@ shadcn 컴포넌트는 `components/ui`에, 서비스 전용 조합은 `component
 - **Filter chip:** `Button`의 `default`(선택됨, 검정)와 `secondary`(선택 안 됨, 연회색). 가로로 스크롤되고 스크롤바는 숨긴다.
 - **Textarea:** 흰 배경, `border-strong` 테두리, `xl` 모서리. 포커스되면 바깥 링 없이 테두리만 `primary`로 바뀐다. placeholder는 `on-surface-muted`. 피드백·내 생각·코멘트 입력이 모두 이것을 쓴다.
 - **Badge:** 높이 28px, 좌우 12px, 모서리 8px, 연회색 배경의 주제 표시. 누르는 요소가 아니다.
-- **Card:** 연회색 면, 모서리 16px, 안 여백 14px. 하이라이트·코멘트·내 생각·저장한 표현·요약 카드가 모두 같은 모양이다. 카드 안 구분선은 `border-strong`.
+- **Card:** 연회색 면, 모서리 16px, 안 여백 14px. 하이라이트·코멘트·내 생각·요약 카드가 모두 같은 모양이다. 카드 안 구분선은 `border-strong`.
 - **Dialog:** 중앙 팝업(`ConfirmDeleteDialog`, 피드백). 제목과 닫기 버튼이 같은 줄에 있고(닫기는 오른쪽), 설명은 한 단계 약한 색, 구획 사이 24px. 삭제 확인은 "삭제할까요?" / "삭제하면 되돌릴 수 없어요." 문구로 통일하고 취소(왼쪽)·삭제(오른쪽, danger)를 한 줄에 둔다.
 - **Bottom sheet:** 하단에서 올라오는 시트(로그인, 코멘트). 위쪽 모서리 26px, 제목은 `headline`.
 - **Toggle:** 38×22px 알약, 손잡이 18px. 켜짐은 `primary`, 꺼짐은 `subtle`. 본문의 "번역 켜기"와 프로필의 "번역 항상 켜기"가 같은 컴포넌트를 쓴다.
 - **Progress bar:** 아티클 상단 고정 영역 아래 3px 막대. 트랙은 `border-strong`(읽은 부분의 라임과 대비를 주려고 한 단계 진하게), 읽은 만큼은 `accent`(라임).
 - **Tab bar:** 위 Layout 참고. 선택된 탭은 `primary`, 선택 안 된 탭은 `subtle`. 아카이브 아이콘은 북마크(채움), 탐색은 나침반.
-- **Tooltip:** 라임 배경, 검정 글자, `xl` 모서리. 영어 표현 `body-lg-semibold`, 뜻 `body-md-semibold`, 부연설명 `body-sm`(`on-surface-muted`).
 - **Popover menu:** 문장 위, 코멘트 말풍선 위에 뜨는 검정 알약 메뉴. 아이콘은 선(stroke) 형태이고 각 버튼 높이 48px.
 - **Excerpt gap marker:** 원문에서 건너뛴 자리에 문단 사이 가운데로 "- 중략 -"을 `label-sm`(12px) 이탤릭, `border-strong` 색으로 두고, 위아래 여백은 기본 문단 간격보다 8px씩 줄인다. 이어지는 문단 사이에는 두지 않고 여백만 쓴다.
 - **Empty state:** 카드 배경 없이 가운데 정렬. 제목 `body-lg-semibold`(18px/600), 필요한 경우에만 제목 아래 8px에 안내 `body-sm`(`on-surface-muted`), 그 아래 20px에 라임 "글 읽으러 가기" 버튼. 칩 아래 빈 영역의 가로·세로 가운데에 둔다.

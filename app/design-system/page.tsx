@@ -46,8 +46,7 @@ function Group({ label, children }: { label: string; children: React.ReactNode }
 
 const COLORS: [name: string, hex: string, token: string, hint: string][] = [
   ["primary", "#111111", "--ds-primary", "글자·기본 버튼"],
-  ["accent", "#D9F25C", "--ds-accent", "라임. 핵심 행동·하이라이트"],
-  ["accent-strong", "#C6E03E", "--ds-accent-strong", "선택된 라임"],
+  ["accent", "#D9F25C", "--ds-accent", "라임. 핵심 행동·진행 바"],
   ["accent-sub", "#E7E0FF", "--ds-accent-sub", "사용자 하이라이트"],
   ["accent-sub-strong", "#CBBCFF", "--ds-accent-sub-strong", "코멘트 말풍선"],
   ["surface", "#FFFFFF", "--ds-surface", "페이지·팝업"],
@@ -61,8 +60,7 @@ const COLORS: [name: string, hex: string, token: string, hint: string][] = [
 
 const TYPE: [name: string, cls: string, spec: string, sample: string][] = [
   ["display", "text-display font-bold tracking-display", "28 / 700 / 1.2", "Empty States Are a First Impression"],
-  ["headline", "text-headline font-bold tracking-headline", "20 / 700 / 1.4", "눈여겨볼 표현"],
-  ["headline-semibold", "text-headline font-semibold tracking-headline", "20 / 600 / 1.4", "drop off"],
+  ["headline", "text-headline font-bold tracking-headline", "20 / 700 / 1.4", "내 생각"],
   ["body-lg", "text-body-lg", "18 / 400 / 1.6", "Most teams treat an empty screen as an edge case."],
   ["body-lg-semibold", "text-body-lg font-semibold", "18 / 600 / 1.6", "left guessing"],
   ["body-md", "text-body-md", "16 / 400 / 1.6", "빈 화면은 오류가 아니라 첫인상이다"],

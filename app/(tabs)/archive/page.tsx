@@ -11,9 +11,9 @@ import { BUBBLE_CLASS } from "@/components/CommentBubble";
 import { ConfirmDeleteDialog } from "@/components/ConfirmDeleteDialog";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { IconBookmark, IconChevron, IconPen, IconTrash } from "@/components/icons";
+import { IconChevron, IconPen, IconTrash } from "@/components/icons";
 
-type Seg = "hl" | "notes" | "thoughts" | "saved" | "expr";
+type Seg = "hl" | "notes" | "thoughts" | "saved";
 
 /** Archive Filter Selected 의 filter 값 */
 const SEG_KEY: Record<Seg, string> = {
@@ -21,7 +21,6 @@ const SEG_KEY: Record<Seg, string> = {
   notes: "comments",
   thoughts: "thoughts",
   saved: "articles",
-  expr: "expressions",
 };
 
 type Item =
@@ -30,7 +29,7 @@ type Item =
   | { kind: "thought"; key: string; text: string; id: string; at: number };
 
 export default function ArchivePage() {
-  const { ready, notes, hl, savedA, savedX, removeNote, editNote, toggleHl, toggleX } = useStore();
+  const { ready, notes, hl, savedA, removeNote, editNote, toggleHl } = useStore();
   const [seg, setSeg] = useState<Seg>("hl");
   const [del, setDel] = useState<Item | null>(null);
 
@@ -72,7 +71,6 @@ export default function ArchivePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready, seg]);
   const savedArts = lib.arts.filter((a) => (snap ? snap.includes(a.id) : savedA[a.id]));
-  const savedExprs = lib.exprList.filter((x) => savedX[x.id]);
   const groups = seg === "notes" ? commentGroups : seg === "thoughts" ? thoughtGroups : hlGroups;
 
   const tabs: [Seg, string][] = [
@@ -80,7 +78,6 @@ export default function ArchivePage() {
     ["notes", "코멘트"],
     ["thoughts", "내 생각"],
     ["saved", "아티클"],
-    ["expr", "표현"],
   ];
 
   return (
@@ -114,60 +111,6 @@ export default function ArchivePage() {
         )}
         {seg === "saved" && ready && savedArts.length === 0 && (
           <Empty title="아직 저장한 아티클이 없어요" />
-        )}
-
-        {seg === "expr" && ready && savedExprs.length === 0 && (
-          <Empty title="아직 저장한 표현이 없어요" />
-        )}
-
-        {seg === "expr" && savedExprs.length > 0 && (
-          <ul className="m-0 flex list-none flex-col gap-4 p-0">
-            {savedExprs.map((x, i) => (
-            <li key={x.id} className="flex flex-col gap-2 rounded-card bg-surface-muted pt-3.5 pr-1.5 pb-1 pl-4">
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex flex-col items-start pt-1">
-                  <span lang="en" className="text-headline font-semibold tracking-headline">
-                    {x.term}
-                  </span>
-                  <span className="mt-0.5 text-body-md font-semibold">{x.meaning}</span>
-                </div>
-                <button
-                  onClick={() => toggleX(x.id)}
-                  aria-label="표현 저장 해제"
-                  aria-pressed="true"
-                  className="-mt-1 flex size-11 shrink-0 items-center justify-center border-0 bg-transparent text-on-surface"
-                >
-                  <IconBookmark filled />
-                </button>
-              </div>
-              <p className="m-0 mr-2.5 text-body-sm text-on-surface-muted">{x.note}</p>
-              {x.ctx && (
-                <div className="mt-2 mr-2.5 flex flex-col gap-1 border-t border-border-strong pt-4">
-                  <p lang="en" className="m-0 text-body-md">
-                    {x.ctx.segs.map((g, gi) =>
-                      g.xid === x.id ? (
-                        <span key={gi} className="rounded bg-lime px-[3px] text-on-surface">
-                          {g.t}
-                        </span>
-                      ) : (
-                        <span key={gi}>{g.t}</span>
-                      ),
-                    )}
-                  </p>
-                  <p className="m-0 text-body-sm text-on-surface-muted">{x.ctx.ko}</p>
-                </div>
-              )}
-              <Link
-                href={`/contents/${x.aid}`}
-                onClick={() => track("Article Opened", { ...articleProps(x.aid), entry_point: "expressions", position: i })}
-                className="mr-2.5 flex min-h-11 items-center justify-between gap-2 text-label-md font-semibold text-on-surface no-underline"
-              >
-                <span lang="en">{lib.byId[x.aid].titleEn}</span>
-                <IconChevron size={16} />
-              </Link>
-            </li>
-          ))}
-          </ul>
         )}
 
         {(seg === "hl" || seg === "notes" || seg === "thoughts") && groups.length > 0 && (

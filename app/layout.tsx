@@ -10,7 +10,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "crumbit",
-  description: "해외 프로덕트·UX 디자인 글을 한국어 요약과 영어 원문 병기로 읽고, 표현과 생각을 기록하세요.",
+  description: "해외 프로덕트·UX 디자인 글을 한국어 요약과 영어 원문 병기로 읽고, 내 생각을 기록하세요.",
 };
 
 export const viewport: Viewport = {

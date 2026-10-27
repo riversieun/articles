@@ -16,3 +16,6 @@ design-history/
 
 # 아티클 발췌 원문 자료 (GitHub에 올리지 않음)
 article-material/
+
+# Supabase 로그 내보내기 파일 (접속 IP 등이 들어 있어 GitHub에 올리지 않음)
+supabase/*.json

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { articleProps, track } from "@/lib/analytics";
 import { SOURCE_LABEL, TOPIC_LABEL, formatTimestamp, lib } from "@/lib/content";
+import { goBackInApp } from "@/lib/nav";
 import { useStore } from "@/lib/store";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -16,7 +17,6 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   IconBack,
   IconBookmark,
-  IconClose,
   IconComment,
   IconHighlighter,
   IconPen,
@@ -24,10 +24,7 @@ import {
   IconTrash,
 } from "./icons";
 
-const TIP_W = 268;
 const COMPLETE_AT = 90; // 완독 기준: 본문 영역 스크롤 90% (PRD F-41의 95%에서 변경)
-
-type Tip = { sid: string; xid: string; top: number; left: number; arrow: number };
 
 const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n));
 
@@ -38,20 +35,17 @@ export function Reader({ aid }: { aid: string }) {
     showKo,
     hl,
     notes,
-    savedX,
     savedA,
     toggleKo,
     toggleHl,
     openComment,
     editNote,
-    toggleX,
     toggleA,
     addThought,
     removeNote,
   } = useStore();
 
   const [progress, setProgress] = useState(0);
-  const [tip, setTip] = useState<Tip | null>(null);
   const [menu, setMenu] = useState("");
   const [thought, setThought] = useState("");
   const [delId, setDelId] = useState("");
@@ -123,56 +117,26 @@ export function Reader({ aid }: { aid: string }) {
     };
   }, [aid]);
 
-  // 툴팁/메뉴 바깥을 누르면 닫기
+  // 메뉴 바깥을 누르면 닫기
   useEffect(() => {
-    if (!tip && !menu) return;
+    if (!menu) return;
     const onDown = (e: PointerEvent) => {
       const t = e.target as Element | null;
       if (t && t.closest("[data-sent]")) return;
-      setTip(null);
       setMenu("");
     };
     document.addEventListener("pointerdown", onDown);
     return () => document.removeEventListener("pointerdown", onDown);
-  }, [tip, menu]);
+  }, [menu]);
 
-  const goBack = () => {
-    if (window.history.length > 1) router.back();
-    else router.push("/");
-  };
-
-  const openTip = (sid: string, xid: string, e: React.MouseEvent<HTMLButtonElement>) => {
-    if (tip && tip.sid === sid && tip.xid === xid) {
-      setTip(null);
-      return;
-    }
-    track("Expression Tooltip Opened", { ...articleProps(aid), expression_id: xid });
-    const btn = e.currentTarget;
-    const block = btn.closest<HTMLElement>("[data-sent]");
-    let top = 44;
-    let cx = 120;
-    let bw = 370;
-    if (block) {
-      const b = btn.getBoundingClientRect();
-      const r = block.getBoundingClientRect();
-      top = b.bottom - r.top + 12;
-      cx = b.left - r.left + b.width / 2;
-      bw = r.width;
-    }
-    const left = clamp(cx - TIP_W / 2, 4, bw - TIP_W - 4);
-    const arrow = clamp(cx - left - 6, 16, TIP_W - 28);
-    setTip({ sid, xid, top, left, arrow });
-    setMenu("");
-  };
+  const goBack = () => goBackInApp(router);
 
   const tapComment = (nid: string) => {
-    setTip(null);
     setMenu((m) => (m === `c-${nid}` ? "" : `c-${nid}`));
   };
 
   const tapSentence = (sid: string) => {
     if (menu !== sid) track("Sentence Action Sheet Opened", { article_id: aid, sentence_id: sid });
-    setTip(null);
     setMenu((m) => (m === sid ? "" : sid));
   };
 
@@ -199,7 +163,6 @@ export function Reader({ aid }: { aid: string }) {
             role="switch"
             aria-checked={showKo}
             onClick={() => {
-              setTip(null);
               setMenu("");
               toggleKo(aid);
             }}
@@ -286,10 +249,8 @@ export function Reader({ aid }: { aid: string }) {
             ) : (
             <div key={pi} className="flex flex-col gap-1">
               {b.sentences.map((st) => {
-                const tipOpen = tip?.sid === st.id;
                 const menuOpen = menu === st.id;
                 const isHl = !!hl[st.id];
-                const x = tipOpen && tip ? lib.expr[tip.xid] : null;
                 const comments = notes.filter((n) => n.sid === st.id);
                 const activeComment = comments.find((n) => menu === `c-${n.id}`);
 
@@ -298,7 +259,7 @@ export function Reader({ aid }: { aid: string }) {
                     key={st.id}
                     data-sent={st.id}
                     className={`relative -mx-2.5 rounded-lg px-2.5 py-[9px] ${
-                      tipOpen || menuOpen || activeComment ? "z-[5]" : "z-[1]"
+                      menuOpen || activeComment ? "z-[5]" : "z-[1]"
                     }`}
                   >
                     <button
@@ -316,23 +277,7 @@ export function Reader({ aid }: { aid: string }) {
                           isHl ? "bg-accent-sub" : menuOpen ? "bg-surface-muted" : ""
                         }`}
                       >
-                      {st.segs.map((g, gi) =>
-                        g.xid ? (
-                          <button
-                            key={gi}
-                            onClick={(e) => openTip(st.id, g.xid, e)}
-                            aria-expanded={tipOpen && tip?.xid === g.xid}
-                            className={`pointer-events-auto relative m-0 inline rounded border-0 px-[3px] leading-[1.3] ${
-                              tipOpen && tip?.xid === g.xid ? "bg-accent-strong text-on-accent" : "bg-lime text-on-surface"
-                            }`}
-                            style={{ font: "inherit" }}
-                          >
-                            {g.t}
-                          </button>
-                        ) : (
-                          <span key={gi}>{g.t}</span>
-                        ),
-                      )}
+                      {st.plain}
                       </span>
                     </p>
 
@@ -359,34 +304,6 @@ export function Reader({ aid }: { aid: string }) {
                         }}
                       />
                     ))}
-
-                    {tipOpen && tip && x && (
-                      <div
-                        role="status"
-                        className="pop absolute z-[3] box-border rounded-xl bg-lime pt-3.5 pr-1 pb-3.5 pl-4 text-on-accent shadow-lg"
-                        style={{ top: tip.top, left: tip.left, width: TIP_W }}
-                      >
-                        <span
-                          aria-hidden="true"
-                          className="absolute -top-[5px] block size-[11px] rotate-45 bg-lime"
-                          style={{ left: tip.arrow }}
-                        />
-                        <div className="flex items-center justify-between gap-2">
-                          <div lang="en" className="text-body-lg font-semibold text-on-accent">
-                            {x.term}
-                          </div>
-                          <button
-                            onClick={() => setTip(null)}
-                            aria-label="뜻 닫기"
-                            className="-my-2.5 flex size-11 shrink-0 items-center justify-center border-0 bg-transparent text-on-accent"
-                          >
-                            <IconClose size={17} />
-                          </button>
-                        </div>
-                        <div className="mt-0.5 mr-3 text-body-md font-semibold">{x.meaning}</div>
-                        <div className="mt-2 mr-3 text-body-sm text-on-surface-muted">{x.note}</div>
-                      </div>
-                    )}
 
                     {menuOpen && (
                       <div className="pop pointer-events-none absolute inset-x-0 bottom-full z-[3] -mb-1 flex justify-center">
@@ -482,42 +399,6 @@ export function Reader({ aid }: { aid: string }) {
               </Button>
             </div>
           </div>
-        </section>
-
-        <section className="mt-20 flex flex-col">
-
-          <div className="flex items-center justify-between gap-3">
-            <h2 className="m-0 text-headline font-bold tracking-headline">눈여겨볼 표현</h2>
-          </div>
-          <ul className="mx-0 mt-1 mb-0 flex list-none flex-col p-0">
-            {art.xs.map((x) => {
-              const on = !!savedX[x.id];
-              return (
-                <li key={x.id} className="flex flex-col border-b border-border py-5 last:border-b-0">
-                  <div className="flex items-start justify-between gap-2">
-                    <span
-                      lang="en"
-                      className="text-body-lg font-semibold"
-                    >
-                      {x.term}
-                    </span>
-                    <button
-                      onClick={() => toggleX(x.id)}
-                      aria-label={on ? "표현 저장 해제" : "표현 저장"}
-                      aria-pressed={on}
-                      className={`-mt-2.5 -mr-2.5 -mb-2.5 flex size-11 shrink-0 items-center justify-center border-0 bg-transparent ${
-                        on ? "text-on-surface" : "text-on-surface-muted"
-                      }`}
-                    >
-                      <IconBookmark filled={on} />
-                    </button>
-                  </div>
-                  <span className="mt-0.5 text-body-md font-semibold">{x.meaning}</span>
-                  <span className="mt-2 text-body-sm text-on-surface-muted">{x.note}</span>
-                </li>
-              );
-            })}
-          </ul>
         </section>
       </article>
 

@@ -7,7 +7,6 @@
   --color-on-primary: #ffffff;
   --color-accent: #d9f25c;
   --color-on-accent: #111111;
-  --color-accent-strong: #c6e03e;
   --color-accent-sub: #e7e0ff;
   --color-accent-sub-strong: #cbbcff;
   --color-surface: #ffffff;
@@ -25,7 +24,6 @@
   --font-body-lg: "Pretendard Variable";
   --font-body-md: "Pretendard Variable";
   --font-body-sm: "Pretendard Variable";
-  --font-headline-semibold: "Pretendard Variable";
   --font-body-lg-semibold: "Pretendard Variable";
   --font-body-md-semibold: "Pretendard Variable";
   --font-label-md-semibold: "Pretendard Variable";
@@ -41,7 +39,6 @@
   --text-body-md--line-height: 1.6;
   --text-body-sm: 14px;
   --text-body-sm--line-height: 1.6;
-  --text-headline-semibold: 20px;
   --text-body-lg-semibold: 18px;
   --text-body-md-semibold: 16px;
   --text-label-md-semibold: 14px;
@@ -49,13 +46,11 @@
   --text-label-sm: 12px;
   --tracking-display: -0.03em;
   --tracking-headline: -0.02em;
-  --tracking-headline-semibold: -0.02em;
   --font-weight-display: 700;
   --font-weight-headline: 700;
   --font-weight-body-lg: 400;
   --font-weight-body-md: 400;
   --font-weight-body-sm: 400;
-  --font-weight-headline-semibold: 600;
   --font-weight-body-lg-semibold: 600;
   --font-weight-body-md-semibold: 600;
   --font-weight-label-md-semibold: 600;
