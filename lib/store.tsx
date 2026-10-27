@@ -101,14 +101,19 @@ const ssSet = (k: string, v: string | null) => {
   }
 };
 
-export type PromptReason = "manual" | "comment";
+export type PromptReason = "manual" | "comment" | "highlight" | "save" | "thought";
 /** 자동으로 뜬 "기록 백업" 제안의 분석용 trigger 값 */
-const PROMPT_TRIGGER = { comment: "first_comment" } as const;
+const PROMPT_TRIGGER = {
+  comment: "first_comment",
+  highlight: "first_highlight",
+  save: "first_save",
+  thought: "first_thought",
+} as const;
 export type Sheet =
   | { type: "login"; reason: PromptReason; trigger: LoginTrigger }
   | { type: "comment"; sid: string; editId: string }
   /** 앱 안 브라우저(카카오톡·인스타그램 등)라 구글 로그인이 막혀 있을 때 기본 브라우저로 옮기도록 안내 */
-  | { type: "inapp"; app: string; reason: "manual" | "comment" }
+  | { type: "inapp"; app: string; reason: "manual" | "record" }
   | null;
 
 type Ctx = Persisted & {
@@ -309,13 +314,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   /** 게스트에게 가치가 쌓인 시점에 한 번만 "기록 백업"을 제안한다. (PRD F-72) */
   const maybePrompt = useCallback(
     (next: Persisted, key: Exclude<PromptReason, "manual">): Persisted => {
-      if (!loginEnabled || next.loggedIn || next.prompted[key]) return next;
+      // 기록이 남는 첫 행동(코멘트·하이라이트·글 저장·내 생각) 직후에 한 번만. 예전에 "comment"로 이미 보여 준 기기도 건너뛴다.
+      if (!loginEnabled || next.loggedIn || next.prompted.record || next.prompted.comment) return next;
       track("Backup Prompt Shown", { trigger: PROMPT_TRIGGER[key] });
-      // 앱 안 브라우저에서는 구글 로그인이 막혀 있어서, 로그인 시트 대신 기본 브라우저로 옮기도록 안내한다.
+      // 앱 안 브라우저에서는 구글 로그인이 막혀 있어서, 로그인 시트 대신 외부 브라우저로 옮기도록 안내한다.
       const app = inAppBrowserName();
-      if (app) setSheet({ type: "inapp", app, reason: key });
+      if (app) setSheet({ type: "inapp", app, reason: "record" });
       else setSheet({ type: "login", reason: key, trigger: "backup_prompt" });
-      return { ...next, prompted: { ...next.prompted, [key]: true } };
+      return { ...next, prompted: { ...next.prompted, record: true } };
     },
     [],
   );
@@ -424,7 +430,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         track("Highlight Toggled", { article_id: aid, on });
         if (on) hl[sid] = true;
         else delete hl[sid];
-        commit({ ...ref.current, hl });
+        const next: Persisted = { ...ref.current, hl };
+        commit(on ? maybePrompt(next, "highlight") : next);
         send({ t: "hl", sid, aid, on });
       },
       openComment: (sid) => setSheet({ type: "comment", sid, editId: "" }),
@@ -449,12 +456,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         if (!t) return;
         const cur = ref.current;
         const note: Note = { id: newId(), aid: lib.sent[sid].aid, sid, text: t, at: Date.now() };
-        const first = !cur.notes.some((n) => n.sid);
         track("Comment Saved", { article_id: note.aid });
         setSheet(null);
         let next: Persisted = { ...cur, notes: [...cur.notes, note] };
         showToast("코멘트를 남겼어요. 글 아래 내 생각에 모여요");
-        if (first) next = maybePrompt(next, "comment");
+        next = maybePrompt(next, "comment");
         commit(next);
         send({ t: "note", note });
       },
@@ -464,7 +470,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         const cur = ref.current;
         track("Thought Added", { article_id: aid });
         const note: Note = { id: newId(), aid, sid: "", text: t, at: Date.now() };
-        commit({ ...cur, notes: [...cur.notes, note] });
+        commit(maybePrompt({ ...cur, notes: [...cur.notes, note] }, "thought"));
         send({ t: "note", note });
         showToast("생각을 남겼어요. 아카이브에서 다시 볼 수 있어요");
       },
@@ -483,7 +489,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         track("Article Saved Toggled", { article_id: aid, on });
         if (on) savedA[aid] = true;
         else delete savedA[aid];
-        commit({ ...ref.current, savedA });
+        const next: Persisted = { ...ref.current, savedA };
+        commit(on ? maybePrompt(next, "save") : next);
         send({ t: "saved", aid, on });
         if (on) showToast("글을 저장했어요. 아카이브에서 볼 수 있어요");
       },

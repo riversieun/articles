@@ -26,3 +26,5 @@ UI 작업 전에 반드시 DESIGN.md를 먼저 읽을 것.
 ### 배포 전
 - `npm run build`가 통과해야 한다. `lint`·`test` 스크립트는 아직 없다(M1 예정).
 - `data/raw.ts`의 번역·요약이 운영자 검수를 마쳤는지, 발췌 분량과 출처 표기가 맞는지 확인한다.
+- 구글 로그인 노출은 환경변수 `NEXT_PUBLIC_LOGIN_ENABLED`(`false`면 숨김)로 정한다. Vercel Production 값이 의도와 맞는지 확인하고, 값은 빌드 때 박히므로 바꾸면 다시 배포한다. (설명: `docs/supabase-설정.md` 4-1)
+- 앱 안 브라우저 안내 시트는 개발 서버에서 주소에 `?inapp=1`을 붙여 확인한다. 배포 빌드에는 들어가지 않는다.
