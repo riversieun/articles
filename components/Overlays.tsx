@@ -6,6 +6,7 @@ import { lib } from "@/lib/content";
 import { useStore, type PromptReason } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { canOpenExternal, copyLink, openExternal } from "@/lib/inapp";
 import { GoogleLoginButton } from "./GoogleLoginButton";
 
 const COPY: Record<PromptReason, { title: string; body: string }> = {
@@ -19,9 +20,20 @@ const COPY: Record<PromptReason, { title: string; body: string }> = {
   },
 };
 
-/** 하단 시트(로그인·코멘트)와 토스트. 앱 폭(430px)에 맞춰 고정 배치한다. */
+const INAPP_COPY = {
+  manual: {
+    title: "외부 브라우저에서\n열어주세요",
+    body: "앱 안에서는 구글 로그인이 불가해요. Safari나 Chrome 같은 외부 브라우저에서 열어주세요.",
+  },
+  comment: {
+    title: "기록을 잃어버리지 않게\n외부 브라우저에서 열어주세요",
+    body: "앱 안에서는 구글 로그인이 불가해요. Safari나 Chrome 같은 외부 브라우저에서 열어 로그인하면 기록이 계속 보관돼요.",
+  },
+} as const;
+
+/** 하단 시트(로그인·코멘트·앱 안 브라우저 안내)와 토스트. 앱 폭(430px)에 맞춰 고정 배치한다. */
 export function Overlays() {
-  const { sheet, closeSheet, login, saveComment, updateNote, notes, toast } = useStore();
+  const { sheet, closeSheet, login, saveComment, updateNote, notes, toast, showToast } = useStore();
   const pathname = usePathname();
   const [draft, setDraft] = useState("");
   const hasTabBar = ["/", "/archive"].includes(pathname);
@@ -48,6 +60,33 @@ export function Overlays() {
           </h2>
           <p className="m-0 text-body-md text-on-surface-muted">{COPY[sheet.reason].body}</p>
           <GoogleLoginButton onClick={() => login()} className="mt-3" />
+          <button onClick={closeSheet} className="h-12 border-0 bg-transparent text-label-md font-medium text-on-surface-muted">
+            나중에 할게요
+          </button>
+        </Sheet>
+      )}
+
+      {sheet?.type === "inapp" && (
+        <Sheet onClose={closeSheet} labelledBy="inapp-title">
+          <h2 id="inapp-title" className="m-0 text-headline font-bold tracking-headline whitespace-pre-line">
+            {INAPP_COPY[sheet.reason].title}
+          </h2>
+          <p className="m-0 text-body-md text-on-surface-muted">{INAPP_COPY[sheet.reason].body}</p>
+          {canOpenExternal(sheet.app) && (
+            <Button variant="accent" size="lg" onClick={openExternal} className="mt-3 h-12">
+              외부 브라우저로 열기
+            </Button>
+          )}
+          <Button
+            variant={canOpenExternal(sheet.app) ? "outline" : "accent"}
+            size="lg"
+            onClick={async () => {
+              if (await copyLink()) showToast("링크를 복사했어요. Safari나 Chrome에 붙여넣어 주세요");
+            }}
+            className={canOpenExternal(sheet.app) ? "h-12" : "mt-3 h-12"}
+          >
+            링크 복사하기
+          </Button>
           <button onClick={closeSheet} className="h-12 border-0 bg-transparent text-label-md font-medium text-on-surface-muted">
             나중에 할게요
           </button>
