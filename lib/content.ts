@@ -1,5 +1,5 @@
 import { RAW } from "@/data/raw";
-import type { Article, Block, Sentence, SourceKey } from "./types";
+import type { Article, Block, Sentence, SourceKey, TopicKey } from "./types";
 
 /** 제목에서 소문자로 두는 짧은 관사·접속사·전치사 (맨 앞·맨 뒤 단어는 예외) */
 const MINOR_WORDS = new Set(["a", "an", "the", "and", "but", "or", "nor", "for", "so", "yet", "as", "at", "by", "in", "of", "on", "per", "to", "up", "via", "vs"]);
@@ -60,6 +60,9 @@ function parse() {
       titleKo: r.titleKo,
       titleEn: toTitleCase(r.titleEn),
       summary: r.summary,
+      insights: r.insights ?? [],
+      quotes: r.quotes ?? [],
+      actions: r.actions ?? [],
       paras,
       blocks,
       min: Math.max(1, Math.ceil(words / 70)),
@@ -72,12 +75,13 @@ function parse() {
 
 export const lib = parse();
 
-export const TOPICS: [key: string, label: string][] = [
-  ["all", "전체"],
-  ["process", "디자인 프로세스"],
-  ["collab", "협업"],
+/** 주제 필터 칩 순서(Paper 디자인). 홈은 이 순서 그대로, 탐색은 맨 앞에 "최신"을 붙인다. */
+export const TOPICS: [key: TopicKey, label: string][] = [
   ["ux", "UX 원칙"],
   ["system", "디자인 시스템"],
+  ["collab", "협업"],
+  ["process", "프로세스"],
+  ["mindset", "마인드셋"],
 ];
 
 export const TOPIC_LABEL: Record<string, string> = Object.fromEntries(TOPICS);

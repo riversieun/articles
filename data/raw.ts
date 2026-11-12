@@ -9,6 +9,40 @@ export const RAW: RawArticle[] = [
     titleKo: '누구나 만들 수 있을 때, 무엇이 중요한가',
     titleEn: 'What matters when anyone can build',
     summary: 'AI가 누구나 프로덕트를 만드는 사람으로 만들어 준다면, 진짜 경쟁력은 무엇을 출시할 가치가 있는지 아는 것입니다.',
+    // 아티클 상세(요약형)용. 인사이트·적용 아이디어는 AI 초안이며 운영자 검수 전. 인용은 아래 paras의 문장을 그대로 옮겼다.
+    insights: [
+      {
+        title: '처음 떠오른 아이디어에 매달리면 놓치는 것이 많습니다.',
+        body: '가능성의 영역은 넓습니다. 하나만 고르기보다 서로 다른 여러 방향을 동시에 탐색하고, 각각을 처음부터 끝까지 이어지는 경험으로 구체화해야 올바른 아이디어를 찾을 수 있습니다.',
+      },
+      {
+        title: '“이 정도면 충분하다”가 가장 위험한 기준이 됩니다.',
+        body: '누구나 빠르게 만들 수 있는 시대에는 결과물이 평범한 쪽으로 쏠립니다. 기억에 남는 것과 기능만 하는 것을 가르는 것은 craft이고, 그것은 받아들이는 일이 아니라 선택하는 일입니다.',
+      },
+      {
+        title: '속도, 방향, craft는 맞바꾸는 것이 아닙니다.',
+        body: '최고의 팀은 빠르게 움직이고, 신중하게 선택하고, 끈질기게 다듬습니다. 무엇이든 만들 수 있다면 유일한 우위는 무엇을 선택하고 얼마나 잘 빚어내느냐입니다.',
+      },
+    ],
+    quotes: [
+      {
+        en: 'The better way, the way you actually find the right idea, is to go broad and deep at the same time.',
+        ko: '더 나은 방법, 즉 올바른 아이디어를 실제로 찾는 방법은 넓게, 그리고 동시에 깊게 파고드는 것입니다.',
+      },
+      {
+        en: 'But craft is what separates the memorable from the merely functional.',
+        ko: '하지만 기억에 남는 것과 그저 기능만 하는 것을 가르는 것은 craft입니다.',
+      },
+      {
+        en: 'Because when anything can be built, the only edge is in what you choose and how well you shape it.',
+        ko: '무엇이든 만들 수 있는 시대에는, 유일한 우위가 무엇을 선택하고 그것을 얼마나 잘 빚어내는가에 있기 때문입니다.',
+      },
+    ],
+    actions: [
+      '지금 만들고 있는 기능에서 처음 떠올린 방향 말고, 전혀 다른 방향 두 가지를 더 스케치해 보기',
+      '최근 출시한 결과물 중 “이 정도면 충분하다”며 넘어간 부분을 하나 골라 다시 다듬어 보기',
+      '다음 회고에서 속도, 방향, craft 중 가장 부족한 하나를 팀과 함께 점검해 보기',
+    ],
     paras: [
       { h: ['Choosing what’s worth building', '무엇을 만들 가치가 있는지 고르기'] },
       [

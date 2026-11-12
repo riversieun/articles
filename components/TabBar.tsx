@@ -2,15 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { RiCompassFill } from "@remixicon/react";
+import { RiCompassFill, RiHomeFill } from "@remixicon/react";
 import { IconBookmark } from "./icons";
 
 const TABS = [
-  { href: "/", label: "탐색", icon: <RiCompassFill className="size-6" aria-hidden="true" /> },
+  { href: "/", label: "홈", icon: <RiHomeFill className="size-6" aria-hidden="true" /> },
+  { href: "/explore", label: "탐색", icon: <RiCompassFill className="size-6" aria-hidden="true" /> },
   { href: "/archive", label: "아카이브", icon: <IconBookmark filled size={24} /> },
 ];
 
-/** 화면 하단에 떠 있는 흰색 탭바. 채움 아이콘 위, 레이블 아래. 선택하면 primary, 아니면 subtle. */
+/** 화면 하단에 떠 있는 흰색 탭바(홈·탐색·아카이브). 채움 아이콘 위, 레이블 아래. 선택하면 primary, 아니면 subtle. */
 export function TabBar() {
   const pathname = usePathname();
   return (

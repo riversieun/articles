@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ProfileAvatar } from "./ProfileAvatar";
-import { IconAvatar } from "./icons";
+import { IconAvatar, IconSparkle } from "./icons";
 import { useStore } from "@/lib/store";
 
 const TITLES: Record<string, string> = {
@@ -12,7 +12,7 @@ const TITLES: Record<string, string> = {
 
 /**
  * 탭 화면 공통 상단 바.
- * 탐색 탭: 서비스명(로고 자리) + 로그인 버튼 → 로그인 후 프로필.
+ * 홈·탐색 탭: 서비스 로고(초록 별 포함) + 프로필 아이콘.
  * 그 밖의 탭: 왼쪽에 페이지 타이틀만.
  */
 export function AppBar() {
@@ -28,13 +28,14 @@ export function AppBar() {
   }
 
   return (
-    <div className="sticky top-0 z-30 flex h-14 items-center justify-between bg-surface px-5">
+    <div className="sticky top-0 z-30 flex h-12 items-center justify-between bg-surface pr-4 pl-6">
       <Link
         href="/"
         aria-label="crumbit 홈"
-        className="text-headline font-bold tracking-headline text-on-surface no-underline"
+        className="relative text-headline font-bold tracking-headline text-pd-ink no-underline"
       >
         crumbit
+        <IconSparkle size={12} className="absolute -top-0.5 -right-3 text-brand" />
       </Link>
 
       {/* ready 전에는 자리만 확보해 로그인 ↔ 프로필 깜빡임을 막는다 */}

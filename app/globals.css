@@ -4,7 +4,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* 디자인 시안(claude_design_prototype2 · D3 라임 프라이머리)의 토큰 */
+/* 디자인 시안(claude_design_prototype2)의 토큰 */
 @theme {
   --color-ink: #111111;
   --color-paper: #ffffff;
@@ -15,11 +15,25 @@
   --color-sub: #5f5f66;
   --color-off: #8e8e96;
   --color-tip: #c9ced6;
-  --color-lime: #d9f25c;
   --color-lilac: #e7e0ff;
   --color-lilac-strong: #cbbcff;
 
   --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  /* 원문 인용(영어 이탤릭)에만 쓰는 글꼴. Paper 디자인 기준 */
+  --font-quote: "Roboto", "Pretendard Variable", Pretendard, system-ui, sans-serif;
+
+  /*
+   * Paper 리디자인(redesign-v2)에서 그대로 가져온 값. 기존 토큰과 한두 단계 차이라서 우선 디자인 값 그대로 쓰고,
+   * 기존 토큰으로 합칠지는 색 정리표를 본 뒤에 정한다. 합치면 pd-* 이름만 바꾸면 된다.
+   */
+  --color-pd-ink: #0b0b0f; /* 본문·제목 글자 (기존 on-surface #111111) */
+  --color-pd-ink-muted: #5e5e66; /* 부제·날짜 (기존 on-surface-muted #5f5f66) */
+  --color-pd-ink-soft: #3a3a42; /* 인용 번역·보조 버튼 글자 */
+  --color-pd-ink-quiet: #77778d; /* 요약 카드 라벨 */
+  --color-pd-icon: #272727; /* 상단 바 저장 아이콘 */
+  --color-pd-line: #e6e6ea; /* 구분선·테두리 (기존 border #e7e7ea) */
+  --color-pd-dot: #c6c6cf; /* 출처와 날짜 사이 점 */
+  --color-pd-tint: #f9f9f9; /* 아티클 상세 머리 배경 */
 }
 
 @layer base {
@@ -113,6 +127,11 @@
 
 @theme inline {
   /* DESIGN.md 토큰 중 shadcn과 이름이 겹치지 않는 것만 Tailwind 클래스로 연다 (bg-surface, text-on-surface-muted, bg-danger 등) */
+  /* 브랜드 초록 (예전 라임 자리). bg-brand, text-brand-strong, bg-brand-tint, border-brand-soft */
+  --color-brand: var(--ds-accent);
+  --color-brand-strong: var(--ds-accent-strong);
+  --color-brand-tint: var(--ds-accent-tint);
+  --color-brand-soft: var(--ds-accent-soft);
   --color-on-accent: var(--ds-on-accent);
   --color-accent-sub: var(--ds-accent-sub);
   --color-accent-sub-strong: var(--ds-accent-sub-strong);
@@ -139,10 +158,19 @@
   --text-body-sm--line-height: 1.6;
   --text-label-md: 14px;
   --text-label-sm: 12px;
+  /* Paper 리디자인: 아티클 제목(24/30), 섹션 제목(22/28), 카드·인사이트 제목(18/26) */
+  --text-title: 24px;
+  --text-title--line-height: 30px;
+  --text-heading: 22px;
+  --text-heading--line-height: 28px;
+  --text-title-sm: 18px;
+  --text-title-sm--line-height: 26px;
   --tracking-display: -0.03em;
   --tracking-headline: -0.02em;
+  --tracking-body: -0.01em;
   --radius-card: 16px;
   --radius-pill: 26px;
+  --radius-panel: 12px;
   /* --font-sans는 위 @theme(Pretendard Variable)을 그대로 쓴다. 프리셋의 자기 참조 선언은 순환이라 제거. */
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -193,7 +221,10 @@
 :root {
   --ds-primary: #111111;
   --ds-on-primary: #ffffff;
-  --ds-accent: #d9f25c; /* 라임. Tailwind에서는 기존 bg-lime / text-lime. shadcn의 --accent(호버 배경)와 다른 값이므로 섞지 않는다. */
+  --ds-accent: #00d866; /* 브랜드 초록(예전 라임 #d9f25c 자리). Tailwind에서는 bg-brand / text-brand. shadcn의 --accent(호버 배경)와 다른 값이므로 섞지 않는다. */
+  --ds-accent-strong: #01a850; /* 연한 초록 면 위의 글자 */
+  --ds-accent-tint: #daf7df; /* 주제 뱃지 배경 */
+  --ds-accent-soft: #9ce4ab; /* 번호·인용선·불릿 같은 장식 */
   --ds-on-accent: #111111;
   --ds-accent-sub: #e7e0ff;
   --ds-accent-sub-strong: #cbbcff;

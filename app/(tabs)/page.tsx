@@ -1,10 +1,5 @@
-import { Suspense } from "react";
-import { Feed } from "@/components/Feed";
+import { Home } from "@/components/Home";
 
 export default function HomePage() {
-  return (
-    <Suspense>
-      <Feed />
-    </Suspense>
-  );
+  return <Home />;
 }

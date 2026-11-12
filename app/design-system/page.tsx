@@ -46,7 +46,7 @@ function Group({ label, children }: { label: string; children: React.ReactNode }
 
 const COLORS: [name: string, hex: string, token: string, hint: string][] = [
   ["primary", "#111111", "--ds-primary", "글자·기본 버튼"],
-  ["accent", "#D9F25C", "--ds-accent", "라임. 핵심 행동·진행 바"],
+  ["accent", "#00D866", "--ds-accent", "브랜드 초록. 저장·진행 바·핵심 행동"],
   ["accent-sub", "#E7E0FF", "--ds-accent-sub", "사용자 하이라이트"],
   ["accent-sub-strong", "#CBBCFF", "--ds-accent-sub-strong", "코멘트 말풍선"],
   ["surface", "#FFFFFF", "--ds-surface", "페이지·팝업"],

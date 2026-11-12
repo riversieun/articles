@@ -45,6 +45,8 @@ type Persisted = {
   hl: Record<string, true>;
   notes: Note[];
   savedA: Record<string, true>;
+  /** "도움이 됐어요"(엄지 척)를 누른 글. 아직 이 기기에만 저장한다(서버 집계는 이후 단계) */
+  liked: Record<string, true>;
   /** 이미 보여준 "기록 백업" 제안 (각 1회) */
   prompted: Record<string, true>;
 };
@@ -55,6 +57,7 @@ const EMPTY: Persisted = {
   hl: {},
   notes: [],
   savedA: {},
+  liked: {},
   prompted: {},
 };
 
@@ -112,6 +115,8 @@ const PROMPT_TRIGGER = {
 export type Sheet =
   | { type: "login"; reason: PromptReason; trigger: LoginTrigger }
   | { type: "comment"; sid: string; editId: string }
+  /** 아티클 상세 하단 바의 "내 생각 기록" */
+  | { type: "thought"; aid: string }
   /** 앱 안 브라우저(카카오톡·인스타그램 등)라 구글 로그인이 막혀 있을 때 기본 브라우저로 옮기도록 안내 */
   | { type: "inapp"; app: string; reason: "manual" | "record" }
   | null;
@@ -129,6 +134,8 @@ type Ctx = Persisted & {
   toggleKo: (aid?: string) => void;
   toggleHl: (sid: string) => void;
   openComment: (sid: string) => void;
+  openThought: (aid: string) => void;
+  toggleLike: (aid: string) => void;
   editNote: (id: string) => void;
   updateNote: (id: string, text: string) => void;
   saveComment: (sid: string, text: string) => void;
@@ -430,6 +437,15 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         send({ t: "hl", sid, aid, on });
       },
       openComment: (sid) => setSheet({ type: "comment", sid, editId: "" }),
+      openThought: (aid) => setSheet({ type: "thought", aid }),
+      toggleLike: (aid) => {
+        const liked = { ...ref.current.liked };
+        const on = !liked[aid];
+        track("Article Liked Toggled", { article_id: aid, on });
+        if (on) liked[aid] = true;
+        else delete liked[aid];
+        commit({ ...ref.current, liked });
+      },
       editNote: (id) => {
         const n = ref.current.notes.find((it) => it.id === id);
         if (n) setSheet({ type: "comment", sid: n.sid, editId: id });
