@@ -19,7 +19,7 @@ const TOPIC_LIMIT = 3;
 function HeroCard({ a, position }: { a: Article; position: number }) {
   return (
     <div
-      className="flex w-full shrink-0 snap-start flex-col gap-4 rounded-card px-6 pt-6 pb-6"
+      className="flex w-full shrink-0 snap-start flex-col gap-4 rounded-hero px-6 pt-6 pb-6"
       style={{
         backgroundImage:
           "radial-gradient(ellipse 89% 100% at 50% 0%, var(--color-pd-glow) 0%, var(--color-pd-glow-mid) 36%, var(--color-pd-glow-soft) 58%, var(--color-pd-tint) 100%)",
@@ -90,7 +90,7 @@ export function Home() {
       </section>
 
       <section aria-labelledby="home-topics">
-        <h2 id="home-topics" className="m-0 px-6 pt-12 pb-6 text-title leading-7 font-bold tracking-display text-pd-ink">
+        <h2 id="home-topics" className="m-0 px-6 pt-12 pb-6 text-title leading-7 font-semibold tracking-display text-pd-ink">
           주제별 보기
         </h2>
         <div className="ns flex gap-2 overflow-x-auto px-6 pb-1">
@@ -116,7 +116,7 @@ export function Home() {
             <Button
               variant="secondary"
               onClick={() => router.push(`/explore?topic=${topic}`)}
-              className="h-13 w-full rounded-lg bg-pd-tint text-pd-ink hover:bg-pd-tint"
+              className="h-13 w-full rounded-panel bg-pd-tint text-pd-ink hover:bg-pd-tint"
             >
               더보기
             </Button>

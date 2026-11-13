@@ -8,6 +8,8 @@ import { AmplitudeInit } from "@/components/AmplitudeInit";
 import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 // 원문 인용(영어 이탤릭) 전용 글꼴. 라틴 글자만 쓰므로 400 이탤릭 한 벌만 불러온다.
 import "@fontsource/roboto/latin-400-italic.css";
+// 로고(crumbit) 전용 글꼴. 700 한 벌만 불러온다.
+import "@fontsource/plus-jakarta-sans/latin-700.css";
 import "./globals.css";
 
 export const metadata: Metadata = {

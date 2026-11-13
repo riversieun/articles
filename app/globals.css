@@ -21,6 +21,8 @@
   --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   /* 원문 인용(영어 이탤릭)에만 쓰는 글꼴. Paper 디자인 기준 */
   --font-quote: "Roboto", "Pretendard Variable", Pretendard, system-ui, sans-serif;
+  /* 로고(crumbit) 전용 글꼴 */
+  --font-logo: "Plus Jakarta Sans", "Pretendard Variable", Pretendard, system-ui, sans-serif;
 
   /*
    * Paper 리디자인(redesign-v2)에서 그대로 가져온 값. 기존 토큰과 한두 단계 차이라서 우선 디자인 값 그대로 쓰고,
@@ -180,6 +182,7 @@
   --radius-card: 16px;
   --radius-pill: 26px;
   --radius-panel: 12px;
+  --radius-hero: 20px;
   /* --font-sans는 위 @theme(Pretendard Variable)을 그대로 쓴다. 프리셋의 자기 참조 선언은 순환이라 제거. */
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -230,10 +233,10 @@
 :root {
   --ds-primary: #111111;
   --ds-on-primary: #ffffff;
-  --ds-accent: #62d573; /* 브랜드 초록(예전 라임 #d9f25c 자리). Tailwind에서는 bg-brand / text-brand. shadcn의 --accent(호버 배경)와 다른 값이므로 섞지 않는다. */
-  --ds-accent-strong: #479e55; /* 연한 초록 면 위의 글자(주제 뱃지, "새로 등록된 글") */
-  --ds-accent-tint: #e0f6e1; /* 주제 뱃지 배경 */
-  --ds-accent-soft: #ace2b0; /* 번호·인용선·불릿 같은 장식 */
+  --ds-accent: #00d866; /* 브랜드 초록(예전 라임 #d9f25c 자리). Tailwind에서는 bg-brand / text-brand. shadcn의 --accent(호버 배경)와 다른 값이므로 섞지 않는다. */
+  --ds-accent-strong: #01a850; /* 연한 초록 면 위의 글자(주제 뱃지, "새로 등록된 글") */
+  --ds-accent-tint: #daf7df; /* 주제 뱃지 배경 */
+  --ds-accent-soft: #9ce4ab; /* 번호·인용선·불릿 같은 장식 */
   --ds-on-accent: #111111;
   --ds-accent-sub: #e7e0ff;
   --ds-accent-sub-strong: #cbbcff;

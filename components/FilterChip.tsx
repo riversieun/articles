@@ -14,7 +14,7 @@ export function FilterChip({ on, onClick, children }: { on: boolean; onClick: ()
       aria-pressed={on}
       onClick={onClick}
       className={`shrink-0 rounded-sm px-3 text-body-md ${
-        on ? "bg-pd-ink font-semibold text-white hover:bg-pd-ink" : "bg-pd-chip text-pd-ink-muted hover:bg-pd-chip"
+        on ? "bg-pd-ink font-semibold text-white hover:bg-pd-ink" : "bg-pd-chip font-normal text-pd-ink-muted hover:bg-pd-chip"
       }`}
     >
       {children}

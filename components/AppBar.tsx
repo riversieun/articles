@@ -32,7 +32,7 @@ export function AppBar() {
       <Link
         href="/"
         aria-label="crumbit 홈"
-        className="relative text-headline font-bold tracking-headline text-pd-ink no-underline"
+        className="relative font-logo text-headline font-bold tracking-display text-pd-ink no-underline"
       >
         crumbit
         <IconSparkle size={10} className="absolute -top-0.5 right-1 text-brand" />
