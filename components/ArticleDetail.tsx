@@ -70,7 +70,7 @@ export function ArticleDetail({ aid }: { aid: string }) {
             </p>
           </div>
           <div className="flex h-6 items-center">
-            <SourceLine a={art} />
+            <SourceLine a={art} large />
           </div>
         </header>
 

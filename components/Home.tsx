@@ -8,6 +8,7 @@ import { articleProps, track } from "@/lib/analytics";
 import type { Article, TopicKey } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { ArticleRow, SaveButton, SourceLine } from "./ArticleRow";
+import { FilterChip } from "./FilterChip";
 
 /** 홈 위쪽 캐러셀에 올리는 최신 글 개수 */
 const HERO_COUNT = 3;
@@ -18,10 +19,10 @@ const TOPIC_LIMIT = 3;
 function HeroCard({ a, position }: { a: Article; position: number }) {
   return (
     <div
-      className="flex w-full shrink-0 snap-start flex-col gap-4 rounded-pill px-6 pt-6 pb-6"
+      className="flex w-full shrink-0 snap-start flex-col gap-4 rounded-card px-6 pt-6 pb-6"
       style={{
         backgroundImage:
-          "radial-gradient(ellipse 80% 70% at 50% 0%, color-mix(in oklch, var(--color-brand) 28%, white) 0%, var(--color-brand-tint) 55%, var(--color-pd-tint) 100%)",
+          "radial-gradient(ellipse 89% 100% at 50% 0%, var(--color-pd-glow) 0%, var(--color-pd-glow-mid) 36%, var(--color-pd-glow-soft) 58%, var(--color-pd-tint) 100%)",
       }}
     >
       <p className="m-0 text-center text-body-sm leading-4.5 font-medium tracking-body text-brand-strong">새로 등록된 글</p>
@@ -31,7 +32,7 @@ function HeroCard({ a, position }: { a: Article; position: number }) {
           onClick={() => track("Article Opened", { ...articleProps(a.id), entry_point: "home_new", position })}
           className="flex flex-col gap-1.5 text-left text-pd-ink no-underline"
         >
-          <span className="text-title-sm font-semibold tracking-body">{a.titleKo}</span>
+          <span className="text-title-md font-semibold tracking-body">{a.titleKo}</span>
           <span lang="en" className="text-body-md leading-6 tracking-body text-pd-ink-muted">
             {a.titleEn}
           </span>
@@ -80,7 +81,7 @@ export function Home() {
           ))}
         </div>
         {latest.length > 1 && (
-          <div className="flex items-center justify-center gap-1.5 pt-5" aria-hidden="true">
+          <div className="flex items-center justify-center gap-2 pt-4" aria-hidden="true">
             {latest.map((a, i) => (
               <span key={a.id} className={`size-2 rounded-full ${i === slide ? "bg-pd-ink-muted" : "bg-border-strong"}`} />
             ))}
@@ -89,20 +90,14 @@ export function Home() {
       </section>
 
       <section aria-labelledby="home-topics">
-        <h2 id="home-topics" className="m-0 px-6 pt-10 pb-3 text-heading font-bold tracking-display text-pd-ink">
+        <h2 id="home-topics" className="m-0 px-6 pt-12 pb-6 text-title leading-7 font-bold tracking-display text-pd-ink">
           주제별 보기
         </h2>
-        <div className="ns flex gap-2 overflow-x-auto px-6 pb-4">
+        <div className="ns flex gap-2 overflow-x-auto px-6 pb-1">
           {TOPICS.map(([key, label]) => (
-            <Button
-              key={key}
-              variant={topic === key ? "default" : "secondary"}
-              aria-pressed={topic === key}
-              onClick={() => pick(key)}
-              className="shrink-0 px-4"
-            >
+            <FilterChip key={key} on={topic === key} onClick={() => pick(key)}>
               {label}
-            </Button>
+            </FilterChip>
           ))}
         </div>
 
@@ -117,11 +112,11 @@ export function Home() {
         )}
 
         {inTopic.length > TOPIC_LIMIT && (
-          <div className="px-6 pt-4">
+          <div className="px-6">
             <Button
               variant="secondary"
               onClick={() => router.push(`/explore?topic=${topic}`)}
-              className="h-13 w-full rounded-panel"
+              className="h-13 w-full rounded-lg bg-pd-tint text-pd-ink hover:bg-pd-tint"
             >
               더보기
             </Button>

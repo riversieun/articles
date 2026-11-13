@@ -7,10 +7,10 @@ import { useStore } from "@/lib/store";
 import type { Article } from "@/lib/types";
 import { IconBookmark, IconSparkle } from "./icons";
 
-/** 출처 · 발행일 한 줄. 별 아이콘 + 출처, 점, 날짜 */
-export function SourceLine({ a }: { a: Article }) {
+/** 출처 · 발행일 한 줄. 별 아이콘 + 출처, 점, 날짜. 글 카드는 13px, 아티클 상세(large)는 14px */
+export function SourceLine({ a, large = false }: { a: Article; large?: boolean }) {
   return (
-    <span className="flex min-w-0 items-center gap-1.5 text-body-sm leading-4.5 tracking-body">
+    <span className={`flex min-w-0 items-center gap-1.5 tracking-body ${large ? "text-body-sm leading-4.5" : "text-caption"}`}>
       <span className="flex shrink-0 items-center gap-0.5 text-pd-ink">
         <IconSparkle size={14} />
         {SOURCE_LABEL[a.src]}
@@ -31,7 +31,7 @@ export function SaveButton({ aid, className = "" }: { aid: string; className?: s
       aria-label={saved ? "글 저장 해제" : "글 저장"}
       aria-pressed={saved}
       className={`flex size-11 shrink-0 items-center justify-center border-0 bg-transparent ${
-        saved ? "text-brand" : "text-pd-ink"
+        saved ? "text-brand" : "text-pd-icon"
       } ${className}`}
     >
       <IconBookmark filled={saved} size={20} />
@@ -57,7 +57,7 @@ export function ArticleRow({
         onClick={() => track("Article Opened", { ...articleProps(a.id), entry_point: entryPoint, position })}
         className="flex flex-col gap-1.5 px-6 pt-6 text-left text-pd-ink no-underline"
       >
-        <span className="text-title-sm font-semibold tracking-body">{a.titleKo}</span>
+        <span className="text-title-md font-semibold tracking-body">{a.titleKo}</span>
         <span lang="en" className="text-body-md leading-6 tracking-body text-pd-ink-muted">
           {a.titleEn}
         </span>

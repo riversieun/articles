@@ -35,7 +35,7 @@ export function AppBar() {
         className="relative text-headline font-bold tracking-headline text-pd-ink no-underline"
       >
         crumbit
-        <IconSparkle size={12} className="absolute -top-0.5 -right-3 text-brand" />
+        <IconSparkle size={10} className="absolute -top-0.5 right-1 text-brand" />
       </Link>
 
       {/* ready 전에는 자리만 확보해 로그인 ↔ 프로필 깜빡임을 막는다 */}

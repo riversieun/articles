@@ -3,8 +3,8 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { TOPICS, lib } from "@/lib/content";
 import { track } from "@/lib/analytics";
-import { Button } from "@/components/ui/button";
 import { ArticleRow } from "./ArticleRow";
+import { FilterChip } from "./FilterChip";
 
 /** 탐색 탭 필터. "최신"(= all)은 전체 글을 최신순으로 보여준다. */
 const FILTERS: [key: string, label: string][] = [["all", "최신"], ...TOPICS];
@@ -27,21 +27,12 @@ export function Feed() {
 
   return (
     <div className="tracking-body">
-      <div className="ns sticky top-12 z-20 flex gap-2 overflow-x-auto bg-surface px-6 pt-2 pb-4">
-        {FILTERS.map(([key, label]) => {
-          const on = topic === key;
-          return (
-            <Button
-              key={key}
-              variant={on ? "default" : "secondary"}
-              aria-pressed={on}
-              onClick={() => go(key)}
-              className="shrink-0 px-4"
-            >
-              {label}
-            </Button>
-          );
-        })}
+      <div className="ns sticky top-12 z-20 flex gap-2 overflow-x-auto bg-surface px-6 pt-3 pb-1">
+        {FILTERS.map(([key, label]) => (
+          <FilterChip key={key} on={topic === key} onClick={() => go(key)}>
+            {label}
+          </FilterChip>
+        ))}
       </div>
 
       {feed.length > 0 ? (

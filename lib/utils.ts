@@ -11,7 +11,7 @@ export const cn = createCn({
     },
     classGroups: {
       "font-size": [
-        { text: ["display", "title", "heading", "headline", "title-sm", "body-lg", "body-md", "body-sm", "label-md", "label-sm"] },
+        { text: ["display", "title", "heading", "headline", "title-md", "title-sm", "body-lg", "body-md", "body-sm", "caption", "label-md", "label-sm"] },
       ],
       tracking: [{ tracking: ["display", "headline", "body"] }],
       "font-family": [{ font: ["quote"] }],
