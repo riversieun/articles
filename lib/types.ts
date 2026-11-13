@@ -7,6 +7,8 @@ export type RawArticle = {
   src: SourceKey;
   topic: TopicKey;
   kind?: "video";
+  /** 화면 확인용 더미 글. 운영 빌드에서는 NEXT_PUBLIC_SHOW_DUMMY=true 가 아니면 숨긴다 */
+  dummy?: true;
   sourceLine: string;
   date: string;
   url: string;

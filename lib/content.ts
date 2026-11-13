@@ -27,7 +27,10 @@ function parse() {
   const byId: Record<string, Article> = {};
   const sent: Record<string, Sentence> = {};
 
-  for (const r of RAW) {
+  // 더미 글은 개발 서버에서만 보인다. 운영 빌드에 섞여 나가지 않도록 NEXT_PUBLIC_SHOW_DUMMY=true 일 때만 연다.
+  const showDummy = process.env.NODE_ENV !== "production" || process.env.NEXT_PUBLIC_SHOW_DUMMY === "true";
+
+  for (const r of RAW.filter((it) => !it.dummy || showDummy)) {
     let words = 0;
     let count = 0;
     const paras: Sentence[][] = [];
