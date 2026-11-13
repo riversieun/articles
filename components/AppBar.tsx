@@ -21,7 +21,7 @@ export function AppBar() {
 
   if (title) {
     return (
-      <div className="sticky top-0 z-30 flex h-14 items-center bg-surface px-5">
+      <div className="sticky top-0 z-30 flex h-12 items-center bg-surface px-6">
         <h1 className="m-0 text-headline font-bold tracking-headline">{title}</h1>
       </div>
     );
