@@ -106,8 +106,10 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .up,
-  .pop {
+  .pop,
+  .tab-bar-motion {
     animation: none;
+    transition: none;
   }
 }
 
