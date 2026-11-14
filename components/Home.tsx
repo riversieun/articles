@@ -53,8 +53,8 @@ function HeroCard({ a, position }: { a: Article; position: number }) {
  */
 export function Home() {
   const router = useRouter();
-  // 글이 있는 첫 주제를 처음 선택된 칩으로 둔다
-  const [topic, setTopic] = useState<TopicKey>(() => (TOPICS.find(([k]) => lib.arts.some((a) => a.topic === k)) ?? TOPICS[0])[0]);
+  // 처음에는 첫 번째 칩이 선택돼 있다
+  const [topic, setTopic] = useState<TopicKey>(TOPICS[0][0]);
   const [slide, setSlide] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
 

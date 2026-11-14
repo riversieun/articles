@@ -13,7 +13,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { IconChevron, IconPen, IconTrash } from "@/components/icons";
 
 /**
- * 아카이브는 "내 생각"과 "아티클(저장한 글)" 두 칩만 보여준다.
+ * 아카이브는 "저장한 아티클"과 "내 생각" 두 칩만 보여준다(이 순서).
  * 하이라이트·코멘트 데이터와 기능은 그대로 두었고(문장 병기 리더 /contents/[id]/read), 이 화면에서만 뺐다.
  */
 type Seg = "thoughts" | "saved";
@@ -25,13 +25,13 @@ const SEG_KEY: Record<Seg, string> = {
 };
 
 const TABS: [Seg, string][] = [
+  ["saved", "저장한 아티클"],
   ["thoughts", "내 생각"],
-  ["saved", "아티클"],
 ];
 
 export default function ArchivePage() {
   const { ready, notes, savedA, removeNote, editNote } = useStore();
-  const [seg, setSeg] = useState<Seg>("thoughts");
+  const [seg, setSeg] = useState<Seg>("saved");
   const [delId, setDelId] = useState("");
 
   // 내 생각: 글 아래 "내 생각"에 직접 적은 글 전체 단위 생각
@@ -77,7 +77,7 @@ export default function ArchivePage() {
                 onClick={() => track("Article Opened", { ...articleProps(a.id), entry_point: "archive", position: gi })}
                 className="flex flex-col items-start gap-2 py-1 text-left text-on-surface no-underline"
               >
-                <Badge variant="secondary" className="h-7 rounded-md px-3 text-label-sm">
+                <Badge variant="secondary" className="h-7 rounded-md border-0 px-3 text-label-sm">
                   {TOPIC_LABEL[a.topic]}
                 </Badge>
                 <span className="flex w-full items-start gap-2">
@@ -146,13 +146,13 @@ function Empty({ title, body }: { title: string; body?: string }) {
         {body && <p className="m-0 text-body-sm text-on-surface-muted">{body}</p>}
       </div>
       <Link
-        href="/"
+        href="/explore"
         className={buttonVariants({
           variant: "accent",
           className: "flex h-12 rounded-pill px-[22px] text-body-md font-semibold no-underline",
         })}
       >
-        글 읽으러 가기
+        아티클 읽으러 가기
       </Link>
     </div>
   );

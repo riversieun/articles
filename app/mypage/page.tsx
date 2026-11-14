@@ -11,7 +11,6 @@ import { IconAvatar, IconBack } from "@/components/icons";
 import { goBackInApp } from "@/lib/nav";
 import { useStore } from "@/lib/store";
 import { FeedbackDialog } from "@/components/FeedbackDialog";
-import { ToggleSwitch } from "@/components/ToggleSwitch";
 import { ConfirmDeleteDialog } from "@/components/ConfirmDeleteDialog";
 
 const ROW =
@@ -19,7 +18,7 @@ const ROW =
 
 export default function MyPage() {
   const router = useRouter();
-  const { ready, loggedIn, profile, showKo, toggleKo, login, logout, deleteAccount } = useStore();
+  const { ready, loggedIn, profile, login, logout, deleteAccount } = useStore();
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [fbOpen, setFbOpen] = useState(false);
 
@@ -55,19 +54,6 @@ export default function MyPage() {
       )}
 
       <ul className="m-0 mt-4 flex list-none flex-col p-0">
-        {ready && (
-          <li>
-            <button
-              role="switch"
-              aria-checked={showKo}
-              onClick={() => toggleKo()}
-              className={ROW}
-            >
-              <span>번역 항상 켜기</span>
-              <ToggleSwitch on={showKo} />
-            </button>
-          </li>
-        )}
         <li>
           <button onClick={() => setFbOpen(true)} className={ROW}>
             <span>피드백 보내기</span>

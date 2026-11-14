@@ -129,7 +129,7 @@ export function Reader({ aid }: { aid: string }) {
       </div>
 
       <article className="px-5 pt-6 pb-10">
-        <Badge variant="secondary" className="h-7 rounded-md px-3 text-label-sm">
+        <Badge variant="secondary" className="h-7 rounded-md border-0 px-3 text-label-sm">
           {TOPIC_LABEL[art.topic]}
         </Badge>
         <h1

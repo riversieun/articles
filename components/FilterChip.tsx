@@ -13,7 +13,7 @@ export function FilterChip({ on, onClick, children }: { on: boolean; onClick: ()
       variant={on ? "default" : "secondary"}
       aria-pressed={on}
       onClick={onClick}
-      className={`shrink-0 rounded-sm px-3 text-body-md ${
+      className={`shrink-0 rounded-sm border-0 px-3 text-body-md ${
         on ? "bg-pd-ink font-semibold text-white hover:bg-pd-ink" : "bg-pd-chip font-normal text-pd-ink-muted hover:bg-pd-chip"
       }`}
     >
