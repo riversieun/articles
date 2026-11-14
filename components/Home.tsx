@@ -8,6 +8,7 @@ import { articleProps, track } from "@/lib/analytics";
 import type { Article, TopicKey } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { ArticleRow, SaveButton, SourceLine } from "./ArticleRow";
+import { ChipRow } from "./ChipRow";
 import { FilterChip } from "./FilterChip";
 import { ReviewBanner } from "./ReviewBanner";
 
@@ -99,13 +100,13 @@ export function Home() {
         <h2 id="home-topics" className="m-0 px-6 pt-8 pb-3 text-title leading-7 font-semibold tracking-display text-pd-ink">
           주제별 보기
         </h2>
-        <div className="ns flex gap-2 overflow-x-auto px-6 pt-3 pb-1">
+        <ChipRow className="ns flex gap-2 overflow-x-auto px-6 pt-3 pb-1">
           {TOPICS.map(([key, label]) => (
             <FilterChip key={key} on={topic === key} onClick={() => pick(key)}>
               {label}
             </FilterChip>
           ))}
-        </div>
+        </ChipRow>
 
         {shown.length > 0 ? (
           <div className="flex flex-col">
