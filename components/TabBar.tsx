@@ -3,11 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { RiCompassFill } from "@remixicon/react";
-import { IconBookmark } from "./icons";
+import { IconBookmark, IconCompassFill, IconHomeFill } from "./icons";
 
 const TABS = [
-  { href: "/", label: "탐색", icon: <RiCompassFill className="size-6" aria-hidden="true" /> },
+  { href: "/", label: "홈", icon: <IconHomeFill /> },
+  { href: "/explore", label: "탐색", icon: <IconCompassFill /> },
   { href: "/archive", label: "아카이브", icon: <IconBookmark filled size={24} /> },
 ];
 
@@ -48,7 +48,11 @@ function useCompactTabBar() {
   return isCompact;
 }
 
-/** 화면 하단에 떠 있는 흰색 탭바. 채움 아이콘 위, 레이블 아래. 선택하면 primary, 아니면 subtle. */
+/**
+ * 화면 하단에 떠 있는 흰색 탭바(홈·탐색·아카이브). 채움 아이콘 위, 레이블 아래. 선택하면 primary, 아니면 subtle.
+ * 아래로 스크롤하면 레이블을 숨기며 작아지고, 위로 스크롤하거나 화면 상단으로 돌아오면 원래대로 돌아온다.
+ * 폭은 애니메이션을 위해 고정값이다: 탭 3개 × 88px + 간격 2 × 8px + 좌우 여백 16px = 296px, 줄어들면 탭 78px 기준 266px.
+ */
 export function TabBar() {
   const pathname = usePathname();
   const isCompact = useCompactTabBar();
@@ -61,7 +65,7 @@ export function TabBar() {
     >
       <div
         className={`tab-bar-motion pointer-events-auto mx-auto flex items-center gap-2 overflow-hidden rounded-full bg-surface px-2 shadow-sm ring-1 ring-border transition-[width,height] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          isCompact ? "h-14 w-[180px]" : "h-16 w-[200px]"
+          isCompact ? "h-14 w-[266px]" : "h-16 w-[296px]"
         }`}
       >
         {TABS.map(({ href, label, icon }) => {
@@ -74,7 +78,7 @@ export function TabBar() {
               className={`tab-bar-motion flex h-12 flex-col items-center justify-center gap-0.5 text-label-sm font-medium no-underline transition-[width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                 isCompact ? "w-[78px]" : "w-[88px]"
               } ${
-                on ? "text-primary" : "text-subtle"
+                on ? "text-pd-ink" : "text-subtle"
               }`}
             >
               {icon}

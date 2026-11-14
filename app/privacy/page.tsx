@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 const EMAIL = "crumbit.articles.official@gmail.com";
-const EFFECTIVE = "2026년 10월 27일";
+const EFFECTIVE = "2026년 11월 16일";
 
 const H2 = "m-0 text-body-md font-semibold text-on-surface";
 const P = "m-0 text-body-sm text-on-surface";
@@ -16,7 +16,8 @@ const UL = "m-0 flex list-disc flex-col gap-1.5 pl-5 text-body-sm text-on-surfac
 
 /**
  * 개인정보처리방침. 서비스가 실제로 하는 일만 적는다. (수집 항목은 lib/store.tsx·lib/remote.ts·lib/analytics.ts 기준)
- * 동작을 바꾸면(수집 항목, 외부 서비스, 보관 방식) 이 문서도 같이 고친다.
+ * 화면의 기능 이름이 아니라 정보의 종류로 적어서, 기능이 바뀔 때마다 이 문서를 고치지 않아도 되게 한다.
+ * 수집 항목, 외부 서비스, 보관 방식이 바뀔 때만 같이 고친다.
  */
 export default function PrivacyPage() {
   return (
@@ -35,51 +36,50 @@ export default function PrivacyPage() {
       <main className="flex flex-col gap-8 px-5 pt-2">
         <div className="flex flex-col gap-2">
           <p className={P}>
-            crumbit(이하 &ldquo;서비스&rdquo;)은 이용자의 개인정보를 소중하게 다루며, 「개인정보 보호법」 등 관련 법령을
-            지킵니다. 이 방침은 서비스가 어떤 정보를 왜 수집하고, 얼마나 보관하며, 어떻게 지울 수 있는지 알려 드립니다.
+            crumbit(이하 &ldquo;서비스&rdquo;)은 「개인정보 보호법」 등 관련 법령을 지킵니다. 이 방침은 서비스가 어떤
+            정보를 왜 수집하고, 얼마나 보관하며, 어떻게 지울 수 있는지 알려 드립니다.
           </p>
           <p className="m-0 text-body-sm text-on-surface-muted">시행일: {EFFECTIVE}</p>
         </div>
 
         <section className="flex flex-col gap-3">
           <h2 className={H2}>1. 수집하는 정보</h2>
-          <p className={P}>서비스는 이름이나 연락처를 받지 않고도 이용할 수 있습니다. 수집하는 정보는 아래와 같습니다.</p>
+          <p className={P}>
+            서비스는 이름이나 연락처 없이 이용할 수 있습니다. 후기 설문의 경품 추첨에 참여할 때만 휴대폰 번호를 받으며,
+            이때는 참여 화면에서 따로 안내하고 동의를 받습니다.
+          </p>
           <p className="m-0 text-body-sm font-medium text-on-surface">이용하는 동안 자동으로 만들어지는 정보</p>
           <ul className={UL}>
             <li>임의로 만들어진 이용자 번호(이름·이메일과 연결되지 않는 무작위 번호)</li>
             <li>브라우저·기기 정보(운영체제, 브라우저 종류, 화면 크기, 언어), IP 주소, 접속 시각</li>
-            <li>
-              서비스 이용 기록: 방문한 화면, 읽은 아티클, 번역 켜기·끄기, 하이라이트·코멘트·생각·글 저장의 추가와 삭제 여부,
-              필터 선택, 피드백 전송 여부
-            </li>
+            <li>서비스 이용 기록: 방문한 화면, 읽은 글과 읽은 시간, 기능 사용 여부</li>
           </ul>
-          <p className="m-0 text-body-sm font-medium text-on-surface">이용자가 직접 입력하는 정보</p>
+          <p className="m-0 text-body-sm font-medium text-on-surface">이용자가 직접 남기는 정보</p>
           <ul className={UL}>
-            <li>하이라이트한 문장, 코멘트와 생각의 내용, 저장한 글, 번역 설정</li>
+            <li>내 생각, 저장한 글, &ldquo;도움이 됐어요&rdquo; 표시, 글에 남긴 별점</li>
             <li>피드백의 유형과 내용</li>
+            <li>후기 설문의 답변</li>
           </ul>
           <p className="m-0 text-body-sm font-medium text-on-surface">구글 로그인을 이용하는 경우</p>
           <ul className={UL}>
-            <li>이메일 주소, 구글 프로필 이름, 프로필 사진 주소</li>
-            <li>프로필 사진 이미지는 저장하지 않고, 구글이 제공하는 주소로 화면에만 표시합니다.</li>
-            <li>구글 로그인을 제공하지 않는 동안에는 이 정보를 수집하지 않습니다.</li>
+            <li>이메일 주소, 구글 프로필 이름, 프로필 사진</li>
           </ul>
-          <p className={P}>
-            이용 현황 분석 도구에는 코멘트·생각·피드백의 내용을 보내지 않습니다. 이용 기록(어떤 기능을 썼는지)만 보냅니다.
-          </p>
         </section>
 
         <section className="flex flex-col gap-3">
           <h2 className={H2}>2. 이용 목적</h2>
           <ul className={UL}>
-            <li>하이라이트·코멘트·저장한 글 등 이용자의 기록을 저장하고 다시 보여 주기 위해</li>
-            <li>서비스 이용 현황을 분석하고 기능을 개선하기 위해</li>
+            <li>생각·저장한 글·&ldquo;도움이 됐어요&rdquo; 표시·별점 등 이용자의 기록을 저장하고 다시 보여 주기 위해</li>
+            <li>글별 &ldquo;도움이 됐어요&rdquo; 수를 집계하고, 서비스 이용 현황을 분석해 콘텐츠와 기능을 개선하기 위해</li>
             <li>피드백과 문의에 답하고 오류에 대응하기 위해</li>
+            <li>후기 설문의 답변을 서비스 개선에 활용하기 위해</li>
+            <li>후기 설문의 경품을 추첨하고 기프티콘을 보내기 위해</li>
             <li>부정한 이용을 막고 서비스를 안전하게 운영하기 위해</li>
           </ul>
           <p className={P}>
-            운영자는 서비스 운영과 개선에 필요한 범위에서 이용자의 기록(코멘트 내용 포함)을 확인할 수 있으며, 다른
-            이용자에게 공개하지 않습니다.
+            이용자가 남긴 생각은 다른 이용자에게 공개되지 않습니다. 운영자는 이 기록을 열람하지 않는 것을 원칙으로
+            하며, 오류 대응·문의 처리·법령상 요구 등 꼭 필요한 경우에만 최소한의 범위에서 확인할 수 있습니다. 피드백은
+            운영자가 읽고 서비스 개선에 활용합니다.
           </p>
         </section>
 
@@ -88,7 +88,7 @@ export default function PrivacyPage() {
           <ul className={UL}>
             <li>
               <b className="font-semibold">로그인하지 않은 이용자:</b> 임의의 번호에 연결된 기록을 서비스를 운영하는 동안
-              보관합니다. 오랫동안 이용하지 않은 기록은 정리(삭제)할 수 있습니다.
+              보관합니다.
             </li>
             <li>
               <b className="font-semibold">구글 로그인 이용자:</b> 계정을 삭제할 때까지 보관합니다. 프로필의 &ldquo;계정
@@ -98,7 +98,14 @@ export default function PrivacyPage() {
               <b className="font-semibold">피드백:</b> 계정을 삭제해도 서비스 개선을 위해 의견 내용은 남을 수 있습니다. 이때
               작성자(이용자 번호)와의 연결은 끊습니다.
             </li>
-            <li>관련 법령에서 일정 기간 보관하도록 정한 정보는 그 기간 동안 보관합니다.</li>
+            <li>
+              <b className="font-semibold">후기 설문의 답변:</b> 계정을 삭제해도 서비스 개선을 위해 답변 내용은 남을 수 있습니다. 이때
+              이용자 번호와의 연결은 끊습니다.
+            </li>
+            <li>
+              <b className="font-semibold">경품 추첨의 휴대폰 번호:</b> 당첨되지 않은 참여자의 번호는 추첨 직후, 당첨자의
+              번호는 기프티콘을 보낸 직후 지체 없이 파기합니다.
+            </li>
           </ul>
         </section>
 
@@ -115,9 +122,8 @@ export default function PrivacyPage() {
               있습니다.
             </li>
             <li>
-              로그인하지 않은 이용자의 기록은 이름·이메일과 연결되지 않은 임의의 번호로 저장돼 있어 운영자가 특정인의
-              기록을 바로 가려내기 어렵습니다. 삭제를 원하시면 작성한 코멘트의 일부 내용, 작성 시기 등 기록을 확인할 수
-              있는 정보를 함께 보내 주세요. 확인되는 범위에서 삭제합니다.
+              로그인하지 않은 이용자의 기록은 임의의 번호로 저장돼 있어 운영자가 특정인의 기록을 바로 찾기 어렵습니다.
+              삭제를 원하시면 생각의 일부 내용, 작성 시기 등 기록을 확인할 수 있는 정보를 함께 보내 주세요.
             </li>
           </ul>
         </section>
@@ -149,9 +155,9 @@ export default function PrivacyPage() {
         <section className="flex flex-col gap-3">
           <h2 className={H2}>6. 쿠키와 브라우저 저장소</h2>
           <p className={P}>
-            서비스는 번역 설정, 이 기기에 둔 기록의 사본, 로그인 세션, 분석 도구의 식별자를 브라우저 저장소(로컬 스토리지,
-            쿠키)에 저장합니다. 브라우저 설정에서 삭제하거나 차단할 수 있으나, 이 경우 기록이 이어지지 않는 등 일부
-            기능이 제한될 수 있습니다.
+            서비스는 이 기기에 둔 기록의 사본(생각·저장한 글·&ldquo;도움이 됐어요&rdquo; 표시·별점), 로그인 세션, 분석 도구의
+            식별자를 브라우저 저장소(로컬 스토리지, 쿠키)에 저장합니다. 브라우저 설정에서 삭제하거나 차단할
+            수 있으나, 이 경우 기록이 이어지지 않는 등 일부 기능이 제한될 수 있습니다.
           </p>
         </section>
 

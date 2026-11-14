@@ -14,7 +14,7 @@ export function ProfileAvatar({ size }: { size: number }) {
       <span
         aria-hidden="true"
         style={style}
-        className="flex shrink-0 items-center justify-center rounded-full bg-lime text-body-md font-bold text-on-accent"
+        className="flex shrink-0 items-center justify-center rounded-full bg-brand text-body-md font-bold text-on-accent"
       >
         {profile.initial}
       </span>

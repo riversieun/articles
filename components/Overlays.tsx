@@ -30,10 +30,17 @@ const INAPP_COPY = {
 
 /** 하단 시트(로그인·코멘트·앱 안 브라우저 안내)와 토스트. 앱 폭(430px)에 맞춰 고정 배치한다. */
 export function Overlays() {
-  const { sheet, closeSheet, login, saveComment, updateNote, notes, toast, showToast } = useStore();
+  const { sheet, closeSheet, login, saveComment, addThought, updateNote, notes, toast, showToast } = useStore();
   const pathname = usePathname();
   const [draft, setDraft] = useState("");
-  const hasTabBar = ["/", "/archive"].includes(pathname);
+  const [thoughtDraft, setThoughtDraft] = useState("");
+  const hasTabBar = ["/", "/explore", "/archive"].includes(pathname);
+
+  // 내 생각 시트는 열 때마다 빈 입력으로 시작
+  const thoughtAid = sheet?.type === "thought" ? sheet.aid : "";
+  useEffect(() => {
+    setThoughtDraft("");
+  }, [thoughtAid]);
 
   const commentSid = sheet?.type === "comment" ? sheet.sid : "";
   const editId = sheet?.type === "comment" ? sheet.editId : "";
@@ -122,6 +129,42 @@ export function Overlays() {
               className="h-12"
             >
               {editId ? "수정 완료" : "코멘트 저장"}
+            </Button>
+          </div>
+        </Sheet>
+      )}
+
+      {sheet?.type === "thought" && (
+        <Sheet onClose={closeSheet} labelledBy="thought-title">
+          <h2 id="thought-title" className="m-0 mb-2.5 text-headline font-bold tracking-headline">
+            내 생각 기록
+          </h2>
+          <label htmlFor="thought-sheet-input" className="sr-only">
+            내 생각
+          </label>
+          <Textarea
+            id="thought-sheet-input"
+            rows={4}
+            autoFocus
+            value={thoughtDraft}
+            onChange={(e) => setThoughtDraft(e.target.value)}
+            placeholder="느낀 점, 내 일에 적용해볼 점은?"
+          />
+          <p className="m-0 pl-2 text-body-sm text-on-surface-muted">입력한 내용은 나만 봐요.</p>
+          <div className="mt-1.5 grid grid-cols-2 gap-2">
+            <Button variant="outline" size="lg" onClick={closeSheet} className="h-12">
+              취소
+            </Button>
+            <Button
+              size="lg"
+              disabled={!thoughtDraft.trim()}
+              onClick={() => {
+                closeSheet(); // 백업 제안 시트가 이어서 뜰 수 있어서 먼저 닫는다
+                addThought(sheet.aid, thoughtDraft);
+              }}
+              className="h-12"
+            >
+              생각 남기기
             </Button>
           </div>
         </Sheet>
