@@ -123,30 +123,6 @@
     opacity: 1;
   }
 }
-/* 별점 완료 체크: 초록 원이 먼저 나타나고, 체크 선이 그려지듯 이어진다 */
-@keyframes check-pop {
-  from {
-    transform: scale(0.6);
-    opacity: 0;
-  }
-  to {
-    transform: none;
-    opacity: 1;
-  }
-}
-@keyframes check-trace {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-.check-pop {
-  animation: check-pop 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-.check-trace {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  animation: check-trace 0.45s 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
 .up {
   animation: up 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -154,13 +130,6 @@
   animation: pop 0.16s ease-out;
 }
 @media (prefers-reduced-motion: reduce) {
-  .check-pop {
-    animation: none;
-  }
-  .check-trace {
-    animation: none;
-    stroke-dashoffset: 0;
-  }
   .up,
   .pop,
   .tab-bar-motion {

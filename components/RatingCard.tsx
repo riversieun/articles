@@ -1,37 +1,32 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useStore } from "@/lib/store";
-import { IconStar } from "./icons";
+import { STAR_PATH } from "./icons";
+import "./rating-card.css";
 
-/** default(별 5개) → rated(고른 별까지 채움) → done("의견 감사합니다" + 체크 모션) → leaving(접힘) → gone */
+/** default(별 5개) → rated(고른 별까지 채움) → done(감사 문구 + 체크) → leaving(접힘) → gone */
 type Phase = "idle" | "rated" | "done" | "leaving" | "gone";
 
-const RATED_MS = 600; // 고른 별까지 채워진 모습을 보여주는 시간
-const DONE_MS = 1800; // 체크 모션(0.25초 뒤 시작, 0.45초)이 끝나고 잠깐 더 머무는 시간
-const LEAVE_MS = 350; // 카드가 접히며 사라지는 시간
+// motion-lab 의 F3(롤링 + 스프링, 기본 속도)에서 확정한 단계별 시간. 세부 속도 값은 rating-card.css 에 있다.
+const RATED_MS = 700; // 고른 별까지 차오르는 스프링이 끝날 때까지
+const DONE_MS = 1600; // 감사 문구와 체크가 머무는 시간
+const LEAVE_MS = 340; // 카드가 접히며 사라지는 시간
 
-/** 체크 원. 초록 원이 먼저 나타나고 흰 체크 선이 그려지듯 이어진다. (Figma 아티클 평가_Done 에셋) */
-function CheckCircle() {
+/** 체크 원. 초록 원 위로 흰 체크 선이 그려지듯 이어진다. (Figma 아티클 평가_Done 에셋) */
+function CheckSvg() {
   return (
-    <svg aria-hidden="true" width="36" height="36" viewBox="-1.5 -1.5 36 36" fill="none" className="check-pop">
-      <circle cx="16.5" cy="16.5" r="15" strokeWidth="3" className="fill-brand stroke-brand" />
-      <path
-        d="M10.5002 17.2499L15.0002 21.7499L22.5002 12.7499"
-        pathLength="1"
-        strokeWidth="3"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="check-trace stroke-white"
-      />
+    <svg aria-hidden="true" viewBox="-1.5 -1.5 36 36" fill="none">
+      <circle className="c" cx="16.5" cy="16.5" r="15" />
+      <path className="p" d="M10.5002 17.2499L15.0002 21.7499L22.5002 12.7499" pathLength="1" />
     </svg>
   );
 }
 
 /**
  * 아티클 본문 아래의 "이 아티클 얼마나 도움됐나요?" 별점 카드.
- * 별을 고르면 별이 채워졌다가 "의견 감사합니다"와 체크 모션이 나오고, 모션이 끝나면 카드가 접히며 사라진다.
- * 이미 평가한 글에서는 처음부터 보이지 않는다.
+ * 별을 고르면 별이 스프링으로 차오르고, 문구가 롤링으로 "의견 감사합니다"로 바뀌며 체크가 그려진다.
+ * 모션이 끝나면 카드가 접히며 사라지고, 이미 평가한 글에서는 처음부터 보이지 않는다.
  */
 export function RatingCard({ aid }: { aid: string }) {
   const { ready, rated, rateArticle } = useStore();
@@ -62,45 +57,47 @@ export function RatingCard({ aid }: { aid: string }) {
     rateArticle(aid, n);
   };
 
-  const leaving = phase === "leaving";
+  const done = phase === "done" || phase === "leaving";
 
   return (
-    <section
-      aria-label="아티클 평가"
-      className="grid transition-[grid-template-rows,opacity] duration-300 ease-out"
-      style={{ gridTemplateRows: leaving ? "0fr" : "1fr", opacity: leaving ? 0 : 1 }}
-    >
-      <div className="overflow-hidden">
+    <section aria-label="아티클 평가" className="rc-slot" data-phase={phase}>
+      <div className="rc-slot-inner">
         <div className="flex items-center justify-center px-6 pt-5 pb-3">
-          <div className="flex h-32 w-64 flex-col items-center justify-center rounded-box bg-pd-tint px-9 py-7">
-            {phase === "done" || leaving ? (
-              <div key="done" className="pop flex flex-col items-center">
-                <p className="m-0 text-body-md leading-6 font-semibold tracking-body text-pd-ink-soft">의견 감사합니다</p>
-                <div className="flex h-12 min-w-11 items-center justify-center p-3">
-                  <CheckCircle />
-                </div>
+          <div className="rc-card" data-phase={phase} data-done={done}>
+            <div className="rc-titlewin">
+              <p className="rc-t rc-t1">이 아티클 얼마나 도움됐나요?</p>
+              <p className="rc-t rc-t2" aria-hidden="true">
+                의견 감사합니다
+              </p>
+            </div>
+            <div className="rc-stage">
+              <div className="rc-row" role="group" aria-label="별점">
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <button
+                    key={i}
+                    className="rc-star"
+                    data-on={i < value}
+                    style={{ "--i": i } as CSSProperties}
+                    disabled={phase !== "idle"}
+                    aria-label={`${i + 1}점`}
+                    onClick={() => pick(i + 1)}
+                  >
+                    <svg aria-hidden="true" viewBox="0 0 24 24">
+                      <path d={STAR_PATH} />
+                    </svg>
+                  </button>
+                ))}
               </div>
-            ) : (
-              <div key="stars" className="flex flex-col items-center">
-                <p className="m-0 text-body-md leading-6 font-semibold tracking-body text-pd-ink-soft">이 아티클 얼마나 도움됐나요?</p>
-                <div role="group" aria-label="별점" className="flex min-w-11 items-center justify-center gap-0.5 p-3">
-                  {[1, 2, 3, 4, 5].map((n) => (
-                    <button
-                      key={n}
-                      onClick={() => pick(n)}
-                      disabled={phase !== "idle"}
-                      aria-label={`${n}점`}
-                      className="relative flex size-6 shrink-0 items-center justify-center border-0 bg-transparent p-0 after:absolute after:-inset-1 after:content-['']"
-                    >
-                      <IconStar filled={n <= value} />
-                    </button>
-                  ))}
-                </div>
+              <div className="rc-check">
+                <CheckSvg />
               </div>
-            )}
+            </div>
           </div>
         </div>
       </div>
+      <span className="sr-only" role="status">
+        {done ? "의견 감사합니다" : ""}
+      </span>
     </section>
   );
 }

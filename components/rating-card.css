@@ -1,0 +1,220 @@
+/*
+ * 아티클 별점 카드 모션 (motion-lab 에서 F3 "롤링 + 스프링, 기본 속도"로 확정).
+ * 문구는 창 안에서 롤링하고, 별과 원은 스프링으로 움직인다. 카드 크기(256×128)는 변하지 않고 바뀌는 부분만 전환한다.
+ *   idle → rated(고른 별까지 채움) → done(감사 문구 + 체크) → leaving(접힘) → gone
+ * 도착은 감속, 퇴장은 더 빠르게. 위치·크기는 transform 과 opacity 로, 높이는 grid 행으로 접는다.
+ * 지속 시간은 모두 .rc-card 의 변수라서 속도만 바꾸려면 이 값들만 고치면 된다.
+ */
+
+.rc-slot {
+  --rc-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --rc-leave: 340ms;
+  display: grid;
+  grid-template-rows: 1fr;
+  transition:
+    grid-template-rows var(--rc-leave) var(--rc-ease),
+    opacity calc(var(--rc-leave) * 0.8) var(--rc-ease);
+}
+.rc-slot > .rc-slot-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+.rc-slot[data-phase="leaving"] {
+  grid-template-rows: 0fr;
+  opacity: 0;
+}
+
+.rc-card {
+  /* F3 속도 값 */
+  --roll: 400ms; /* 문구 롤링 */
+  --roll-gap: 40ms; /* 새 문구가 늦게 시작하는 간격 */
+  --star-spring: 460ms; /* 별이 차오르는 스프링 */
+  --star-gap: 60ms; /* 별 사이 간격 */
+  --exit: 260ms; /* 별이 줄어들며 빠지는 시간 */
+  --exit-gap: 30ms; /* 오른쪽부터 빠지는 간격 */
+  --circle-delay: 180ms; /* 원이 들어오기 시작하는 시점 */
+  --circle-spring: 560ms; /* 원 스프링 */
+  --trace: 380ms; /* 체크 선이 그려지는 시간 */
+  --trace-delay: 320ms; /* 체크 선이 시작하는 시점 */
+  --rc-spring: linear(0, 0.25 8%, 0.62 17%, 0.88 26%, 1.03 37%, 1.05 44%, 1.02 55%, 1 70%, 1 100%);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 256px;
+  height: 128px;
+  padding: 28px 36px;
+  overflow: hidden;
+  border-radius: 24px;
+  background: var(--color-pd-tint);
+}
+
+/* 제목 창: 질문과 감사 문구를 같은 자리에 겹쳐 두고 위로 롤링한다 */
+.rc-titlewin {
+  position: relative;
+  width: 184px;
+  height: 24px;
+  overflow: hidden;
+}
+.rc-t {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  color: var(--color-pd-ink-soft);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: -0.16px;
+  white-space: nowrap;
+  transition:
+    transform var(--roll) cubic-bezier(0.7, 0, 0.2, 1),
+    opacity var(--roll) cubic-bezier(0.7, 0, 0.2, 1);
+}
+.rc-t2 {
+  opacity: 0;
+  transform: translateY(100%);
+}
+.rc-card[data-done="true"] .rc-t1 {
+  opacity: 0;
+  transform: translateY(-100%);
+}
+.rc-card[data-done="true"] .rc-t2 {
+  opacity: 1;
+  transform: none;
+  transition-delay: var(--roll-gap);
+}
+
+/* 단: 별 줄과 체크가 같은 자리 */
+.rc-stage {
+  position: relative;
+  width: 184px;
+  height: 48px;
+}
+.rc-row {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+.rc-star {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transition:
+    transform var(--exit) var(--rc-spring),
+    opacity var(--exit) ease;
+}
+.rc-star:disabled {
+  cursor: default;
+}
+.rc-star::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+}
+.rc-star svg {
+  display: block;
+  width: 24px;
+  height: 24px;
+  overflow: visible;
+}
+.rc-star path {
+  fill: transparent;
+  stroke: var(--color-pd-star);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition:
+    fill 200ms var(--rc-ease),
+    stroke 200ms var(--rc-ease);
+}
+/* 고른 별까지 왼쪽부터 차오르며 스프링으로 살짝 커졌다 안착한다 */
+.rc-star[data-on="true"] {
+  animation: rc-pop var(--star-spring) var(--rc-spring) backwards;
+  animation-delay: calc(var(--i) * var(--star-gap));
+}
+.rc-star[data-on="true"] path {
+  fill: var(--color-brand);
+  stroke: var(--color-brand);
+  transition-delay: calc(var(--i) * var(--star-gap));
+}
+@keyframes rc-pop {
+  from {
+    transform: scale(0.72);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+/* 문구가 바뀔 때 별은 오른쪽부터 줄어들며 빠진다 */
+.rc-card[data-done="true"] .rc-star {
+  opacity: 0;
+  transform: scale(0.6);
+  transition-delay: calc((4 - var(--i)) * var(--exit-gap));
+}
+
+/* 체크 원: 스프링으로 들어오고 흰 체크 선이 그려지듯 이어진다 */
+.rc-check {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.5);
+  pointer-events: none;
+  transition:
+    opacity calc(var(--circle-spring) * 0.3) ease var(--circle-delay),
+    transform var(--circle-spring) var(--rc-spring) var(--circle-delay);
+}
+.rc-card[data-done="true"] .rc-check {
+  opacity: 1;
+  transform: none;
+}
+.rc-check svg {
+  display: block;
+  width: 36px;
+  height: 36px;
+}
+.rc-check .c {
+  fill: var(--color-brand);
+  stroke: var(--color-brand);
+  stroke-width: 3;
+}
+.rc-check .p {
+  fill: none;
+  stroke: var(--ds-on-primary);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.rc-card[data-done="true"] .rc-check .p {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset var(--trace) cubic-bezier(0.4, 0, 0.2, 1) var(--trace-delay);
+}
+
+/* 접근성: 이동·크기·스프링을 없애고, 상태가 바뀐다는 정보는 투명도 전환으로만 남긴다 */
+@media (prefers-reduced-motion: reduce) {
+  .rc-slot,
+  .rc-card * {
+    animation: none !important;
+    transition-property: opacity !important;
+    transition-duration: 160ms !important;
+    transition-delay: 0ms !important;
+    transform: none !important;
+  }
+  .rc-card .rc-check .p {
+    stroke-dashoffset: 0 !important;
+  }
+}
