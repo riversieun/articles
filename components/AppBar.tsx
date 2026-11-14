@@ -1,32 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { ProfileAvatar } from "./ProfileAvatar";
 import { IconAvatar, IconSparkle } from "./icons";
 import { useStore } from "@/lib/store";
 
-const TITLES: Record<string, string> = {
-  "/archive": "아카이브",
-};
-
 /**
  * 탭 화면 공통 상단 바.
- * 홈·탐색 탭: 서비스 로고(초록 별 포함) + 프로필 아이콘.
- * 그 밖의 탭: 왼쪽에 페이지 타이틀만.
+ * 홈·탐색·아카이브 탭 모두 서비스 로고(초록 별 포함) + 프로필 아이콘.
  */
 export function AppBar() {
   const { ready, loggedIn } = useStore();
-  const title = TITLES[usePathname()];
-
-  if (title) {
-    return (
-      <div className="sticky top-0 z-30 flex h-12 items-center bg-surface px-6">
-        <h1 className="m-0 text-headline font-bold tracking-headline">{title}</h1>
-      </div>
-    );
-  }
-
   return (
     <div className="sticky top-0 z-30 flex h-12 items-center justify-between bg-surface pr-4 pl-6">
       <Link

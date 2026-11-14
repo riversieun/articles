@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { RiThumbUpFill, RiThumbUpLine } from "@remixicon/react";
 import { articleProps, track } from "@/lib/analytics";
 import { TOPIC_LABEL, lib } from "@/lib/content";
 import { goBackInApp } from "@/lib/nav";
@@ -11,30 +10,38 @@ import { useReadTracking } from "@/lib/useReadTracking";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { FeedbackDialog } from "./FeedbackDialog";
-import { SaveButton, SourceLine } from "./ArticleRow";
-import { IconBack, IconBookmark, IconExternal, IconPenLine, IconSparkle } from "./icons";
+import { RatingCard } from "./RatingCard";
+import { SourceLine } from "./ArticleRow";
+import { IconArrowUpRight, IconBack, IconBookmark, IconPenEdit, IconSparkle, IconThumbUp } from "./icons";
 
-const SECTION = "flex flex-col gap-5 px-6 pt-8 pb-9";
+const SECTION = "flex flex-col gap-5 px-6 pt-8 pb-10";
 const HEADING = "m-0 text-heading font-bold tracking-display text-pd-ink";
+const FOOTER_BUTTON = "h-11.5 rounded-md border-pd-line px-4 text-body-md font-semibold text-pd-ink-soft";
 
 /**
- * 아티클 상세(요약형). 한 줄 요약 → 핵심 인사이트 → 원문 인용 → 업무 적용 → 피드백·원문 읽기.
- * 하단 떠 있는 바에 도움이 됐어요(엄지 척) · 내 생각 기록 · 저장이 있다.
+ * 아티클 상세(요약형). 한 줄 요약 → 핵심 인사이트 → 원문 인용 → 업무 적용 → 별점 카드 → 피드백·원문 읽기.
+ * 하단에 떠 있는 바에 추천해요(엄지 척, 1개 이상일 때만 숫자) · 내 생각 기록 · 저장이 있다.
  * 문장 병기 읽기(하이라이트·코멘트)는 이 화면에서 쓰지 않는다. 기능은 /contents/[id]/read 에 그대로 있다.
  */
 export function ArticleDetail({ aid }: { aid: string }) {
   const art = lib.byId[aid];
   const router = useRouter();
-  const { liked, savedA, toggleLike, toggleA, openThought } = useStore();
+  const { liked, savedA, toggleLike, toggleA, openThought, likeCount, refreshLikeCounts } = useStore();
   const { progress, endRef } = useReadTracking(aid);
   const [fbOpen, setFbOpen] = useState(false);
 
+  // 열 때마다 서버의 추천 수를 새로 받아온다
+  useEffect(() => {
+    void refreshLikeCounts();
+  }, [refreshLikeCounts, aid]);
+
   const isLiked = !!liked[aid];
   const isSaved = !!savedA[aid];
+  const count = likeCount(aid);
 
   return (
     <div className="min-h-dvh bg-surface tracking-body">
-      {/* 상단 고정: 뒤로가기 / 저장 + 읽기 진행(초록 선) */}
+      {/* 상단 고정: 뒤로가기 + 읽기 진행(초록 선) */}
       <div className="sticky top-0 z-30 bg-surface">
         <div className="flex h-12 items-center justify-between px-3">
           <button
@@ -42,9 +49,8 @@ export function ArticleDetail({ aid }: { aid: string }) {
             aria-label="목록으로 돌아가기"
             className="flex size-11 shrink-0 items-center justify-center border-0 bg-transparent text-pd-ink"
           >
-            <IconBack />
+            <IconBack size={22} sw={1.75} />
           </button>
-          <SaveButton aid={aid} />
         </div>
         <div
           role="progressbar"
@@ -64,7 +70,7 @@ export function ArticleDetail({ aid }: { aid: string }) {
             {TOPIC_LABEL[art.topic]}
           </span>
           <div className="flex flex-col gap-1.5">
-            <h1 className="m-0 text-title font-semibold text-pd-ink">{art.titleKo}</h1>
+            <h1 className="m-0 text-title font-bold text-pd-ink">{art.titleKo}</h1>
             <p lang="en" className="m-0 text-body-md leading-6 text-pd-ink-muted">
               {art.titleEn}
             </p>
@@ -75,14 +81,23 @@ export function ArticleDetail({ aid }: { aid: string }) {
         </header>
 
         <section aria-label="한 줄 요약" className="flex flex-col px-6 pt-8 pb-5">
-          <div className="flex flex-col gap-4 rounded-panel border border-pd-line bg-surface px-5 pt-5 pb-6">
-            <div className="flex items-center gap-0.5 text-pd-ink-quiet">
-              <span className="flex size-4.5 items-center justify-center">
-                <IconSparkle size={14} />
+          <div className="flex flex-col gap-3 rounded-panel border border-pd-line bg-pd-tint px-2 pt-4 pb-2">
+            <div className="flex items-center gap-0.5 px-2">
+              <span className="relative size-4.5 shrink-0 overflow-clip">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/icons/text-description.svg"
+                  alt=""
+                  aria-hidden="true"
+                  width="15.075"
+                  height="11.8"
+                  className="absolute max-w-none"
+                  style={{ left: 1.74, top: 4.2 }}
+                />
               </span>
-              <h2 className="m-0 text-body-sm leading-4.5 font-semibold">한 줄 요약</h2>
+              <h2 className="m-0 text-body-sm leading-4.5 font-semibold text-pd-label">한 줄 요약</h2>
             </div>
-            <p className="m-0 text-body-md leading-6 text-pd-ink [word-break:normal]">{art.summary}</p>
+            <p className="m-0 rounded-md bg-surface p-4 text-body-md leading-6 text-pd-ink [word-break:normal]">{art.summary}</p>
           </div>
         </section>
 
@@ -91,7 +106,7 @@ export function ArticleDetail({ aid }: { aid: string }) {
             <h2 className={HEADING}>핵심 인사이트예요</h2>
             <ol className="m-0 flex list-none flex-col gap-7 p-0">
               {art.insights.map((it, i) => (
-                <li key={i} className="flex flex-col gap-1">
+                <li key={i} className="flex flex-col gap-2">
                   <span className="text-body-md leading-6.25 font-bold text-brand-soft">{String(i + 1).padStart(2, "0")}</span>
                   <div className="flex flex-col gap-2">
                     <h3 className="m-0 text-title-sm font-bold text-pd-ink">{it.title}</h3>
@@ -124,7 +139,7 @@ export function ArticleDetail({ aid }: { aid: string }) {
             <h2 className={HEADING}>업무에 적용해보세요</h2>
             <ul className="m-0 flex list-none flex-col gap-5 p-0">
               {art.actions.map((t, i) => (
-                <li key={i} className="flex items-start gap-1.5">
+                <li key={i} className="flex items-start gap-1">
                   <span className="flex size-5.5 shrink-0 items-center justify-center text-brand-soft">
                     <IconSparkle size={18} />
                   </span>
@@ -138,11 +153,10 @@ export function ArticleDetail({ aid }: { aid: string }) {
         {/* 본문 끝 표식 — 프로그레스 100%의 기준 */}
         <div ref={endRef} />
 
-        <div className="flex items-center justify-between gap-3 px-6 pt-3 pb-24">
-          <button
-            onClick={() => setFbOpen(true)}
-            className={cn(buttonVariants({ variant: "outline" }), "h-11.5 rounded-md border-pd-line px-4 text-body-md font-semibold text-pd-ink-soft")}
-          >
+        <RatingCard aid={aid} />
+
+        <div className="flex items-center justify-center gap-3 px-6 pt-5 pb-25">
+          <button onClick={() => setFbOpen(true)} className={cn(buttonVariants({ variant: "outline" }), FOOTER_BUTTON)}>
             피드백 보내기
           </button>
           <a
@@ -150,40 +164,38 @@ export function ArticleDetail({ aid }: { aid: string }) {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => track("Original Article Clicked", articleProps(aid))}
-            className={cn(
-              buttonVariants({ variant: "outline" }),
-              "h-11.5 gap-2 rounded-md border-pd-line px-4 text-body-md font-semibold text-pd-ink-soft no-underline",
-            )}
+            className={cn(buttonVariants({ variant: "outline" }), FOOTER_BUTTON, "gap-1 no-underline")}
           >
             원문 읽기
-            <IconExternal size={16} />
+            <IconArrowUpRight />
           </a>
         </div>
       </article>
 
-      {/* 하단에 떠 있는 바: 도움이 됐어요 · 내 생각 기록 · 저장 */}
-      <div className="pointer-events-none fixed inset-x-0 bottom-[max(16px,env(safe-area-inset-bottom))] z-40 mx-auto w-full max-w-[430px] px-6">
-        <div className="pointer-events-auto mx-auto flex w-fit items-center gap-1 rounded-full bg-surface px-3 py-0.5 shadow-[0_2px_12px_rgba(0,0,0,0.1)]">
+      {/* 하단에 떠 있는 바: 추천해요(엄지) · 내 생각 기록 · 저장 */}
+      <div className="pointer-events-none fixed inset-x-0 bottom-[max(16px,env(safe-area-inset-bottom))] z-40 mx-auto flex w-full max-w-[430px] justify-center px-6">
+        <div className="pointer-events-auto flex items-center gap-2 rounded-full bg-surface px-4 py-1 drop-shadow-[0_2px_6px_rgba(0,0,0,0.1)]">
           <button
             onClick={() => toggleLike(aid)}
-            aria-label="도움이 됐어요"
+            aria-label={count > 0 ? `추천해요 ${count}` : "추천해요"}
             aria-pressed={isLiked}
-            className={`flex size-11 items-center justify-center border-0 bg-transparent ${isLiked ? "text-brand" : "text-pd-icon"}`}
+            className={`flex h-11 min-w-11 items-center justify-center gap-1 border-0 bg-transparent ${isLiked ? "text-brand" : "text-pd-ink"}`}
           >
-            {isLiked ? <RiThumbUpFill className="size-5" aria-hidden="true" /> : <RiThumbUpLine className="size-5" aria-hidden="true" />}
+            <IconThumbUp filled={isLiked} />
+            {count > 0 && <span className="text-body-sm leading-4.5 tracking-body text-pd-ink-muted">{count}</span>}
           </button>
           <button
             onClick={() => openThought(aid)}
             aria-label="내 생각 기록"
-            className="flex size-11 items-center justify-center border-0 bg-transparent text-pd-icon"
+            className="flex size-11 items-center justify-center border-0 bg-transparent text-pd-ink"
           >
-            <IconPenLine size={20} />
+            <IconPenEdit />
           </button>
           <button
             onClick={() => toggleA(aid)}
             aria-label={isSaved ? "글 저장 해제" : "글 저장"}
             aria-pressed={isSaved}
-            className={`flex size-11 items-center justify-center border-0 bg-transparent ${isSaved ? "text-brand" : "text-pd-icon"}`}
+            className={`flex size-11 items-center justify-center border-0 bg-transparent ${isSaved ? "text-brand" : "text-pd-ink"}`}
           >
             <IconBookmark filled={isSaved} size={20} />
           </button>

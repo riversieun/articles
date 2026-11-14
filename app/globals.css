@@ -36,6 +36,8 @@
   --color-pd-line: #e6e6ea; /* 구분선·테두리 (기존 border #e7e7ea) */
   --color-pd-dot: #c6c6cf; /* 출처와 날짜 사이 점 */
   --color-pd-tint: #f9f9f9; /* 아티클 상세 머리 배경, 더보기 버튼 */
+  --color-pd-label: #7f7f8a; /* 한 줄 요약 라벨 (기존 pd-ink-quiet #77778d 와 다른 값) */
+  --color-pd-star: #b4b4b8; /* 비어 있는 별점 별 */
   --color-pd-chip: #f1f1f3; /* 선택 안 된 주제 칩 배경 (기존 surface-muted #f4f4f6) */
   /* 홈 "새로 등록된 글" 카드의 위쪽 가운데 초록 빛. 위에서 아래로 pd-tint 로 사라진다 */
   --color-pd-glow: #aeffc0;
@@ -121,6 +123,30 @@
     opacity: 1;
   }
 }
+/* 별점 완료 체크: 초록 원이 먼저 나타나고, 체크 선이 그려지듯 이어진다 */
+@keyframes check-pop {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes check-trace {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.check-pop {
+  animation: check-pop 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.check-trace {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: check-trace 0.45s 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
 .up {
   animation: up 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -128,6 +154,13 @@
   animation: pop 0.16s ease-out;
 }
 @media (prefers-reduced-motion: reduce) {
+  .check-pop {
+    animation: none;
+  }
+  .check-trace {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
   .up,
   .pop,
   .tab-bar-motion {
@@ -190,6 +223,7 @@
   --radius-pill: 26px;
   --radius-panel: 12px;
   --radius-hero: 20px;
+  --radius-box: 24px;
   /* --font-sans는 위 @theme(Pretendard Variable)을 그대로 쓴다. 프리셋의 자기 참조 선언은 순환이라 제거. */
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);

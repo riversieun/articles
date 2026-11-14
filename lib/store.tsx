@@ -17,6 +17,7 @@ import {
   clearOutbox,
   deleteMyAccount,
   enqueue,
+  fetchLikeCounts,
   flush,
   inAppBrowserName,
   outboxSize,
@@ -47,6 +48,8 @@ type Persisted = {
   savedA: Record<string, true>;
   /** "도움이 됐어요"(엄지 척)를 누른 글. 아직 이 기기에만 저장한다(서버 집계는 이후 단계) */
   liked: Record<string, true>;
+  /** 아티클 별점(1~5). 평가한 글은 본문 아래 별점 카드를 다시 보여주지 않는다 */
+  rated: Record<string, number>;
   /** 이미 보여준 "기록 백업" 제안 (각 1회) */
   prompted: Record<string, true>;
 };
@@ -58,6 +61,7 @@ const EMPTY: Persisted = {
   notes: [],
   savedA: {},
   liked: {},
+  rated: {},
   prompted: {},
 };
 
@@ -136,6 +140,10 @@ type Ctx = Persisted & {
   openComment: (sid: string) => void;
   openThought: (aid: string) => void;
   toggleLike: (aid: string) => void;
+  /** 글의 추천 수. 서버 합계에 이 기기의 변경을 반영한 값(0이면 화면에 숫자를 쓰지 않는다) */
+  likeCount: (aid: string) => number;
+  refreshLikeCounts: () => Promise<void>;
+  rateArticle: (aid: string, rating: number) => void;
   editNote: (id: string) => void;
   updateNote: (id: string, text: string) => void;
   saveComment: (sid: string, text: string) => void;
@@ -162,6 +170,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [sheet, setSheet] = useState<Sheet>(null);
   const [toast, setToast] = useState("");
   const [auth, setAuth] = useState<Auth>(GUEST);
+  const [counts, setCounts] = useState<Record<string, number>>({});
+  /** 서버 추천 수를 받아온 순간 이미 서버에 반영돼 있던 내 추천. 이 이후에 바꾼 만큼만 숫자에 더하고 뺀다 */
+  const baseLiked = useRef<Record<string, true>>({});
   const ref = useRef<Persisted>(EMPTY);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
@@ -188,11 +199,32 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     void flush();
   }, []);
 
+  /** 서버의 글별 추천 수를 받는다. 받기 전에 편지함을 먼저 비워서 내 추천이 합계에 들어간 상태로 맞춘다. */
+  const refreshLikeCounts = useCallback(async () => {
+    if (!supabaseEnabled) return;
+    try {
+      await flush();
+      const next = await fetchLikeCounts();
+      baseLiked.current = { ...ref.current.liked };
+      setCounts(next);
+    } catch {
+      /* 못 받아오면 이전 숫자를 그대로 둔다 */
+    }
+  }, []);
+
   /** 서버의 기록을 로컬 상태에 반영한다. 그 사이 새로 쌓인 변경이 있으면 건너뛰고 다음 동기화에 맡긴다. */
   const applyPulled = useCallback(
     (p: Pulled) => {
       if (outboxSize() > 0) return;
-      commit({ ...ref.current, hl: p.hl, notes: p.notes, savedA: p.savedA, showKo: p.showKo ?? ref.current.showKo });
+      commit({
+        ...ref.current,
+        hl: p.hl,
+        notes: p.notes,
+        savedA: p.savedA,
+        liked: p.liked ?? ref.current.liked,
+        rated: p.rated ?? ref.current.rated,
+        showKo: p.showKo ?? ref.current.showKo,
+      });
     },
     [commit],
   );
@@ -438,6 +470,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       },
       openComment: (sid) => setSheet({ type: "comment", sid, editId: "" }),
       openThought: (aid) => setSheet({ type: "thought", aid }),
+      likeCount: (aid) =>
+        Math.max(0, (counts[aid] ?? 0) + (state.liked[aid] ? 1 : 0) - (baseLiked.current[aid] ? 1 : 0)),
+      refreshLikeCounts,
+      rateArticle: (aid, rating) => {
+        track("Article Rated", { article_id: aid, rating });
+        commit({ ...ref.current, rated: { ...ref.current.rated, [aid]: rating } });
+        send({ t: "rating", aid, rating });
+      },
       toggleLike: (aid) => {
         const liked = { ...ref.current.liked };
         const on = !liked[aid];
@@ -445,6 +485,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         if (on) liked[aid] = true;
         else delete liked[aid];
         commit({ ...ref.current, liked });
+        send({ t: "like", aid, on });
       },
       editNote: (id) => {
         const n = ref.current.notes.find((it) => it.id === id);
@@ -506,7 +547,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         if (on) showToast("글을 저장했어요. 아카이브에서 볼 수 있어요");
       },
     };
-  }, [state, auth, ready, sheet, toast, commit, showToast, maybePrompt, send]);
+  }, [state, auth, ready, sheet, toast, counts, refreshLikeCounts, commit, showToast, maybePrompt, send]);
 
   return <StoreCtx.Provider value={value}>{children}</StoreCtx.Provider>;
 }

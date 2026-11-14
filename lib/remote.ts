@@ -14,12 +14,17 @@ export type Op =
   | { t: "note"; note: Note }
   | { t: "noteDel"; id: string }
   | { t: "saved"; aid: string; on: boolean }
+  | { t: "like"; aid: string; on: boolean }
+  | { t: "rating"; aid: string; rating: number }
   | { t: "ko"; on: boolean };
 
 export type Pulled = {
   hl: Record<string, true>;
   notes: Note[];
   savedA: Record<string, true>;
+  /** 추천·별점 표가 서버에 아직 없으면(0002 마이그레이션 전) undefined — 로컬 값을 그대로 둔다 */
+  liked?: Record<string, true>;
+  rated?: Record<string, number>;
   /** 서버에 설정 행이 없으면 undefined (로컬 값을 그대로 둔다) */
   showKo?: boolean;
 };
@@ -47,7 +52,10 @@ export const outboxSize = () => readOutbox().length;
 export const clearOutbox = () => writeOutbox([]);
 
 /** 현재 상태 전체를 편지함에 넣는다. (처음 연결할 때 기존 기록 가져오기, 다른 계정으로 합칠 때) 같은 기록은 덮어쓰기라 여러 번 보내도 중복되지 않는다. */
-export function seedOutbox(s: { hl: Record<string, true>; notes: Note[]; savedA: Record<string, true>; showKo: boolean }, aidOf: (sid: string) => string | undefined) {
+export function seedOutbox(
+  s: { hl: Record<string, true>; notes: Note[]; savedA: Record<string, true>; liked?: Record<string, true>; rated?: Record<string, number>; showKo: boolean },
+  aidOf: (sid: string) => string | undefined,
+) {
   const ops: Op[] = [];
   for (const sid of Object.keys(s.hl)) {
     const aid = aidOf(sid);
@@ -55,6 +63,8 @@ export function seedOutbox(s: { hl: Record<string, true>; notes: Note[]; savedA:
   }
   for (const note of s.notes) ops.push({ t: "note", note });
   for (const aid of Object.keys(s.savedA)) ops.push({ t: "saved", aid, on: true });
+  for (const aid of Object.keys(s.liked ?? {})) ops.push({ t: "like", aid, on: true });
+  for (const [aid, rating] of Object.entries(s.rated ?? {})) ops.push({ t: "rating", aid, rating });
   if (!s.showKo) ops.push({ t: "ko", on: false });
   enqueue(...ops);
 }
@@ -121,6 +131,15 @@ async function apply(uid: string, op: Op) {
           : await sb.from("saved_articles").delete().eq("user_id", uid).eq("article_id", op.aid)
         ).error,
       );
+    case "like":
+      return check(
+        (op.on
+          ? await sb.from("article_likes").upsert({ user_id: uid, article_id: op.aid })
+          : await sb.from("article_likes").delete().eq("user_id", uid).eq("article_id", op.aid)
+        ).error,
+      );
+    case "rating":
+      return check((await sb.from("article_ratings").upsert({ user_id: uid, article_id: op.aid, rating: op.rating })).error);
     case "ko":
       return check((await sb.from("user_settings").upsert({ user_id: uid, show_ko: op.on })).error);
   }
@@ -159,6 +178,21 @@ export async function pull(uid: string): Promise<Pulled> {
     sb.from("user_settings").select("show_ko").eq("user_id", uid).maybeSingle(),
   ]);
   for (const r of [hl, notes, saved, settings]) if (r.error) throw new Error(r.error.message);
+
+  // 추천·별점 표는 0002 마이그레이션 뒤에 생긴다. 아직 없어도 다른 기록을 받아오는 데는 영향이 없게 따로 받는다.
+  let liked: Record<string, true> | undefined;
+  let rated: Record<string, number> | undefined;
+  try {
+    const [l, r] = await Promise.all([
+      sb.from("article_likes").select("article_id").eq("user_id", uid),
+      sb.from("article_ratings").select("article_id, rating").eq("user_id", uid),
+    ]);
+    if (!l.error) liked = Object.fromEntries((l.data ?? []).map((row) => [row.article_id as string, true as const]));
+    if (!r.error) rated = Object.fromEntries((r.data ?? []).map((row) => [row.article_id as string, row.rating as number]));
+  } catch {
+    /* 무시 */
+  }
+
   return {
     hl: Object.fromEntries((hl.data ?? []).map((r) => [r.sentence_id as string, true as const])),
     notes: (notes.data ?? [])
@@ -171,8 +205,20 @@ export async function pull(uid: string): Promise<Pulled> {
       }))
       .sort((a, b) => a.at - b.at),
     savedA: Object.fromEntries((saved.data ?? []).map((r) => [r.article_id as string, true as const])),
+    liked,
+    rated,
     showKo: settings.data ? (settings.data.show_ko as boolean) : undefined,
   };
+}
+
+/** 글별 추천 수(모든 사용자 합계). 서버 함수 article_like_counts() 가 개수만 돌려준다. 함수가 아직 없으면 빈 객체. */
+export async function fetchLikeCounts(): Promise<Record<string, number>> {
+  const { data, error } = await supabase().rpc("article_like_counts");
+  if (error) {
+    if (error.code && !error.code.startsWith("PGRST3")) return {};
+    throw new Error(error.message);
+  }
+  return Object.fromEntries(((data ?? []) as { article_id: string; likes: number | string }[]).map((r) => [r.article_id, Number(r.likes)]));
 }
 
 /**
