@@ -10,6 +10,7 @@ import { ConfirmDeleteDialog } from "@/components/ConfirmDeleteDialog";
 import { FilterChip } from "@/components/FilterChip";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { IconChevron, IconPen, IconTrash } from "@/components/icons";
 
 /**
@@ -142,15 +143,12 @@ function Empty({ title, body }: { title: string; body?: string }) {
   return (
     <div className="flex min-h-[55dvh] flex-col items-center justify-center gap-5 px-6 text-center">
       <div className="flex flex-col items-center gap-2">
-        <h2 className="m-0 text-body-lg font-semibold">{title}</h2>
+        <h2 className="m-0 text-title-md font-semibold">{title}</h2>
         {body && <p className="m-0 text-body-sm text-on-surface-muted">{body}</p>}
       </div>
       <Link
         href="/explore"
-        className={buttonVariants({
-          variant: "accent",
-          className: "flex h-12 rounded-pill px-[22px] text-body-md font-semibold no-underline",
-        })}
+        className={cn(buttonVariants({ variant: "accent" }), "flex h-12 rounded-pill px-[22px] text-body-md font-semibold no-underline")}
       >
         아티클 읽으러 가기
       </Link>
