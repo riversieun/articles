@@ -15,8 +15,7 @@ export type Op =
   | { t: "noteDel"; id: string }
   | { t: "saved"; aid: string; on: boolean }
   | { t: "like"; aid: string; on: boolean }
-  | { t: "rating"; aid: string; rating: number }
-  | { t: "ko"; on: boolean };
+  | { t: "rating"; aid: string; rating: number };
 
 export type Pulled = {
   hl: Record<string, true>;
@@ -25,8 +24,6 @@ export type Pulled = {
   /** 추천·별점 표가 서버에 아직 없으면(0002 마이그레이션 전) undefined — 로컬 값을 그대로 둔다 */
   liked?: Record<string, true>;
   rated?: Record<string, number>;
-  /** 서버에 설정 행이 없으면 undefined (로컬 값을 그대로 둔다) */
-  showKo?: boolean;
 };
 
 const OUTBOX_KEY = "articles:outbox:v1";
@@ -53,7 +50,7 @@ export const clearOutbox = () => writeOutbox([]);
 
 /** 현재 상태 전체를 편지함에 넣는다. (처음 연결할 때 기존 기록 가져오기, 다른 계정으로 합칠 때) 같은 기록은 덮어쓰기라 여러 번 보내도 중복되지 않는다. */
 export function seedOutbox(
-  s: { hl: Record<string, true>; notes: Note[]; savedA: Record<string, true>; liked?: Record<string, true>; rated?: Record<string, number>; showKo: boolean },
+  s: { hl: Record<string, true>; notes: Note[]; savedA: Record<string, true>; liked?: Record<string, true>; rated?: Record<string, number> },
   aidOf: (sid: string) => string | undefined,
 ) {
   const ops: Op[] = [];
@@ -65,7 +62,6 @@ export function seedOutbox(
   for (const aid of Object.keys(s.savedA)) ops.push({ t: "saved", aid, on: true });
   for (const aid of Object.keys(s.liked ?? {})) ops.push({ t: "like", aid, on: true });
   for (const [aid, rating] of Object.entries(s.rated ?? {})) ops.push({ t: "rating", aid, rating });
-  if (!s.showKo) ops.push({ t: "ko", on: false });
   enqueue(...ops);
 }
 
@@ -140,8 +136,6 @@ async function apply(uid: string, op: Op) {
       );
     case "rating":
       return check((await sb.from("article_ratings").upsert({ user_id: uid, article_id: op.aid, rating: op.rating })).error);
-    case "ko":
-      return check((await sb.from("user_settings").upsert({ user_id: uid, show_ko: op.on })).error);
   }
 }
 
@@ -171,13 +165,12 @@ export function flush(): Promise<boolean> {
 /** 서버에 있는 내 기록 전부. (한 표당 PostgREST 기본 한도 1000행) */
 export async function pull(uid: string): Promise<Pulled> {
   const sb = supabase();
-  const [hl, notes, saved, settings] = await Promise.all([
+  const [hl, notes, saved] = await Promise.all([
     sb.from("highlights").select("sentence_id").eq("user_id", uid),
     sb.from("notes").select("id, article_id, sentence_id, body, created_at").eq("user_id", uid),
     sb.from("saved_articles").select("article_id").eq("user_id", uid),
-    sb.from("user_settings").select("show_ko").eq("user_id", uid).maybeSingle(),
   ]);
-  for (const r of [hl, notes, saved, settings]) if (r.error) throw new Error(r.error.message);
+  for (const r of [hl, notes, saved]) if (r.error) throw new Error(r.error.message);
 
   // 추천·별점 표는 0002 마이그레이션 뒤에 생긴다. 아직 없어도 다른 기록을 받아오는 데는 영향이 없게 따로 받는다.
   let liked: Record<string, true> | undefined;
@@ -207,7 +200,6 @@ export async function pull(uid: string): Promise<Pulled> {
     savedA: Object.fromEntries((saved.data ?? []).map((r) => [r.article_id as string, true as const])),
     liked,
     rated,
-    showKo: settings.data ? (settings.data.show_ko as boolean) : undefined,
   };
 }
 

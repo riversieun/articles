@@ -2,7 +2,7 @@
 
 코드: `lib/analytics.ts`의 `track(이벤트명, 속성)` 한 곳으로 보내면 Mixpanel과 Amplitude에 **같은 이름·속성**으로 전송된다.
 키는 `.env.local`의 `NEXT_PUBLIC_MIXPANEL_TOKEN`, `NEXT_PUBLIC_AMPLITUDE_API_KEY`. 키가 없는 쪽은 조용히 건너뛴다.
-코멘트·생각 본문 같은 유저가 쓴 텍스트와 이메일은 보내지 않는다.
+코멘트·생각·설문 답변 본문 같은 유저가 쓴 텍스트와 이메일·휴대폰 번호는 보내지 않는다. (개인정보처리방침에는 분석 도구가 받는 내용을 따로 약속하지 않으므로, 이 규칙은 이 문서와 코드가 지킨다)
 
 - 이벤트 이름은 `Title Case`(영문), 속성 이름은 `snake_case`.
 - 토글류는 on/off를 모두 보내고 `on`(true/false) 속성으로 구분한다.
@@ -29,17 +29,20 @@
 | 이벤트 | 발생 시점 | 속성 | 코드 위치 |
 |---|---|---|---|
 | Page View | 화면(경로)이 바뀔 때. 로그인 상태를 읽은 뒤부터 보냄 | `path`, `article_id`(글 화면만) | `components/Analytics.tsx` |
-| Feed Filter Selected | 탐색 주제 필터 칩 선택 | `topic` (`all` · `process` · `collab` · `ux` · `system`) | `components/Feed.tsx` |
-| Archive Filter Selected | 아카이브 필터 칩 선택(같은 칩을 다시 누르면 보내지 않음) | `filter` (`highlights` · `comments` · `thoughts` · `articles`) | `app/(tabs)/archive/page.tsx` |
+| Feed Filter Selected | 주제 필터 칩 선택. 탐색 탭(`Feed`)과 홈의 "주제별 보기"(`Home`) 두 곳에서 보냄 | `topic` (`all` · `process` · `collab` · `ux` · `system`), `entry_point`(홈에서 보낼 때만 `home`) | `components/Feed.tsx`, `components/Home.tsx` |
+| Home Banner Clicked | 홈의 사용 후기 배너 클릭(`NEXT_PUBLIC_REVIEW_URL`이 있을 때만 링크). 설문이 서비스 안으로 들어오면 `Review Survey Started`가 대신한다 | `banner` (`review`) | `components/ReviewBanner.tsx` |
+| Archive Filter Selected | 아카이브 필터 칩 선택(같은 칩을 다시 누르면 보내지 않음) | `filter` (`thoughts` · `articles`)  ← v2 아카이브는 "저장한 아티클"·"내 생각" 두 칩 | `app/(tabs)/archive/page.tsx` |
 | **Article Opened** | 목록·카드에서 글을 눌러 상세로 들어갈 때 | `article_id`, `source`, `content_type`, `entry_point`, `position` | `ArticleRow`, 아카이브 |
 
 `Article Opened`의 `entry_point`와 `position`(목록에서 0부터 센 순서):
 
 | entry_point | 어디서 | position 기준 |
 |---|---|---|
-| `feed` | 피드의 글 카드 | 현재 필터가 적용된 목록의 순서 |
-| `archive` | 아카이브 하이라이트·코멘트·내 생각 필터의 글 제목 영역 | 그 필터에 보이는 글 그룹의 순서 |
-| `saved` | 아카이브 "아티클" 필터의 글 카드 | 저장한 글 목록의 순서 |
+| `feed` | 탐색 탭의 글 카드 | 현재 필터가 적용된 목록의 순서 |
+| `home_new` | 홈 "새로 등록된 글" 카드(`Home`) | 카드 순서 |
+| `home_topic` | 홈 "주제별 보기" 목록 | 현재 칩이 적용된 목록의 순서 |
+| `archive` | 아카이브 "내 생각" 필터의 글 제목 영역 | 그 필터에 보이는 글 그룹의 순서 |
+| `saved` | 아카이브 "저장한 아티클" 필터의 글 카드 | 저장한 글 목록의 순서 |
 
 ## 읽기
 
@@ -49,10 +52,11 @@
 | Article Completed | 읽기 진행률이 **90%**에 처음 도달 (글당 1회) | `article_id`, `source`, `content_type` | `components/Reader.tsx` |
 | Translation Toggled | 한글 번역 스위치 | `article_id`(글 화면에서만), `on` | `lib/store.tsx` |
 | Sentence Action Sheet Opened | 문장을 탭해 팝오버(하이라이트·코멘트)가 열릴 때. 이름은 옛 "액션 시트"를 그대로 유지(바꾸면 기존 데이터와 끊김). 코멘트 말풍선의 수정·삭제 팝오버는 보내지 않고 `Note Edited`/`Note Deleted`로 잡힘 (닫을 때도 보내지 않음) | `article_id`, `sentence_id` | `components/Reader.tsx` |
-| Original Article Clicked | "원문 읽기" 버튼 | `article_id`, `source`, `content_type` | `components/Reader.tsx` |
+| Original Article Clicked | "원문 읽기" 버튼. 상세(`ArticleDetail`) 하단과 병기 읽기(`Reader`) 두 곳에서 보냄 | `article_id`, `source`, `content_type` | `components/ArticleDetail.tsx`, `components/Reader.tsx` |
 
 - 완독 기준은 `Reader.tsx`의 `COMPLETE_AT`(90) 하나다. `Article Completed`, `Article Read.completed`가 같은 기준을 쓴다. 완독했을 때 화면에 보이는 UI(배너 등)는 없다. (PRD v0.3 F-41도 90%)
-- `Translation Toggled`는 프로필의 "번역 항상 켜기" 스위치에서도 보내며, 이때는 `article_id`가 없다.
+- `Translation Toggled`는 병기 읽기(`/contents/[id]/read`)의 스위치에서만 보낸다. v2에서 프로필의 "번역 항상 켜기"가 빠져 `article_id` 없는 이벤트는 더 나오지 않는다. 번역 설정은 서버에 저장하지 않고 이 기기에만 둔다.
+- `Article Read`·`Article Completed`는 상세(`ArticleDetail`)와 병기 읽기(`Reader`) 양쪽에서 같은 `useReadTracking`으로 보낸다. 두 화면을 구분하는 속성은 없으므로 필요하면 `Page View`의 `path`(`/read`로 끝나는지)로 가른다.
 
 ## 기록·저장
 
@@ -64,10 +68,35 @@
 | Note Edited | 코멘트/생각 수정 완료 | `article_id`, `note_type` | `lib/store.tsx` (`updateNote`) |
 | Note Deleted | 코멘트/생각 삭제 | `article_id`, `note_type` | `lib/store.tsx` (`removeNote`) |
 | Article Saved Toggled | 글 저장/해제 | `article_id`, `on` | `lib/store.tsx` |
+| Article Liked Toggled | "도움이 됐어요"(엄지) 켜기/끄기. 서버에서 글별로 합산(비로그인 포함) | `article_id`, `on` | `lib/store.tsx` (`toggleLike`) |
+| Article Rated | 글 아래 별점 카드에서 별 선택(글당 한 번, 평가한 글에서는 카드가 안 보임) | `article_id`, `rating`(1~5) | `lib/store.tsx` (`rateArticle`) |
 
 `note_type`: 문장 코멘트면 `comment`, 글 전체 "내 생각"이면 `thought`.
 
 하이라이트·글 저장을 **해제할 때 스낵바는 뜨지 않지만** 이벤트(`on: false`)는 그대로 보낸다. 삭제 확인 다이얼로그에서 취소하면 삭제 이벤트를 보내지 않는다.
+
+### 후기 설문 (구현 예정)
+
+설문이 서비스 안 폼이 되면 아래 이벤트를 `Home Banner Clicked` 대신 쓴다. **답변 내용과 휴대폰 번호는 속성에 넣지 않는다.** 응답 자체는 Supabase(`review_responses`)에 저장한다.
+
+| 이벤트 | 발생 시점 | 속성 |
+|---|---|---|
+| Review Survey Started | 배너를 눌러 설문에 들어갈 때 | 없음 |
+| Review Survey Step Completed | 단계를 넘길 때 | `step`(1부터), `total_steps` |
+| Review Survey Abandoned | 제출 없이 닫을 때 | `last_step` |
+| Review Survey Submitted | 제출 | `entered_draw`(경품 응모 여부, true/false) |
+
+## 삭제 예정 이벤트 (하이라이트·코멘트 제거 시)
+
+v2 디자인에서 하이라이트·코멘트를 없애기로 했다. 코드(`lib/store.tsx`, `components/Reader.tsx`)에서 기능을 걷어낼 때 아래도 함께 지운다. 현재 코드에는 아직 남아 있다.
+
+| 지울 것 | 이유 |
+|---|---|
+| `Highlight Toggled` | 하이라이트 삭제 |
+| `Comment Saved` | 코멘트 삭제 |
+| `Sentence Action Sheet Opened` | 하이라이트·코멘트 팝오버가 사라짐 |
+| `Note Edited`·`Note Deleted`의 `note_type=comment` | 생각(`thought`)만 남음. 이벤트 자체는 유지 |
+| `Backup Prompt Shown/Dismissed`의 `trigger=first_comment`, `first_highlight` | 코멘트·하이라이트가 첫 행동이 될 수 없음. `first_save`, `first_thought`는 유지 |
 
 ## 로그인·백업 제안
 
@@ -128,6 +157,7 @@
 
 - 위에 정의한 모든 이벤트는 `track()` 한 번으로 같은 이름·속성으로 두 도구에 전송된다. Amplitude는 `flushQueueSize: 1`이라 이벤트마다 바로 보낸다.
 - Amplitude는 자동 수집(autocapture)도 켜 둠: 페이지뷰(`[Amplitude] Page Viewed`), 세션, 폼 입력, 파일 다운로드, 클릭(`elementInteractions: true`, `[Amplitude] Element Clicked`). Mixpanel에는 자동 수집이 없다.
+- **후기 설문의 휴대폰 번호 입력란은 자동 수집에서 제외해야 한다.** `formInteractions`·`elementInteractions`가 입력란 이름·값을 보낼 수 있으므로, 설문 화면(경로)을 `UNTRACKED_PATH`에 넣거나 입력란에 `data-amp-mask`(마스킹)를 건다. 설문 답변 본문과 번호는 `track()` 속성에도 넣지 않는다. 설문 구현 때 확인한다.
 - 그래서 Amplitude에는 직접 정의한 `Page View`와 자동 수집 `[Amplitude] Page Viewed`가 둘 다 보인다. 분석할 때 하나만 기준으로 삼는다.
 - `is_guest`는 Amplitude에서 이벤트 속성이 아니라 **사용자 속성**이다. 차트에서 사용자 속성으로 필터/그룹하세요.
 
@@ -143,4 +173,4 @@
 
 - 체류 시간은 `seconds_visible`을 쓰세요. 탭이 백그라운드에 있던 시간은 빠져 있습니다.
 - 개발 모드에서는 브라우저 콘솔에 `MIXPANEL REQUEST`로 전송 내용이 보입니다.
-- 공개 전: 개인정보처리방침/분석 수집 안내 필요.
+- 개인정보처리방침(`/privacy`, 시행일 2026-11-16)은 작성돼 있다. 법무 검토와 Amplitude 자동 수집 범위 점검(위 설문 입력란 제외 포함)은 공개 전 확인 항목이다.

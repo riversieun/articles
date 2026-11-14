@@ -223,7 +223,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         savedA: p.savedA,
         liked: p.liked ?? ref.current.liked,
         rated: p.rated ?? ref.current.rated,
-        showKo: p.showKo ?? ref.current.showKo,
       });
     },
     [commit],
@@ -454,8 +453,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       toggleKo: (aid) => {
         const on = !ref.current.showKo;
         track("Translation Toggled", { ...(aid ? { article_id: aid } : {}), on });
-        commit({ ...ref.current, showKo: on });
-        send({ t: "ko", on });
+        commit({ ...ref.current, showKo: on }); // 번역 설정은 이 기기에만 저장한다(서버에 보내지 않음)
       },
       toggleHl: (sid) => {
         const hl = { ...ref.current.hl };
