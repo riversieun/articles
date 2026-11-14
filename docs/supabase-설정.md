@@ -10,7 +10,7 @@
 - 대시보드 → **SQL Editor** → `supabase/migrations/0001_user_records.sql` 내용을 붙여넣고 **Run**
 - 만들어지는 것: `user_settings`(2026-11-15부터 앱이 쓰지 않음, 비어 있는 채로 둠), `highlights`, `notes`(코멘트+내 생각), `saved_articles`, `feedback`, 함수 `delete_my_account()`, 그리고 모든 표의 RLS(내 행만 접근)
 - 확인: Table Editor에서 5개 표 모두 RLS가 켜져 있는지
-- (2026-11-14에 운영 DB에 `0002`는 적용됨, `0003`은 아직) 이어서 `0002_article_likes_ratings.sql`(추천 `article_likes`·별점 `article_ratings`, 함수 `article_like_counts()`), `0003_review_survey.sql`(후기 설문 `review_responses`(계정을 삭제해도 남고 `user_id`만 비워짐)·경품 응모 `review_prize_entries`, 함수 `submit_review()`)을 같은 방식으로 순서대로 Run
+- (운영 DB: `0002`는 2026-11-14, `0003`은 2026-11-15에 적용함) 이어서 `0002_article_likes_ratings.sql`(추천 `article_likes`·별점 `article_ratings`, 함수 `article_like_counts()`), `0003_review_survey.sql`(후기 설문 `review_responses`(계정을 삭제해도 남고 `user_id`만 비워짐)·경품 응모 `review_prize_entries`, 함수 `submit_review()`)을 같은 방식으로 순서대로 Run
 - **경품 휴대폰 번호 파기(운영 절차)**: 추첨 직후 `delete from public.review_prize_entries where not winner;`, 기프티콘을 보낸 직후 `delete from public.review_prize_entries where winner;` 를 SQL Editor에서 실행한다. 개인정보처리방침 3항의 약속이므로 빠뜨리지 않는다. 번호는 설문 답변 표와 분리돼 있고 앱에서는 읽을 수 없다.
 
 ## 3. 로그인 켜기
