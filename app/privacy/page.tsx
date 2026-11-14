@@ -58,6 +58,7 @@ export default function PrivacyPage() {
           <ul className={UL}>
             <li>내 생각, 저장한 글, &ldquo;도움이 됐어요&rdquo; 표시, 글에 남긴 별점</li>
             <li>피드백의 유형과 내용</li>
+            <li>후기 설문의 답변</li>
           </ul>
           <p className="m-0 text-body-sm font-medium text-on-surface">구글 로그인을 이용하는 경우</p>
           <ul className={UL}>
@@ -71,6 +72,7 @@ export default function PrivacyPage() {
             <li>생각·저장한 글·&ldquo;도움이 됐어요&rdquo; 표시·별점 등 이용자의 기록을 저장하고 다시 보여 주기 위해</li>
             <li>글별 &ldquo;도움이 됐어요&rdquo; 수를 집계하고, 서비스 이용 현황을 분석해 콘텐츠와 기능을 개선하기 위해</li>
             <li>피드백과 문의에 답하고 오류에 대응하기 위해</li>
+            <li>후기 설문의 답변을 서비스 개선에 활용하기 위해</li>
             <li>후기 설문의 경품을 추첨하고 기프티콘을 보내기 위해</li>
             <li>부정한 이용을 막고 서비스를 안전하게 운영하기 위해</li>
           </ul>
@@ -95,6 +97,10 @@ export default function PrivacyPage() {
             <li>
               <b className="font-semibold">피드백:</b> 계정을 삭제해도 서비스 개선을 위해 의견 내용은 남을 수 있습니다. 이때
               작성자(이용자 번호)와의 연결은 끊습니다.
+            </li>
+            <li>
+              <b className="font-semibold">후기 설문의 답변:</b> 계정을 삭제해도 서비스 개선을 위해 답변 내용은 남을 수 있습니다. 이때
+              이용자 번호와의 연결은 끊습니다.
             </li>
             <li>
               <b className="font-semibold">경품 추첨의 휴대폰 번호:</b> 당첨되지 않은 참여자의 번호는 추첨 직후, 당첨자의

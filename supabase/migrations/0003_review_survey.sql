@@ -2,16 +2,19 @@
 -- 실행: Supabase 대시보드 > SQL Editor 에 붙여넣고 Run. 0001, 0002 를 먼저 실행해야 한다.
 --
 -- 원칙 (개인정보처리방침 3항과 같아야 한다)
+--  · 설문 답변은 계정을 삭제해도 남긴다(2026-11-15 결정). 이때 user_id 를 비워 이용자와의 연결을 끊는다(피드백과 같은 방식).
 --  · 설문 답변(review_responses)과 경품 응모(review_prize_entries)는 다른 표에 둔다. 번호가 답변에 붙어 다니지 않게.
 --  · 휴대폰 번호는 응모 표에만 있고, 이용자는 자기 번호를 다시 읽을 수 없다(읽기 정책 없음).
 --  · 비당첨자 번호는 추첨 직후, 당첨자 번호는 기프티콘을 보낸 직후 지운다. (아래 "운영" 참고)
 
 -- 설문 답변: 한 사용자가 한 번. 답변 모양은 설문이 정해진 뒤 앱이 정하므로 jsonb 로 받는다.
 create table public.review_responses (
-  user_id    uuid primary key references auth.users (id) on delete cascade,
+  id         uuid primary key default gen_random_uuid(),
+  user_id    uuid references auth.users (id) on delete set null,   -- 계정 삭제 뒤에는 null (답변은 남음)
   answers    jsonb not null,
   created_at timestamptz not null default now()
 );
+create unique index review_responses_user_idx on public.review_responses (user_id);   -- 한 사용자 한 번 (null 은 여러 개 가능)
 
 -- 경품 응모: 번호는 여기에만 둔다. winner 는 운영자가 추첨한 뒤 직접 표시한다.
 create table public.review_prize_entries (
@@ -47,4 +50,4 @@ grant execute on function public.submit_review(jsonb, text) to authenticated;
 -- 운영 (SQL Editor, 번호는 이 두 줄로 지운다)
 --   추첨 직후:      delete from public.review_prize_entries where not winner;
 --   기프티콘 발송 직후: delete from public.review_prize_entries where winner;   -- 보낸 사람만 지우려면 user_id 조건을 붙인다
--- 계정 삭제(delete_my_account)는 auth.users 를 지우므로 두 표의 내 행도 on delete cascade 로 함께 지워진다.
+-- 계정 삭제(delete_my_account)는 auth.users 를 지우므로, 응모 표의 내 행은 on delete cascade 로 함께 지워지고 설문 답변은 user_id 만 null 이 되어 남는다.
