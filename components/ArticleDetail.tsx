@@ -7,6 +7,7 @@ import { TOPIC_LABEL, lib } from "@/lib/content";
 import { goBackInApp } from "@/lib/nav";
 import { useStore } from "@/lib/store";
 import { useReadTracking } from "@/lib/useReadTracking";
+import { useScrollChrome } from "@/lib/useScrollChrome";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { FeedbackDialog } from "./FeedbackDialog";
@@ -28,6 +29,8 @@ export function ArticleDetail({ aid }: { aid: string }) {
   const router = useRouter();
   const { liked, savedA, toggleLike, toggleA, openThought, likeCount, refreshLikeCounts } = useStore();
   const { progress, endRef } = useReadTracking(aid);
+  const { hidden, atEnd } = useScrollChrome(endRef);
+  const showBar = !hidden || atEnd; // 내려 읽는 중에는 숨고, 끝까지 읽으면 다시 나온다
   const [fbOpen, setFbOpen] = useState(false);
 
   // 열 때마다 서버의 추천 수를 새로 받아온다
@@ -41,26 +44,33 @@ export function ArticleDetail({ aid }: { aid: string }) {
 
   return (
     <div className="min-h-dvh bg-surface tracking-body">
-      {/* 상단 고정: 뒤로가기 + 읽기 진행(초록 선) */}
-      <div className="sticky top-0 z-30 bg-surface">
-        <div className="flex h-12 items-center justify-between px-3">
-          <button
-            onClick={() => goBackInApp(router)}
-            aria-label="목록으로 돌아가기"
-            className="flex size-11 shrink-0 items-center justify-center border-0 bg-transparent text-pd-ink"
-          >
-            <IconBack size={22} sw={1.75} />
-          </button>
-        </div>
+      {/* 상단 고정: 뒤로가기 + 읽기 진행(초록 선). 내려 읽으면 앱 바는 위로 들어가고 초록 선만 맨 위에 남는다. */}
+      <div className="pointer-events-none sticky top-0 z-30">
         <div
-          role="progressbar"
-          aria-label="읽은 정도"
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={progress}
-          className="h-0.5"
+          className={cn(
+            "pointer-events-auto transition-transform ease-[cubic-bezier(0.23,1,0.32,1)] motion-reduce:transition-none",
+            hidden ? "-translate-y-12 duration-220" : "duration-300",
+          )}
         >
-          <div className="h-0.5 bg-brand transition-[width] duration-100 ease-linear" style={{ width: `${progress}%` }} />
+          <div inert={hidden} className="flex h-12 items-center justify-between bg-surface px-3">
+            <button
+              onClick={() => goBackInApp(router)}
+              aria-label="목록으로 돌아가기"
+              className="flex size-11 shrink-0 items-center justify-center border-0 bg-transparent text-pd-ink"
+            >
+              <IconBack size={22} sw={1.75} />
+            </button>
+          </div>
+          <div
+            role="progressbar"
+            aria-label="읽은 정도"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={progress}
+            className="h-0.5 bg-surface"
+          >
+            <div className="h-0.5 bg-brand transition-[width] duration-100 ease-linear" style={{ width: `${progress}%` }} />
+          </div>
         </div>
       </div>
 
@@ -173,7 +183,13 @@ export function ArticleDetail({ aid }: { aid: string }) {
       </article>
 
       {/* 하단에 떠 있는 바: 추천해요(엄지) · 내 생각 기록 · 저장 */}
-      <div className="pointer-events-none fixed inset-x-0 bottom-[max(16px,env(safe-area-inset-bottom))] z-40 mx-auto flex w-full max-w-[430px] justify-center px-6">
+      <div
+        inert={!showBar}
+        className={cn(
+          "pointer-events-none fixed inset-x-0 bottom-[max(16px,env(safe-area-inset-bottom))] z-40 mx-auto flex w-full max-w-[430px] justify-center px-6 transition-[transform,opacity] ease-[cubic-bezier(0.23,1,0.32,1)] motion-reduce:transition-opacity",
+          showBar ? "duration-300" : "translate-y-[calc(100%+24px)] opacity-0 duration-220 motion-reduce:translate-y-0",
+        )}
+      >
         <div className="pointer-events-auto flex items-center gap-2 rounded-full bg-surface px-4 py-1 drop-shadow-[0_2px_6px_rgba(0,0,0,0.1)]">
           <button
             onClick={() => toggleLike(aid)}

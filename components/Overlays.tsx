@@ -7,6 +7,7 @@ import { useStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { copyLink } from "@/lib/inapp";
+import { cn } from "@/lib/utils";
 import { GoogleLoginButton } from "./GoogleLoginButton";
 
 // 기록이 남는 첫 행동(코멘트·하이라이트·글 저장·내 생각) 직후에 뜨는 로그인 시트
@@ -36,14 +37,34 @@ export function Overlays() {
   const [thoughtDraft, setThoughtDraft] = useState("");
   const hasTabBar = ["/", "/explore", "/archive"].includes(pathname);
 
+  // 시트가 닫히면 store 의 sheet 는 바로 null 이 된다. 나가는 모션이 끝날 때까지 마지막 시트를 그려 둔다.
+  const [shown, setShown] = useState(sheet);
+  const [closing, setClosing] = useState(false);
+  useEffect(() => {
+    if (sheet) {
+      setShown(sheet);
+      setClosing(false);
+      return;
+    }
+    if (!shown) return;
+    setClosing(true);
+    const t = setTimeout(() => {
+      setShown(null);
+      setClosing(false);
+    }, SHEET_EXIT_MS);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sheet]);
+  const cur = sheet ?? shown;
+
   // 내 생각 시트는 열 때마다 빈 입력으로 시작
-  const thoughtAid = sheet?.type === "thought" ? sheet.aid : "";
+  const thoughtAid = cur?.type === "thought" ? cur.aid : "";
   useEffect(() => {
     setThoughtDraft("");
   }, [thoughtAid]);
 
-  const commentSid = sheet?.type === "comment" ? sheet.sid : "";
-  const editId = sheet?.type === "comment" ? sheet.editId : "";
+  const commentSid = cur?.type === "comment" ? cur.sid : "";
+  const editId = cur?.type === "comment" ? cur.editId : "";
   // 새 코멘트는 빈 입력으로, 수정은 기존 내용으로 시작
   useEffect(() => {
     setDraft(editId ? (notes.find((n) => n.id === editId)?.text ?? "") : "");
@@ -57,8 +78,8 @@ export function Overlays() {
 
   return (
     <>
-      {sheet?.type === "login" && (
-        <Sheet onClose={closeSheet} labelledBy="login-title">
+      {cur?.type === "login" && (
+        <Sheet closing={closing} onClose={closeSheet} labelledBy="login-title">
           <h2 id="login-title" className="m-0 text-headline font-bold tracking-headline whitespace-pre-line">
             {LOGIN_COPY.title}
           </h2>
@@ -70,12 +91,12 @@ export function Overlays() {
         </Sheet>
       )}
 
-      {sheet?.type === "inapp" && (
-        <Sheet onClose={closeSheet} labelledBy="inapp-title">
+      {cur?.type === "inapp" && (
+        <Sheet closing={closing} onClose={closeSheet} labelledBy="inapp-title">
           <h2 id="inapp-title" className="m-0 text-headline font-bold tracking-headline whitespace-pre-line">
-            {INAPP_COPY[sheet.reason].title}
+            {INAPP_COPY[cur.reason].title}
           </h2>
-          <p className="m-0 text-body-md text-on-surface-muted">{INAPP_COPY[sheet.reason].body}</p>
+          <p className="m-0 text-body-md text-on-surface-muted">{INAPP_COPY[cur.reason].body}</p>
           <Button
             variant="accent"
             size="lg"
@@ -94,8 +115,8 @@ export function Overlays() {
         </Sheet>
       )}
 
-      {sheet?.type === "comment" && (
-        <Sheet onClose={closeSheet} labelledBy="comment-title">
+      {cur?.type === "comment" && (
+        <Sheet closing={closing} onClose={closeSheet} labelledBy="comment-title">
           <h2 id="comment-title" className="m-0 mb-2.5 text-headline font-bold tracking-headline">
             {commentTitle}
           </h2>
@@ -134,8 +155,8 @@ export function Overlays() {
         </Sheet>
       )}
 
-      {sheet?.type === "thought" && (
-        <Sheet onClose={closeSheet} labelledBy="thought-title">
+      {cur?.type === "thought" && (
+        <Sheet closing={closing} onClose={closeSheet} labelledBy="thought-title">
           <h2 id="thought-title" className="m-0 mb-2.5 text-headline font-bold tracking-headline">
             내 생각 기록
           </h2>
@@ -160,7 +181,7 @@ export function Overlays() {
               disabled={!thoughtDraft.trim()}
               onClick={() => {
                 closeSheet(); // 백업 제안 시트가 이어서 뜰 수 있어서 먼저 닫는다
-                addThought(sheet.aid, thoughtDraft);
+                addThought(cur.aid, thoughtDraft);
               }}
               className="h-12"
             >
@@ -170,7 +191,7 @@ export function Overlays() {
         </Sheet>
       )}
 
-      {toast && !sheet && (
+      {toast && !cur && (
         <div
           role="status"
           className={`pop fixed inset-x-0 z-[60] mx-auto w-full max-w-[430px] px-5 ${
@@ -186,15 +207,39 @@ export function Overlays() {
   );
 }
 
+/** 시트가 나가는 시간(ms). Sheet 의 닫힘 transition 과 같아야 한다. */
+const SHEET_EXIT_MS = 300;
+
+/**
+ * 하단 시트. 아래에서 올라오고, 닫을 때(바깥·닫기 버튼·Esc)는 같은 길로 아래로 내려간다.
+ * 키프레임이 아니라 transition 이라 여는 도중에 닫아도 그 자리에서 되돌아간다.
+ * 들어올 때는 iOS 시트 곡선(0.32, 0.72, 0, 1) 480ms, 나갈 때는 더 빠르게 300ms. 어두운 배경은 같이 사라진다.
+ */
 function Sheet({
   children,
   onClose,
   labelledBy,
+  closing,
 }: {
   children: React.ReactNode;
   onClose: () => void;
   labelledBy: string;
+  closing: boolean;
 }) {
+  const [entered, setEntered] = useState(false);
+  useEffect(() => {
+    // 처음 그린 프레임을 "닫힘" 상태로 두고 다음 프레임에 열어야 올라오는 모션이 생긴다
+    let r2 = 0;
+    const r1 = requestAnimationFrame(() => {
+      r2 = requestAnimationFrame(() => setEntered(true));
+    });
+    return () => {
+      cancelAnimationFrame(r1);
+      cancelAnimationFrame(r2);
+    };
+  }, []);
+  const open = entered && !closing;
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
@@ -206,13 +251,21 @@ function Sheet({
       <button
         aria-label="닫기"
         onClick={onClose}
-        className="pop absolute inset-0 h-full w-full cursor-default border-0 bg-primary/50 p-0"
+        tabIndex={closing ? -1 : 0}
+        className={cn(
+          "absolute inset-0 h-full w-full cursor-default border-0 bg-primary/50 p-0 transition-opacity ease-out",
+          open ? "opacity-100 duration-[320ms]" : "opacity-0 duration-[240ms]",
+        )}
       />
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby={labelledBy}
-        className="up relative flex flex-col gap-2.5 rounded-t-[26px] bg-surface px-5 pt-7 pb-6"
+        inert={closing}
+        className={cn(
+          "relative flex flex-col gap-2.5 rounded-t-[26px] bg-surface px-5 pt-7 pb-6 transition-[transform,opacity] ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-opacity",
+          open ? "translate-y-0 opacity-100 duration-[480ms]" : "translate-y-full opacity-0 duration-[300ms] motion-reduce:translate-y-0",
+        )}
       >
         {children}
       </div>
