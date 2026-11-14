@@ -38,9 +38,11 @@
   --color-pd-tint: #f9f9f9; /* 아티클 상세 머리 배경, 더보기 버튼 */
   --color-pd-chip: #f1f1f3; /* 선택 안 된 주제 칩 배경 (기존 surface-muted #f4f4f6) */
   /* 홈 "새로 등록된 글" 카드의 위쪽 가운데 초록 빛. 위에서 아래로 pd-tint 로 사라진다 */
-  --color-pd-glow: #c1fdc5;
-  --color-pd-glow-mid: #d1fbc7;
-  --color-pd-glow-soft: #ecfae3;
+  --color-pd-glow: #aeffc0;
+  --color-pd-glow-mid: #b9fec1;
+  --color-pd-glow-soft: #d5fbc4;
+  /* 홈 사용 후기 배너 배경 */
+  --color-pd-note: #fffcc0;
 }
 
 @layer base {
@@ -174,6 +176,9 @@
   --text-heading--line-height: 28px;
   --text-title-md: 20px;
   --text-title-md--line-height: 26px;
+  /* 홈 사용 후기 배너 본문 */
+  --text-note: 15px;
+  --text-note--line-height: 20px;
   /* 글 카드·홈 카드의 출처 · 발행일 */
   --text-caption: 13px;
   --text-caption--line-height: 18px;  --text-title-sm: 18px;

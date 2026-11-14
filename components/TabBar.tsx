@@ -3,12 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { RiCompassFill, RiHomeFill } from "@remixicon/react";
-import { IconBookmark } from "./icons";
+import { IconBookmark, IconCompassFill, IconHomeFill } from "./icons";
 
 const TABS = [
-  { href: "/", label: "홈", icon: <RiHomeFill className="size-6" aria-hidden="true" /> },
-  { href: "/explore", label: "탐색", icon: <RiCompassFill className="size-6" aria-hidden="true" /> },
+  { href: "/", label: "홈", icon: <IconHomeFill /> },
+  { href: "/explore", label: "탐색", icon: <IconCompassFill /> },
   { href: "/archive", label: "아카이브", icon: <IconBookmark filled size={24} /> },
 ];
 
@@ -79,7 +78,7 @@ export function TabBar() {
               className={`tab-bar-motion flex h-12 flex-col items-center justify-center gap-0.5 text-label-sm font-medium no-underline transition-[width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                 isCompact ? "w-[78px]" : "w-[88px]"
               } ${
-                on ? "text-primary" : "text-subtle"
+                on ? "text-pd-ink" : "text-subtle"
               }`}
             >
               {icon}

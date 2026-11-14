@@ -35,7 +35,7 @@ export function AppBar() {
         className="relative font-logo text-headline font-bold tracking-display text-pd-ink no-underline"
       >
         crumbit
-        <IconSparkle size={10} className="absolute -top-0.5 right-1 text-brand" />
+        <IconSparkle size={12} className="absolute top-0 -right-2.5 text-brand" />
       </Link>
 
       {/* ready 전에는 자리만 확보해 로그인 ↔ 프로필 깜빡임을 막는다 */}
@@ -44,7 +44,7 @@ export function AppBar() {
           <Link
             href="/mypage"
             aria-label="프로필"
-            className="flex size-11 items-center justify-center no-underline"
+            className="mr-0.5 flex size-11 items-center justify-center no-underline"
           >
             {loggedIn ? <ProfileAvatar size={32} /> : <IconAvatar size={32} />}
           </Link>
