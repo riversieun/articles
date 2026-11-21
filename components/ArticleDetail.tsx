@@ -70,9 +70,9 @@ export function ArticleDetail({ aid }: { aid: string }) {
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={progress}
-            className="h-0.5 bg-surface"
+            className="h-0.5 bg-pd-dot"
           >
-            <div className="h-0.5 bg-brand transition-[width] duration-100 ease-linear" style={{ width: `${progress}%` }} />
+            <div className="h-0.5 bg-pd-ink transition-[width] duration-100 ease-linear" style={{ width: `${progress}%` }} />
           </div>
         </div>
       </div>
@@ -210,7 +210,7 @@ export function ArticleDetail({ aid }: { aid: string }) {
             onClick={() => openThought(aid)}
             aria-label="내 생각 기록"
             data-on={hasThought}
-            className="fb-btn flex size-11 items-center justify-center border-0 bg-transparent text-pd-ink"
+            className="fb-btn flex size-11 items-center justify-center border-0 bg-transparent text-pd-ink data-[on=true]:text-pd-ink-soft"
           >
             {/* 기록한 글이면 윤곽 펜 위에 채운 펜이 겹쳐 보인다(P1) */}
             <span className="fb-ico">
@@ -221,7 +221,7 @@ export function ArticleDetail({ aid }: { aid: string }) {
             </span>
           </button>
           <button
-            onClick={() => toggleA(aid)}
+            onClick={() => toggleA(aid, { quiet: true })}
             aria-label={isSaved ? "글 저장 해제" : "글 저장"}
             aria-pressed={isSaved}
             data-on={isSaved}
