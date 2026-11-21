@@ -268,7 +268,7 @@ export function Overlays() {
                   }}
                   className="h-12"
                 >
-                  {cur.editId ? "수정 완료" : "생각 남기기"}
+                  {cur.editId ? "수정 완료" : "기록 저장하기"}
                 </Button>
               </div>
             </>
