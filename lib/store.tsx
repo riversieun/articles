@@ -149,7 +149,8 @@ type Ctx = Persisted & {
   saveComment: (sid: string, text: string) => void;
   addThought: (aid: string, text: string) => void;
   removeNote: (id: string) => void;
-  toggleA: (aid: string) => void;
+  /** quiet: 저장 스낵바를 띄우지 않는다(아카이브에서 해제했다가 다시 저장할 때) */
+  toggleA: (aid: string, opts?: { quiet?: boolean }) => void;
   showToast: (msg: string) => void;
 };
 
@@ -533,7 +534,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         send({ t: "noteDel", id });
         showToast("삭제했어요");
       },
-      toggleA: (aid) => {
+      toggleA: (aid, opts) => {
         const savedA = { ...ref.current.savedA };
         const on = !savedA[aid];
         track("Article Saved Toggled", { article_id: aid, on });
@@ -542,7 +543,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         const next: Persisted = { ...ref.current, savedA };
         commit(on ? maybePrompt(next, "save") : next);
         send({ t: "saved", aid, on });
-        if (on) showToast("글을 저장했어요. 아카이브에서 볼 수 있어요");
+        if (on && !opts?.quiet) showToast("글을 저장했어요. 아카이브에서 볼 수 있어요");
       },
     };
   }, [state, auth, ready, sheet, toast, counts, refreshLikeCounts, commit, showToast, maybePrompt, send]);

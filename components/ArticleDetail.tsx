@@ -77,7 +77,7 @@ export function ArticleDetail({ aid }: { aid: string }) {
       </div>
 
       <article>
-        <header className="flex flex-col gap-4.5 bg-pd-tint px-6 py-5">
+        <header className="flex flex-col gap-4.5 px-6 py-5">
           <span className="w-fit rounded-sm bg-brand-tint px-2.5 py-1.5 text-body-sm leading-4.5 font-medium text-brand-strong">
             {TOPIC_LABEL[art.topic]}
           </span>
@@ -92,8 +92,8 @@ export function ArticleDetail({ aid }: { aid: string }) {
           </div>
         </header>
 
-        <section aria-label="한 줄 요약" className="flex flex-col px-6 pt-8 pb-5">
-          <div className="flex flex-col gap-3 rounded-panel border border-pd-line bg-pd-tint px-2 pt-4 pb-2">
+        <section aria-label="한 문장 요약" className="flex flex-col px-6 pt-8 pb-5">
+          <div className="flex flex-col gap-3 rounded-panel border border-pd-line bg-pd-tint px-2 py-5">
             <div className="flex items-center gap-0.5 px-2">
               <span className="relative size-4.5 shrink-0 overflow-clip">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -107,7 +107,7 @@ export function ArticleDetail({ aid }: { aid: string }) {
                   style={{ left: 1.74, top: 4.2 }}
                 />
               </span>
-              <h2 className="m-0 text-body-sm leading-4.5 font-semibold text-pd-label">한 줄 요약</h2>
+              <h2 className="m-0 text-body-sm leading-4.5 font-semibold text-pd-label">한 문장 요약</h2>
             </div>
             <p className="m-0 rounded-md bg-surface p-4 text-body-md leading-6 text-pd-ink [word-break:normal]">{art.summary}</p>
           </div>
@@ -136,7 +136,7 @@ export function ArticleDetail({ aid }: { aid: string }) {
             <div className="flex flex-col gap-5">
               {art.quotes.map((q, i) => (
                 <blockquote key={i} className="m-0 flex flex-col gap-2.5 border-0 border-l-2 border-solid border-brand-soft pl-4">
-                  <p lang="en" className="m-0 font-quote text-body-lg leading-6 text-pd-ink italic">
+                  <p lang="en" className="m-0 font-quote text-body-lg leading-6 text-pd-ink">
                     “{q.en}”
                   </p>
                   <p className="m-0 text-body-sm leading-5.25 text-pd-ink-soft">{q.ko}</p>
@@ -176,9 +176,9 @@ export function ArticleDetail({ aid }: { aid: string }) {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => track("Original Article Clicked", articleProps(aid))}
-            className={cn(buttonVariants({ variant: "outline" }), FOOTER_BUTTON, "gap-1 no-underline")}
+            className={cn(buttonVariants({ variant: "outline" }), FOOTER_BUTTON, "gap-1 pr-3 pl-4 no-underline")}
           >
-            원문 읽기
+            원문 보기
             <IconArrowUpRight />
           </a>
         </div>

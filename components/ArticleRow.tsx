@@ -22,12 +22,12 @@ export function SourceLine({ a, large = false }: { a: Article; large?: boolean }
 }
 
 /** 글 저장 책갈피. 저장하면 브랜드 초록으로 채운다. 눈에 보이는 크기는 24px, 누르는 영역은 44px. */
-export function SaveButton({ aid, className = "" }: { aid: string; className?: string }) {
+export function SaveButton({ aid, className = "", quiet = false }: { aid: string; className?: string; quiet?: boolean }) {
   const { savedA, toggleA } = useStore();
   const saved = !!savedA[aid];
   return (
     <button
-      onClick={() => toggleA(aid)}
+      onClick={() => toggleA(aid, { quiet })}
       aria-label={saved ? "글 저장 해제" : "글 저장"}
       aria-pressed={saved}
       className={`flex size-11 shrink-0 items-center justify-center border-0 bg-transparent ${
@@ -64,7 +64,7 @@ export function ArticleRow({
       </Link>
       <div className="mt-3.5 mb-6 flex h-6 items-center justify-between gap-3 pr-3.5 pl-6">
         <SourceLine a={a} />
-        <SaveButton aid={a.id} className="-my-2.5" />
+        <SaveButton aid={a.id} className="-my-2.5" quiet={entryPoint === "saved"} />
       </div>
     </div>
   );
