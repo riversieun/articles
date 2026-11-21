@@ -58,7 +58,7 @@ export function FeedbackDialog({ open, onOpenChange }: { open: boolean; onOpenCh
     track("Feedback Sent", { kind: FB_KIND_KEY[fbKind] });
     setFbText("");
     onOpenChange(false);
-    showToast("피드백을 보냈어요. 운영자가 확인할게요");
+    showToast("소중한 의견 감사합니다.");
   };
 
   return (
@@ -73,9 +73,7 @@ export function FeedbackDialog({ open, onOpenChange }: { open: boolean; onOpenCh
             </DialogClose>
           </div>
           <DialogDescription className="text-body-md text-on-surface-muted">
-            의견을 자유롭게 남겨주세요.
-            <br />
-            서비스 개선에 반영하겠습니다.
+            보내주신 의견은 서비스 개선에 반영하겠습니다.
           </DialogDescription>
         </DialogHeader>
         <div className="mt-2 flex flex-col gap-2">
