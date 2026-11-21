@@ -78,9 +78,11 @@ const RADII: [name: string, cls: string, px: string][] = [
   ["sm", "rounded-sm", "6"],
   ["md", "rounded-md", "8"],
   ["lg", "rounded-lg", "10"],
+  ["panel", "rounded-panel", "12"],
   ["xl", "rounded-xl", "14"],
   ["card", "rounded-card", "16"],
   ["pill", "rounded-pill", "26"],
+  ["sheet", "rounded-sheet", "28"],
   ["full", "rounded-full", "∞"],
 ];
 
