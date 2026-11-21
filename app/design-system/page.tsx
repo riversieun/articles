@@ -46,7 +46,10 @@ function Group({ label, children }: { label: string; children: React.ReactNode }
 
 const COLORS: [name: string, hex: string, token: string, hint: string][] = [
   ["primary", "#111111", "--ds-primary", "글자·기본 버튼"],
-  ["accent", "#00D866", "--ds-accent", "브랜드 초록. 저장·진행 바·핵심 행동"],
+  ["accent", "#00D866", "--ds-accent", "브랜드 초록. 저장·핵심 행동 (bg-brand)"],
+  ["accent-strong", "#01A850", "--ds-accent-strong", "연한 초록 면 위의 글자 (brand-strong)"],
+  ["accent-tint", "#DAF7DF", "--ds-accent-tint", "주제 뱃지 배경 (brand-tint)"],
+  ["accent-soft", "#9CE4AB", "--ds-accent-soft", "번호·인용선·불릿 장식 (brand-soft)"],
   ["accent-sub", "#E7E0FF", "--ds-accent-sub", "사용자 하이라이트"],
   ["accent-sub-strong", "#CBBCFF", "--ds-accent-sub-strong", "코멘트 말풍선"],
   ["surface", "#FFFFFF", "--ds-surface", "페이지·팝업"],
@@ -59,6 +62,18 @@ const COLORS: [name: string, hex: string, token: string, hint: string][] = [
   ["danger", "oklch(0.577 0.245 27.325)", "--ds-danger", "삭제·오류만"],
   ["like", "#FFBF00", "--color-pd-like", "추천해요(엄지) 켜짐·별점 채움. 플로팅 바와 별점 전용"],
   ["snack", "#4A4A52", "--color-pd-snack", "스낵바(토스트) 배경. 글자는 흰색"],
+  ["pd-ink", "#0B0B0F", "--color-pd-ink", "v2 본문·제목 글자, 선택된 칩·탭"],
+  ["pd-ink-muted", "#5E5E66", "--color-pd-ink-muted", "v2 부제·날짜·영어 제목"],
+  ["pd-ink-soft", "#3A3A42", "--color-pd-ink-soft", "v2 인용 번역·보조 버튼 글자"],
+  ["pd-ink-quiet", "#77778D", "--color-pd-ink-quiet", "v2 요약 카드 라벨"],
+  ["pd-icon", "#272727", "--color-pd-icon", "v2 글 저장 아이콘(저장 전)"],
+  ["pd-line", "#E6E6EA", "--color-pd-line", "v2 구분선·카드 테두리"],
+  ["pd-dot", "#C6C6CF", "--color-pd-dot", "v2 출처·날짜 사이 점, 진행 막대 트랙"],
+  ["pd-tint", "#F9F9F9", "--color-pd-tint", "v2 한 문장 요약 카드·더보기 버튼"],
+  ["pd-chip", "#F1F1F3", "--color-pd-chip", "v2 선택 안 된 주제 칩"],
+  ["pd-star", "#B4B4B8", "--color-pd-star", "v2 비어 있는 별점 별"],
+  ["pd-glow", "#AEFFC0", "--color-pd-glow", "v2 새로 등록된 글 카드의 초록 빛"],
+  ["pd-note", "#FFFCC0", "--color-pd-note", "v2 사용 후기 배너 배경"],
 ];
 
 const TYPE: [name: string, cls: string, spec: string, sample: string][] = [
@@ -72,6 +87,12 @@ const TYPE: [name: string, cls: string, spec: string, sample: string][] = [
   ["label-md", "text-label-md font-medium", "14 / 500", "원문 읽기"],
   ["label-md-semibold", "text-label-md font-semibold", "14 / 600", "원문 요약"],
   ["label-sm", "text-label-sm font-medium", "12 / 500", "디자인 프로세스"],
+  ["title", "text-title font-bold", "24 / 700 / 30px", "빈 화면은 오류가 아니라 첫인상이다"],
+  ["heading", "text-heading font-bold", "22 / 700 / 28px", "핵심 인사이트예요"],
+  ["title-md", "text-title-md font-semibold", "20 / 600 / 26px", "빈 화면은 첫인상이다"],
+  ["title-sm", "text-title-sm font-bold", "18 / 700 / 26px", "빈 상태를 설계하는 법"],
+  ["note", "text-note", "15 / 400 / 20px", "최신 · 디자인 · 리서치"],
+  ["caption", "text-caption", "13 / 400 / 18px", "Nielsen Norman Group · 2026.11.02"],
 ];
 
 const RADII: [name: string, cls: string, px: string][] = [
@@ -81,6 +102,8 @@ const RADII: [name: string, cls: string, px: string][] = [
   ["panel", "rounded-panel", "12"],
   ["xl", "rounded-xl", "14"],
   ["card", "rounded-card", "16"],
+  ["hero", "rounded-hero", "20"],
+  ["box", "rounded-box", "24"],
   ["pill", "rounded-pill", "26"],
   ["sheet", "rounded-sheet", "28"],
   ["full", "rounded-full", "∞"],
@@ -136,7 +159,7 @@ export default function DesignSystemPage() {
         </div>
       </Section>
 
-      <Section id="typography" title="Typography" note="크기·줄 높이는 text-* 클래스, 굵기·자간은 font-*·tracking-*를 함께 붙인다. Pretendard 하나만 쓴다.">
+      <Section id="typography" title="Typography" note="크기·줄 높이는 text-* 클래스, 굵기·자간은 font-*·tracking-*를 함께 붙인다. Pretendard 하나만 쓴다(원문 인용 Roboto, 로고 Plus Jakarta Sans 예외).">
         <div className="flex flex-col">
           {TYPE.map(([name, cls, spec, sample]) => (
             <div key={name} className="flex flex-col gap-1 border-b border-border py-4 last:border-b-0">
