@@ -212,7 +212,10 @@ export function Overlays() {
                         {/* 보이는 아이콘은 20px, 누르는 영역은 44px. 아이콘 사이 16px */}
                         <div className="-mr-3 flex items-center -space-x-2">
                           <button
-                            onClick={() => setThoughtMode("edit")}
+                            onClick={() => {
+                              setThoughtDraft(note.text);
+                              setThoughtMode("edit");
+                            }}
                             aria-label="수정"
                             className="flex size-11 shrink-0 items-center justify-center border-0 bg-transparent text-pd-ink-muted"
                           >
@@ -253,7 +256,12 @@ export function Overlays() {
                 placeholder="느낀 점, 내 일에 적용해볼 점은?"
               />
               <div className="mt-1.5 grid grid-cols-2 gap-2">
-                <Button variant="outline" size="lg" onClick={closeSheet} className="h-12">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={() => (cur.editId ? setThoughtMode("view") : closeSheet())}
+                  className="h-12"
+                >
                   취소
                 </Button>
                 <Button
@@ -261,7 +269,8 @@ export function Overlays() {
                   disabled={!thoughtDraft.trim()}
                   onClick={() => {
                     if (cur.editId) {
-                      updateNote(cur.editId, thoughtDraft);
+                      updateNote(cur.editId, thoughtDraft, true); // 시트는 닫지 않고 수정된 생각 보기로 돌아간다
+                      setThoughtMode("view");
                       return;
                     }
                     closeSheet(); // 백업 제안 시트가 이어서 뜰 수 있어서 먼저 닫는다
@@ -292,11 +301,11 @@ export function Overlays() {
         <div
           role="status"
           data-open={snackIn}
-          className={`snack pointer-events-none fixed inset-x-0 z-[60] mx-auto flex w-full max-w-[430px] justify-center px-5 ${
+          className={`snack pointer-events-none fixed inset-x-0 z-[60] mx-auto flex w-full max-w-[430px] justify-center px-6 ${
             hasTabBar ? "bottom-24" : hasFloatBar ? "bottom-[calc(max(16px,env(safe-area-inset-bottom))+64px)]" : "bottom-6"
           }`}
         >
-          <div className="snack-pill w-fit rounded-pill bg-pd-snack px-4 py-[13px] text-label-md font-medium text-on-primary shadow-[0_2px_8px_rgba(17,17,17,0.2),0_8px_16px_-6px_rgba(17,17,17,0.18)]">
+          <div className="snack-pill w-fit rounded-panel bg-pd-snack/80 px-4 py-3 text-center text-label-md font-normal whitespace-pre-line text-on-primary backdrop-blur-md backdrop-saturate-120 shadow-[0_2px_8px_rgba(17,17,17,0.2),0_8px_16px_-6px_rgba(17,17,17,0.18)]">
             {snack}
           </div>
         </div>

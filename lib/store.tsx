@@ -146,7 +146,8 @@ type Ctx = Persisted & {
   refreshLikeCounts: () => Promise<void>;
   rateArticle: (aid: string, rating: number) => void;
   editNote: (id: string) => void;
-  updateNote: (id: string, text: string) => void;
+  /** keepOpen: 열려 있는 시트를 닫지 않는다(내 생각 시트가 수정 후 보기 화면으로 돌아갈 때) */
+  updateNote: (id: string, text: string, keepOpen?: boolean) => void;
   saveComment: (sid: string, text: string) => void;
   addThought: (aid: string, text: string) => void;
   removeNote: (id: string) => void;
@@ -252,7 +253,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           ssSet(MERGE_KEY, null);
           setGuestState(false); // Login Completed부터 is_guest=false
           track("Login Completed", { trigger, merged });
-          showToast("구글 계정에 기록을 연결했어요");
         }
       }
 
@@ -324,7 +324,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         }
         ssSet(MERGE_KEY, null);
         ssSet(TRIGGER_KEY, null);
-        showToast("구글 계정을 연결하지 못했어요. 잠시 후 다시 시도해주세요");
+        showToast("구글 계정을 연결하지 못했어요\n잠시 후 다시 시도해주세요!");
       }
       try {
         const { data } = await sb.auth.getSession();
@@ -394,7 +394,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           track("Login Completed", { trigger, merged: false });
           commit({ ...ref.current, loggedIn: true });
           setSheet(null);
-          showToast("구글 계정에 기록을 연결했어요 (프로토타입: 실제 인증 없음)");
           return;
         }
 
@@ -411,7 +410,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         startGoogleLogin().catch((e) => {
           console.error("[login] 구글 로그인을 시작하지 못함", e);
           ssSet(TRIGGER_KEY, null);
-          showToast("로그인을 시작하지 못했어요. 잠시 후 다시 시도해주세요");
+          showToast("구글 계정을 연결하지 못했어요\n잠시 후 다시 시도해주세요!");
         });
       },
       logout: () => {
@@ -490,7 +489,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         const n = ref.current.notes.find((it) => it.id === id);
         if (n) setSheet({ type: "comment", sid: n.sid, editId: id });
       },
-      updateNote: (id, text) => {
+      updateNote: (id, text, keepOpen) => {
         const t = text.trim();
         if (!t) return;
         const target = ref.current.notes.find((n) => n.id === id);
@@ -499,8 +498,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         commit({ ...ref.current, notes });
         const edited = notes.find((n) => n.id === id);
         if (edited) send({ t: "note", note: edited });
-        setSheet(null);
-        showToast("수정했어요");
+        if (!keepOpen) setSheet(null);
       },
       saveComment: (sid, text) => {
         const t = text.trim();
@@ -523,7 +521,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         const note: Note = { id: newId(), aid, sid: "", text: t, at: Date.now() };
         commit(maybePrompt({ ...cur, notes: [...cur.notes, note] }, "thought"));
         send({ t: "note", note });
-        showToast("생각을 남겼어요. 아카이브에서 다시 볼 수 있어요");
+        showToast("내 생각을 남겼어요");
       },
       removeNote: (id) => {
         const target = ref.current.notes.find((n) => n.id === id);
@@ -532,7 +530,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         });
         commit({ ...ref.current, notes: ref.current.notes.filter((n) => n.id !== id) });
         send({ t: "noteDel", id });
-        showToast("기록을 삭제했어요.");
+        showToast("생각을 삭제했어요");
       },
       toggleA: (aid) => {
         const savedA = { ...ref.current.savedA };

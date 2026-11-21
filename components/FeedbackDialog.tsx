@@ -43,7 +43,7 @@ export function FeedbackDialog({ open, onOpenChange }: { open: boolean; onOpenCh
       try {
         await sendFeedbackRemote(fbKind, text);
       } catch {
-        showToast("피드백을 보내지 못했어요. 잠시 후 다시 시도해주세요");
+        showToast("피드백을 보내지 못했어요\n잠시 후 다시 시도해주세요!");
         return; // 입력한 내용은 그대로 둔다
       }
     } else {
@@ -58,7 +58,7 @@ export function FeedbackDialog({ open, onOpenChange }: { open: boolean; onOpenCh
     track("Feedback Sent", { kind: FB_KIND_KEY[fbKind] });
     setFbText("");
     onOpenChange(false);
-    showToast("소중한 의견 감사합니다.");
+    showToast("소중한 의견 감사합니다");
   };
 
   return (
