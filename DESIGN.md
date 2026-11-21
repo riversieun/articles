@@ -19,6 +19,8 @@ colors:
   danger: "oklch(0.577 0.245 27.325)"
   on-danger: "#FFFFFF"
   focus-ring: "#111111"
+  like: "#F5A524"
+  snack: "#4A4A52"
 typography:
   display:
     fontFamily: Pretendard Variable
@@ -181,7 +183,7 @@ components:
     rounded: "{rounded.xl}"
     padding: 12px
   toast:
-    backgroundColor: "{colors.primary}"
+    backgroundColor: "{colors.snack}"
     textColor: "{colors.on-primary}"
     typography: "{typography.label-md}"
     rounded: "{rounded.pill}"
@@ -209,6 +211,8 @@ components:
 - **Border (#E7E7EA) / Border-strong (#D5D5DA):** 구분선. 일반 구분은 `border`, 입력창 테두리와 카드 안의 구분선처럼 경계를 조금 더 또렷하게 할 때는 `border-strong`.
 - **Danger:** 삭제 등 되돌릴 수 없는 행동과 입력 오류에만 쓴다. 배경에 깔 때는 옅게(10~20%) 깔고 글자만 진하게 쓴다.
 - **Focus-ring (#111111):** 키보드 포커스 표시. 지우지 않는다.
+- **Like (#F5A524):** 앰버. 아티클 하단 플로팅 바에서 추천해요(엄지)가 켜졌을 때의 색이다. 저장(북마크)이 브랜드 초록을 쓰니 겹치지 않게 보조 색으로 둔다. 다른 곳에는 쓰지 않는다. CSS 토큰은 `--color-pd-like`(`text-pd-like`).
+- **Snack (#4A4A52):** 어두운 회색. 스낵바(토스트) 배경이고, 위에 올리는 글자는 `on-primary`(흰색)다. 기존 검정(`primary`)에서 한 단계 풀어 화면을 덜 누른다. CSS 토큰은 `--color-pd-snack`(`bg-pd-snack`).
 
 다크 모드 토큰은 `globals.css`에 정의돼 있지만 현재 화면에서는 사용하지 않는다.
 
@@ -244,7 +248,7 @@ components:
 
 ## Elevation & Depth
 
-그림자보다 **색 면과 구분선**으로 위계를 만든다. 흰 페이지 위에 연회색(`surface-muted`) 면을 올린다. 떠 있는 요소만 그림자를 쓴다: 탭바 `shadow-sm`, 팝오버 메뉴·토스트는 큰 그림자 하나(`0 12px 28px`, 투명도 0.28). 팝업(Dialog)과 바텀 시트는 뒷배경을 어둡게 눌러서 분리한다. 그림자를 겹쳐 쓰지 않는다.
+그림자보다 **색 면과 구분선**으로 위계를 만든다. 흰 페이지 위에 연회색(`surface-muted`) 면을 올린다. 떠 있는 요소만 그림자를 쓴다: 탭바 `shadow-sm`, 팝오버 메뉴는 큰 그림자 하나(`0 12px 28px`, 투명도 0.28), 스낵바(토스트)는 가까운 그림자와 먼 그림자 두 층(`0 2px 8px` 투명도 0.2 + `0 8px 16px -6px` 투명도 0.18)으로 가볍게 띄운다. 팝업(Dialog)과 바텀 시트는 뒷배경을 어둡게 눌러서 분리한다. 그림자를 겹쳐 쓰지 않는다. 예외는 스낵바뿐이다.
 
 ## Shapes
 
@@ -266,6 +270,8 @@ shadcn 컴포넌트는 `components/ui`에, 서비스 전용 조합은 `component
 - **Toggle:** 38×22px 알약, 손잡이 18px. 켜짐은 `primary`, 꺼짐은 `subtle`. 병기 읽기의 "번역 켜기"와 알림·설정류 스위치가 같은 컴포넌트를 쓴다. (프로필의 "번역 항상 켜기"는 v2에서 삭제)
 - **Progress bar:** 아티클 상단 고정 영역 아래 3px 막대. 트랙은 `border-strong`(읽은 부분의 라임과 대비를 주려고 한 단계 진하게), 읽은 만큼은 `accent`(라임).
 - **Tab bar:** 위 Layout 참고. 선택된 탭은 `primary`, 선택 안 된 탭은 `subtle`. 아카이브 아이콘은 북마크(채움), 탐색은 나침반.
+- **Snackbar(토스트):** 저장·수정·삭제·링크 복사 같은 동작 결과를 하단에 알리는 알약. 배경 `snack`, 글자 `on-primary` `label-md`, 모서리 `pill`, 안 여백 18px/13px. 시트가 열려 있으면 띄우지 않고 닫힌 뒤에 띄운다. 아티클 상세에서는 하단 플로팅 바를 가리지 않도록 그 위(바 위 12px)에 뜬다. 모션: 아래에서 14px 올라오며 나타나고(320ms, ease-out) 더 빠르게 사라진다(180ms). 2.4초 뒤 사라진다.
+- **Floating bar(아티클 하단):** 추천해요(엄지) · 내 생각 기록 · 저장(북마크)이 있는 알약 바. 내려 읽으면 아래로 내려가며 숨고(준비 동작 후 94%로 작아지며 360ms) 올리거나 본문 끝에 닿으면 300ms 동안 스프링 없이 올라온다. 버튼은 누르는 동안 86%로 줄었다가 손을 떼면 스프링으로 돌아온다. 엄지는 켜지면 `like` 색으로 바뀌며 14° 기울어 6px 올라갔다 내려오고, 추천 수는 첫 추천부터 표기되며 아래에서 위로 롤링한다. 저장은 `accent` 초록으로 채워진다. 모션 줄이기 설정에서는 이동·기울임 없이 투명도·색 전환만 남는다.
 - **Popover menu:** 문장 위, 코멘트 말풍선 위에 뜨는 검정 알약 메뉴. 아이콘은 선(stroke) 형태이고 각 버튼 높이 48px.
 - **Excerpt gap marker:** 원문에서 건너뛴 자리에 문단 사이 가운데로 "- 중략 -"을 `label-sm`(12px) 이탤릭, `border-strong` 색으로 두고, 위아래 여백은 기본 문단 간격보다 8px씩 줄인다. 이어지는 문단 사이에는 두지 않고 여백만 쓴다.
 - **Empty state:** 카드 배경 없이 가운데 정렬. 제목 `body-lg-semibold`(18px/600), 필요한 경우에만 제목 아래 8px에 안내 `body-sm`(`on-surface-muted`), 그 아래 20px에 라임 "글 읽으러 가기" 버튼. 칩 아래 빈 영역의 가로·세로 가운데에 둔다.

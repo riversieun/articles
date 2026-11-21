@@ -56,6 +56,8 @@ const COLORS: [name: string, hex: string, token: string, hint: string][] = [
   ["border", "#E7E7EA", "--ds-border", "일반 구분선"],
   ["border-strong", "#D5D5DA", "--ds-border-strong", "입력창·카드 안 구분선"],
   ["danger", "oklch(0.577 0.245 27.325)", "--ds-danger", "삭제·오류만"],
+  ["like", "#F5A524", "--color-pd-like", "추천해요(엄지) 켜짐. 플로팅 바 전용"],
+  ["snack", "#4A4A52", "--color-pd-snack", "스낵바(토스트) 배경. 글자는 흰색"],
 ];
 
 const TYPE: [name: string, cls: string, spec: string, sample: string][] = [

@@ -37,6 +37,8 @@ export function Overlays() {
   const [draft, setDraft] = useState("");
   const [thoughtDraft, setThoughtDraft] = useState("");
   const hasTabBar = ["/", "/explore", "/archive"].includes(pathname);
+  // 아티클 상세는 하단에 플로팅 바(52px, 아래 여백 16px)가 떠 있어서, 스낵바는 그 위(12px 간격)에 띄운다
+  const hasFloatBar = /^\/contents\/[^/]+$/.test(pathname);
 
   // 시트가 닫히면 store 의 sheet 는 바로 null 이 된다. 나가는 모션이 끝날 때까지 마지막 시트를 그려 둔다.
   const [shown, setShown] = useState(sheet);
@@ -219,7 +221,7 @@ export function Overlays() {
           role="status"
           data-open={snackIn}
           className={`snack pointer-events-none fixed inset-x-0 z-[60] mx-auto w-full max-w-[430px] px-5 ${
-            hasTabBar ? "bottom-24" : "bottom-6"
+            hasTabBar ? "bottom-24" : hasFloatBar ? "bottom-[calc(max(16px,env(safe-area-inset-bottom))+64px)]" : "bottom-6"
           }`}
         >
           <div className="snack-pill rounded-pill bg-pd-snack px-[18px] py-[13px] text-label-md font-medium text-on-primary shadow-[0_2px_8px_rgba(17,17,17,0.2),0_8px_16px_-6px_rgba(17,17,17,0.18)]">

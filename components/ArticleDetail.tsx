@@ -41,7 +41,8 @@ export function ArticleDetail({ aid }: { aid: string }) {
 
   const isLiked = !!liked[aid];
   const isSaved = !!savedA[aid];
-  const count = likeCount(aid);
+  // 내가 추천했다면 서버 집계가 아직 반영되지 않았어도 최소 1로 보여준다(첫 추천부터 숫자 표기)
+  const count = Math.max(likeCount(aid), isLiked ? 1 : 0);
 
   return (
     <div className="min-h-dvh bg-surface tracking-body">
