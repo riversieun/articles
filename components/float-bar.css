@@ -59,6 +59,13 @@
   display: block;
 }
 
+/* 직접 누르기 전(이미 추천한 글에 다시 들어왔을 때)에는 어떤 움직임도 없이 켜진 모습으로 바로 보인다 */
+.fb-like[data-touched="false"],
+.fb-like[data-touched="false"] * {
+  transition: none !important;
+  animation: none !important;
+}
+
 /* 엄지: 켜지면 앰버, 한 번 기울었다 올라가서 제자리로 (해제할 때는 움직이지 않는다) */
 .fb-like[data-on="true"] {
   color: var(--color-pd-like);

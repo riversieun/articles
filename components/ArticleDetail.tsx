@@ -33,6 +33,7 @@ export function ArticleDetail({ aid }: { aid: string }) {
   const { hidden, atEnd } = useScrollChrome(endRef);
   const showBar = !hidden || atEnd; // 내려 읽는 중에는 숨고, 끝까지 읽으면 다시 나온다
   const [fbOpen, setFbOpen] = useState(false);
+  const [likeTouched, setLikeTouched] = useState(false); // 직접 누르기 전에는 엄지가 움직이지 않는다(이미 추천한 글에 다시 들어왔을 때)
 
   // 열 때마다 서버의 추천 수를 새로 받아온다
   useEffect(() => {
@@ -187,10 +188,13 @@ export function ArticleDetail({ aid }: { aid: string }) {
       >
         <div className="pointer-events-auto flex items-center gap-2 rounded-full bg-surface px-4 py-1 drop-shadow-[0_2px_6px_rgba(0,0,0,0.1)]">
           <button
+            onPointerDown={() => setLikeTouched(true)}
+            onKeyDown={() => setLikeTouched(true)}
             onClick={() => toggleLike(aid)}
             aria-label={count > 0 ? `추천해요 ${count}` : "추천해요"}
             aria-pressed={isLiked}
             data-on={isLiked}
+            data-touched={likeTouched}
             className="fb-btn fb-like flex h-11 min-w-11 items-center justify-center gap-1 border-0 bg-transparent text-pd-ink"
           >
             <span className="fb-ico">

@@ -1,14 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { lib } from "@/lib/content";
+import { formatTimestamp, lib } from "@/lib/content";
+import type { Note } from "@/lib/types";
 import { useStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { copyLink } from "@/lib/inapp";
 import { cn } from "@/lib/utils";
+import { ConfirmDeleteDialog } from "./ConfirmDeleteDialog";
 import { GoogleLoginButton } from "./GoogleLoginButton";
+import { IconPencilFill, IconTrashFill } from "./icons";
 import "./snackbar.css";
 
 // 기록이 남는 첫 행동(코멘트·하이라이트·글 저장·내 생각) 직후에 뜨는 로그인 시트
@@ -32,10 +35,14 @@ const INAPP_COPY = {
 
 /** 하단 시트(로그인·코멘트·앱 안 브라우저 안내)와 토스트. 앱 폭(430px)에 맞춰 고정 배치한다. */
 export function Overlays() {
-  const { sheet, closeSheet, login, saveComment, addThought, updateNote, notes, toast, showToast } = useStore();
+  const { sheet, closeSheet, login, saveComment, addThought, updateNote, removeNote, notes, toast, showToast } = useStore();
   const pathname = usePathname();
   const [draft, setDraft] = useState("");
   const [thoughtDraft, setThoughtDraft] = useState("");
+  // 이미 적은 생각을 다시 열면 먼저 카드로 보여주고, 연필을 누르면 같은 시트에서 입력창으로 바뀐다
+  const [thoughtMode, setThoughtMode] = useState<"view" | "edit">("view");
+  const [delThought, setDelThought] = useState(false);
+  const viewNoteCache = useRef<Note | undefined>(undefined);
   const hasTabBar = ["/", "/explore", "/archive"].includes(pathname);
   // 아티클 상세는 하단에 플로팅 바(52px, 아래 여백 16px)가 떠 있어서, 스낵바는 그 위(12px 간격)에 띄운다
   const hasFloatBar = /^\/contents\/[^/]+$/.test(pathname);
@@ -88,6 +95,7 @@ export function Overlays() {
   const thoughtEditId = cur?.type === "thought" ? (cur.editId ?? "") : "";
   useEffect(() => {
     setThoughtDraft(thoughtEditId ? (notes.find((n) => n.id === thoughtEditId)?.text ?? "") : "");
+    setThoughtMode("view");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [thoughtAid, thoughtEditId]);
 
@@ -185,45 +193,99 @@ export function Overlays() {
 
       {cur?.type === "thought" && (
         <Sheet closing={closing} onClose={closeSheet} labelledBy="thought-title">
-          <div className="mb-4 flex flex-col gap-1">
-            <h2 id="thought-title" className="m-0 text-headline font-bold tracking-headline">
-              내 생각 기록
-            </h2>
-            <p className="m-0 text-body-md leading-6 text-on-surface-muted">입력한 내용은 나만 볼 수 있게 저장돼요.</p>
-          </div>
-          <label htmlFor="thought-sheet-input" className="sr-only">
-            내 생각
-          </label>
-          <Textarea
-            id="thought-sheet-input"
-            rows={4}
-            autoFocus
-            value={thoughtDraft}
-            onChange={(e) => setThoughtDraft(e.target.value)}
-            placeholder="느낀 점, 내 일에 적용해볼 점은?"
-          />
-          <div className="mt-1.5 grid grid-cols-2 gap-2">
-            <Button variant="outline" size="lg" onClick={closeSheet} className="h-12">
-              취소
-            </Button>
-            <Button
-              size="lg"
-              disabled={!thoughtDraft.trim()}
-              onClick={() => {
-                if (cur.editId) {
-                  updateNote(cur.editId, thoughtDraft);
-                  return;
-                }
-                closeSheet(); // 백업 제안 시트가 이어서 뜰 수 있어서 먼저 닫는다
-                addThought(cur.aid, thoughtDraft);
-              }}
-              className="h-12"
-            >
-              {cur.editId ? "수정하기" : "생각 남기기"}
-            </Button>
-          </div>
+          {cur.editId && thoughtMode === "view" ? (
+            (() => {
+              // 삭제 직후 시트가 내려가는 동안에도 카드가 비지 않게 마지막으로 본 노트를 기억해 둔다
+              const found = notes.find((n) => n.id === cur.editId);
+              if (found) viewNoteCache.current = found;
+              const note = found ?? viewNoteCache.current;
+              return (
+                <>
+                  <h2 id="thought-title" className="m-0 mb-4 text-headline font-bold tracking-headline">
+                    내 생각 기록
+                  </h2>
+                  {note && (
+                    <div className="flex flex-col gap-4 rounded-card border border-pd-line bg-pd-tint px-5 pt-5 pb-6">
+                      <div className="flex h-6 items-center justify-between">
+                        <span className="text-caption text-pd-ink-muted">{formatTimestamp(note.at)}</span>
+                        {/* 보이는 아이콘은 20px, 누르는 영역은 44px. 아이콘 사이 16px */}
+                        <div className="-mr-3 flex items-center -space-x-2">
+                          <button
+                            onClick={() => setThoughtMode("edit")}
+                            aria-label="수정"
+                            className="flex size-11 shrink-0 items-center justify-center border-0 bg-transparent text-pd-ink-muted"
+                          >
+                            <IconPencilFill />
+                          </button>
+                          <button
+                            onClick={() => setDelThought(true)}
+                            aria-label="삭제"
+                            className="flex size-11 shrink-0 items-center justify-center border-0 bg-transparent text-pd-ink-muted"
+                          >
+                            <IconTrashFill />
+                          </button>
+                        </div>
+                      </div>
+                      <p className="m-0 text-body-md leading-6 whitespace-pre-wrap text-pd-ink">{note.text}</p>
+                    </div>
+                  )}
+                </>
+              );
+            })()
+          ) : (
+            <>
+              <div className="mb-4 flex flex-col gap-1">
+                <h2 id="thought-title" className="m-0 text-headline font-bold tracking-headline">
+                  내 생각 기록
+                </h2>
+                <p className="m-0 text-body-md leading-6 text-on-surface-muted">입력한 내용은 나만 볼 수 있게 저장돼요.</p>
+              </div>
+              <label htmlFor="thought-sheet-input" className="sr-only">
+                내 생각
+              </label>
+              <Textarea
+                id="thought-sheet-input"
+                rows={4}
+                autoFocus
+                value={thoughtDraft}
+                onChange={(e) => setThoughtDraft(e.target.value)}
+                placeholder="느낀 점, 내 일에 적용해볼 점은?"
+              />
+              <div className="mt-1.5 grid grid-cols-2 gap-2">
+                <Button variant="outline" size="lg" onClick={closeSheet} className="h-12">
+                  취소
+                </Button>
+                <Button
+                  size="lg"
+                  disabled={!thoughtDraft.trim()}
+                  onClick={() => {
+                    if (cur.editId) {
+                      updateNote(cur.editId, thoughtDraft);
+                      return;
+                    }
+                    closeSheet(); // 백업 제안 시트가 이어서 뜰 수 있어서 먼저 닫는다
+                    addThought(cur.aid, thoughtDraft);
+                  }}
+                  className="h-12"
+                >
+                  {cur.editId ? "수정하기" : "생각 남기기"}
+                </Button>
+              </div>
+            </>
+          )}
         </Sheet>
       )}
+
+      <ConfirmDeleteDialog
+        open={delThought}
+        onOpenChange={setDelThought}
+        onConfirm={() => {
+          const id = cur?.type === "thought" ? cur.editId : undefined;
+          if (!id) return;
+          closeSheet(); // 시트를 먼저 닫아야 삭제 스낵바가 바로 뜬다
+          removeNote(id);
+        }}
+      />
 
       {snack && (
         <div
