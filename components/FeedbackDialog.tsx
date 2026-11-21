@@ -67,7 +67,7 @@ export function FeedbackDialog({ open, onOpenChange }: { open: boolean; onOpenCh
         <DialogHeader className="gap-2.5">
           <div className="flex items-center justify-between gap-3">
             <DialogTitle className="text-headline font-bold tracking-headline">피드백 보내기</DialogTitle>
-            <DialogClose render={<Button variant="ghost" size="icon-sm" className="shrink-0 bg-secondary" />}>
+            <DialogClose render={<Button variant="ghost" size="icon-sm" className="shrink-0" />}>
               <RiCloseLine />
               <span className="sr-only">닫기</span>
             </DialogClose>

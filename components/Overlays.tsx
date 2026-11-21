@@ -268,7 +268,7 @@ export function Overlays() {
                   }}
                   className="h-12"
                 >
-                  {cur.editId ? "수정하기" : "생각 남기기"}
+                  {cur.editId ? "수정 완료" : "생각 남기기"}
                 </Button>
               </div>
             </>
@@ -291,11 +291,11 @@ export function Overlays() {
         <div
           role="status"
           data-open={snackIn}
-          className={`snack pointer-events-none fixed inset-x-0 z-[60] mx-auto w-full max-w-[430px] px-5 ${
+          className={`snack pointer-events-none fixed inset-x-0 z-[60] mx-auto flex w-full max-w-[430px] justify-center px-5 ${
             hasTabBar ? "bottom-24" : hasFloatBar ? "bottom-[calc(max(16px,env(safe-area-inset-bottom))+64px)]" : "bottom-6"
           }`}
         >
-          <div className="snack-pill rounded-pill bg-pd-snack px-[18px] py-[13px] text-label-md font-medium text-on-primary shadow-[0_2px_8px_rgba(17,17,17,0.2),0_8px_16px_-6px_rgba(17,17,17,0.18)]">
+          <div className="snack-pill w-fit rounded-pill bg-pd-snack px-4 py-[13px] text-label-md font-medium text-on-primary shadow-[0_2px_8px_rgba(17,17,17,0.2),0_8px_16px_-6px_rgba(17,17,17,0.18)]">
             {snack}
           </div>
         </div>

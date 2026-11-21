@@ -533,7 +533,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         });
         commit({ ...ref.current, notes: ref.current.notes.filter((n) => n.id !== id) });
         send({ t: "noteDel", id });
-        showToast("삭제했어요");
+        showToast("기록을 삭제했어요.");
       },
       toggleA: (aid, opts) => {
         const savedA = { ...ref.current.savedA };
