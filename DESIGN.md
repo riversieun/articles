@@ -14,6 +14,7 @@ colors:
   surface-muted: "#F4F4F6"
   on-surface-muted: "#5F5F66"
   subtle: "#8E8E96"
+  label: "#7F7F8A"
   border: "#E7E7EA"
   border-strong: "#D5D5DA"
   danger: "oklch(0.577 0.245 27.325)"
@@ -206,7 +207,8 @@ components:
 - **Accent (#D9F25C):** 라임. 서비스의 시그니처 강조색으로, 핵심 행동 버튼과 읽기 진행 바에만 쓴다. 위에 올리는 글자는 반드시 `on-accent`(검정)를 쓴다.
 - **Accent-sub (#E7E0FF), Accent-sub-strong (#CBBCFF):** 연보라. 라임과 겹치지 않는 보조 구분용으로만 쓴다. 사용자가 하이라이트한 문장은 `accent-sub`, 코멘트 말풍선은 `accent-sub-strong`.
 - **Surface (#FFFFFF) / Surface-muted (#F4F4F6):** 페이지와 팝업은 흰색, 그 위의 카드·주제 뱃지·보조 버튼·구획 배경은 연회색.
-- **On-surface-muted (#5F5F66):** 보조 설명과 메타 정보, 읽는 글자 중 한 단계 약한 것(부연설명, 한글 번역, 안내 문구, 입력창 placeholder).
+- **On-surface-muted (#5F5F66):** 보조 설명과 메타 정보, 읽는 글자 중 한 단계 약한 것(부연설명, 한글 번역, 안내 문구).
+- **Label (#7F7F8A):** 입력창 placeholder 전용. `on-surface-muted`보다 한 단계 옅어 입력한 글과 확실히 구분되고, 흰 배경 대비 3.96:1이다. 다른 읽는 글자에는 쓰지 않는다. CSS 토큰은 `--color-pd-label`(`text-pd-label`).
 - **Subtle (#8E8E96):** 읽는 글자에는 쓰지 않는다(흰 배경 대비 3.25:1로 읽기 기준에 못 미침). 토글 꺼짐 배경, 로그인 전 프로필 아이콘 같은 장식에 쓴다. 예외로 **하단 탭바의 선택 안 된 탭**(아이콘과 라벨)에는 글자색으로 쓴다(대비 3.25:1). 본문의 **"- 중략 -" 구분 표시**는 한 단계 더 약한 `border-strong`을 쓴다.
 - **Border (#E7E7EA) / Border-strong (#D5D5DA):** 구분선. 일반 구분은 `border`, 입력창 테두리와 카드 안의 구분선처럼 경계를 조금 더 또렷하게 할 때는 `border-strong`.
 - **Danger:** 삭제 등 되돌릴 수 없는 행동과 입력 오류에만 쓴다. 배경에 깔 때는 옅게(10~20%) 깔고 글자만 진하게 쓴다.
@@ -231,7 +233,7 @@ components:
 | `body-md` | 16 / 400 / 1.6 | 한글 제목, 원문 요약, 내 생각, 입력창, 다이얼로그 설명, 문장 코멘트 시트의 영어 문장 |
 | `body-md-semibold` | 16 / 600 | 구글 로그인 버튼, 앱 안 브라우저 시트의 "링크 복사하기" 버튼(구글 로그인 버튼과 같은 52px 높이), 빈 상태 버튼 |
 | `body-sm` | 14 / 400 / 1.6 | 한글 문장 번역, 안내 문구, 출처·발행일, helper text |
-| `label-md` | 14 / 500 | 버튼, 필터 칩, 코멘트 말풍선, 팝오버 메뉴, 토스트 |
+| `label-md` | 14 / 500 | 버튼, 코멘트 말풍선, 팝오버 메뉴, 토스트 |
 | `label-md-semibold` | 14 / 600 | 원문 요약 라벨, 아카이브의 원문 링크 |
 | `label-sm` | 12 / 500 | 주제 뱃지, 탭바 라벨, 저장 날짜 |
 
@@ -261,8 +263,8 @@ components:
 shadcn 컴포넌트는 `components/ui`에, 서비스 전용 조합은 `components/`에 있다. 새로 만들기 전에 먼저 여기서 찾는다.
 
 - **Button:** `variant` 7종(`default`, `outline`, `secondary`, `ghost`, `destructive`, `link`, `accent`)과 `size` 4종(`xs`, `sm`, `default`, `lg`) + 아이콘 버튼. 글자는 `label-md`. `default`는 검정(`primary`), `outline`은 연한 회색 테두리, `accent`는 라임 배경 + 검정 글자, `destructive`는 옅은 빨강 배경 + 빨강 글자다. 라임 버튼은 `bg-lime`을 직접 붙이지 말고 `variant="accent"`를 쓴다.
-- **Filter chip:** `Button`의 `default`(선택됨, 검정)와 `secondary`(선택 안 됨, 연회색). 가로로 스크롤되고 스크롤바는 숨긴다.
-- **Textarea:** 흰 배경, `border-strong` 테두리, `xl` 모서리. 포커스되면 바깥 링 없이 테두리만 `primary`로 바뀐다. placeholder는 `on-surface-muted`. 피드백·내 생각·코멘트 입력이 모두 이것을 쓴다.
+- **Filter chip:** `Button`의 `default`(선택됨, 검정)와 `secondary`(선택 안 됨, 연회색). 글자는 15px / 줄 높이 24px(`text-note leading-6`, 선택됨 600). 칩을 감싼 줄은 위 8px·아래 4px 여백(`pt-2 pb-1`). 홈·탐색·아카이브가 같은 컴포넌트와 값을 쓴다. 가로로 스크롤되고 스크롤바는 숨긴다.
+- **Textarea:** 흰 배경, `border-strong` 테두리, `xl` 모서리. 포커스되면 바깥 링 없이 테두리만 `primary`로 바뀐다. placeholder는 `label`(#7F7F8A). 피드백·내 생각·코멘트 입력이 모두 이것을 쓴다.
 - **Badge:** 높이 28px, 좌우 12px, 모서리 8px, 연회색 배경의 주제 표시. 누르는 요소가 아니다.
 - **Card:** 연회색 면, 모서리 16px, 안 여백 14px. 하이라이트·코멘트·내 생각·요약 카드가 모두 같은 모양이다. 카드 안 구분선은 `border-strong`.
 - **Dialog:** 중앙 팝업(`ConfirmDeleteDialog`, 피드백). 제목과 닫기 버튼이 같은 줄에 있고(닫기는 오른쪽), 설명은 한 단계 약한 색, 구획 사이 24px. 삭제 확인은 "삭제할까요?" / "삭제하면 되돌릴 수 없어요." 문구로 통일하고 취소(왼쪽)·삭제(오른쪽, danger)를 한 줄에 둔다.
@@ -287,7 +289,7 @@ shadcn 컴포넌트는 `components/ui`에, 서비스 전용 조합은 `component
 - Don't: 라임 위에 흰 글자를 올리지 않는다. 항상 `on-accent`(검정)를 쓴다.
 - Do: 모든 색은 역할 토큰(`primary`, `danger`, `surface-muted`)으로 부른다. 화면에서 `#hex`나 임의 색을 직접 쓰지 않는다.
 - Don't: `danger`는 삭제·오류 외에는 쓰지 않는다. 강조나 장식으로 빨강을 쓰지 않는다.
-- Don't: `subtle`을 읽는 글자에 쓰지 않는다. 읽는 글자의 가장 약한 단계는 `on-surface-muted`다(예외: 선택 안 된 탭바 라벨은 `subtle`, "- 중략 -" 구분 표시는 `border-strong`).
+- Don't: `subtle`을 읽는 글자에 쓰지 않는다. 읽는 글자의 가장 약한 단계는 `on-surface-muted`다(예외: 입력창 placeholder는 `label`, 선택 안 된 탭바 라벨은 `subtle`, "- 중략 -" 구분 표시는 `border-strong`).
 - Do: 글자는 `text-display`·`text-headline`·`text-body-*`·`text-label-*` 토큰으로 정한다. `text-[13.5px]` 같은 임의 크기를 쓰지 않는다.
 - Do: 새 UI가 필요하면 `components/ui`에서 먼저 찾고, 없을 때만 `npx shadcn@latest add`로 추가한다. 같은 역할의 컴포넌트를 따로 만들지 않는다.
 - Do: 토큰 이름(글자 크기, 자간, 간격, 모서리)을 새로 만들면 `lib/utils.ts`의 클래스 병합 설정에도 같이 등록한다(자세한 이유는 `CLAUDE.md`).

@@ -143,8 +143,8 @@
   animation-delay: calc(var(--i) * var(--star-gap));
 }
 .rc-star[data-on="true"] path {
-  fill: var(--color-brand);
-  stroke: var(--color-brand);
+  fill: var(--color-pd-star-on);
+  stroke: var(--color-pd-star-on);
   transition-delay: calc(var(--i) * var(--star-gap));
 }
 @keyframes rc-pop {

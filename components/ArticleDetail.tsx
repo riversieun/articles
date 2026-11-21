@@ -14,7 +14,7 @@ import { FeedbackDialog } from "./FeedbackDialog";
 import { RatingCard } from "./RatingCard";
 import { SourceLine } from "./ArticleRow";
 import "./float-bar.css";
-import { IconArrowUpRight, IconBack, IconBookmark, IconPenEdit, IconSparkle, IconThumbUp } from "./icons";
+import { IconArrowUpRight, IconBack, IconBookmark, IconPenEdit, IconPenFilled, IconSparkle, IconThumbUp } from "./icons";
 
 const SECTION = "flex flex-col gap-5 px-6 pt-8 pb-10";
 const HEADING = "m-0 text-heading font-bold tracking-display text-pd-ink";
@@ -28,7 +28,7 @@ const FOOTER_BUTTON = "h-11.5 rounded-md border-pd-line px-4 text-body-md font-s
 export function ArticleDetail({ aid }: { aid: string }) {
   const art = lib.byId[aid];
   const router = useRouter();
-  const { liked, savedA, toggleLike, toggleA, openThought, likeCount, refreshLikeCounts } = useStore();
+  const { liked, savedA, notes, toggleLike, toggleA, openThought, likeCount, refreshLikeCounts } = useStore();
   const { progress, endRef } = useReadTracking(aid);
   const { hidden, atEnd } = useScrollChrome(endRef);
   const showBar = !hidden || atEnd; // 내려 읽는 중에는 숨고, 끝까지 읽으면 다시 나온다
@@ -41,6 +41,7 @@ export function ArticleDetail({ aid }: { aid: string }) {
 
   const isLiked = !!liked[aid];
   const isSaved = !!savedA[aid];
+  const hasThought = notes.some((n) => n.aid === aid && !n.sid); // 글 아래에 직접 적은 내 생각이 있는지
   // 내가 추천했다면 서버 집계가 아직 반영되지 않았어도 최소 1로 보여준다(첫 추천부터 숫자 표기)
   const count = Math.max(likeCount(aid), isLiked ? 1 : 0);
 
@@ -93,8 +94,8 @@ export function ArticleDetail({ aid }: { aid: string }) {
         </header>
 
         <section aria-label="한 문장 요약" className="flex flex-col px-6 pt-8 pb-5">
-          <div className="flex flex-col gap-3 rounded-panel border border-pd-line bg-pd-tint px-2 py-5">
-            <div className="flex items-center gap-0.5 px-2">
+          <div className="flex flex-col gap-4 rounded-panel bg-pd-tint px-5 pt-5 pb-6">
+            <div className="flex items-center gap-0.5">
               <span className="relative size-4.5 shrink-0 overflow-clip">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -107,9 +108,9 @@ export function ArticleDetail({ aid }: { aid: string }) {
                   style={{ left: 1.74, top: 4.2 }}
                 />
               </span>
-              <h2 className="m-0 text-body-sm leading-4.5 font-semibold text-pd-label">한 문장 요약</h2>
+              <h2 className="m-0 text-body-sm leading-4.5 font-semibold text-pd-ink">한 문장 요약</h2>
             </div>
-            <p className="m-0 rounded-md bg-surface p-4 text-body-md leading-6 text-pd-ink [word-break:normal]">{art.summary}</p>
+            <p className="m-0 text-body-md leading-6 text-pd-ink [word-break:normal]">{art.summary}</p>
           </div>
         </section>
 
@@ -216,9 +217,16 @@ export function ArticleDetail({ aid }: { aid: string }) {
           <button
             onClick={() => openThought(aid)}
             aria-label="내 생각 기록"
-            className="flex size-11 items-center justify-center border-0 bg-transparent text-pd-ink"
+            data-on={hasThought}
+            className="fb-btn flex size-11 items-center justify-center border-0 bg-transparent text-pd-ink"
           >
-            <IconPenEdit />
+            {/* 기록한 글이면 윤곽 펜 위에 채운 펜이 겹쳐 보인다(P1) */}
+            <span className="fb-ico">
+              <IconPenEdit />
+              <span className="fb-fill">
+                <IconPenFilled />
+              </span>
+            </span>
           </button>
           <button
             onClick={() => toggleA(aid)}

@@ -100,7 +100,7 @@ export function Home() {
         <h2 id="home-topics" className="m-0 px-6 pt-8 pb-3 text-title leading-7 font-semibold tracking-display text-pd-ink">
           주제별 보기
         </h2>
-        <ChipRow className="ns flex gap-2 overflow-x-auto px-6 pt-3 pb-1">
+        <ChipRow className="ns flex gap-2 overflow-x-auto px-6 pt-2 pb-1">
           {TOPICS.map(([key, label]) => (
             <FilterChip key={key} on={topic === key} onClick={() => pick(key)}>
               {label}

@@ -182,11 +182,11 @@ export function Overlays() {
 
       {cur?.type === "thought" && (
         <Sheet closing={closing} onClose={closeSheet} labelledBy="thought-title">
-          <div className="mb-2.5 flex flex-col gap-1">
+          <div className="mb-4 flex flex-col gap-1">
             <h2 id="thought-title" className="m-0 text-headline font-bold tracking-headline">
               내 생각 기록
             </h2>
-            <p className="m-0 text-body-sm text-on-surface-muted">입력한 내용은 아카이브에 저장되고, 나만 볼 수 있는 기록이에요.</p>
+            <p className="m-0 text-body-sm text-on-surface-muted">입력한 내용은 나만 볼 수 있게 저장돼요.</p>
           </div>
           <label htmlFor="thought-sheet-input" className="sr-only">
             내 생각

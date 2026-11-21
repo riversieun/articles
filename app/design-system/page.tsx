@@ -52,6 +52,7 @@ const COLORS: [name: string, hex: string, token: string, hint: string][] = [
   ["surface", "#FFFFFF", "--ds-surface", "페이지·팝업"],
   ["surface-muted", "#F4F4F6", "--ds-surface-muted", "카드·뱃지·보조 버튼"],
   ["on-surface-muted", "#5F5F66", "--ds-on-surface-muted", "읽는 글자의 약한 단계"],
+  ["label", "#7F7F8A", "--color-pd-label", "입력창 placeholder 전용"],
   ["subtle", "#8E8E96", "--ds-subtle", "글자 금지. 토글 꺼짐 등 장식"],
   ["border", "#E7E7EA", "--ds-border", "일반 구분선"],
   ["border-strong", "#D5D5DA", "--ds-border-strong", "입력창·카드 안 구분선"],
