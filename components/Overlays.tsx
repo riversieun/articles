@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { copyLink } from "@/lib/inapp";
 import { cn } from "@/lib/utils";
 import { GoogleLoginButton } from "./GoogleLoginButton";
+import "./snackbar.css";
 
 // 기록이 남는 첫 행동(코멘트·하이라이트·글 저장·내 생각) 직후에 뜨는 로그인 시트
 const LOGIN_COPY = {
@@ -56,6 +57,28 @@ export function Overlays() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sheet]);
   const cur = sheet ?? shown;
+
+  // 스낵바도 같다. store 의 toast 는 2.4초 뒤 바로 비워지니, 나가는 모션이 끝날 때까지 마지막 문구를 그려 둔다.
+  const snackOpen = !!toast && !cur;
+  const [snack, setSnack] = useState("");
+  const [snackIn, setSnackIn] = useState(false);
+  useEffect(() => {
+    if (snackOpen) {
+      setSnack(toast);
+      // 닫힌 상태로 한 번 그린 뒤 다음 프레임에 열어야 올라오는 모션이 생긴다
+      let r2 = 0;
+      const r1 = requestAnimationFrame(() => {
+        r2 = requestAnimationFrame(() => setSnackIn(true));
+      });
+      return () => {
+        cancelAnimationFrame(r1);
+        cancelAnimationFrame(r2);
+      };
+    }
+    setSnackIn(false);
+    const t = setTimeout(() => setSnack(""), SNACK_EXIT_MS);
+    return () => clearTimeout(t);
+  }, [snackOpen, toast]);
 
   // 내 생각 시트는 열 때마다 빈 입력으로 시작
   const thoughtAid = cur?.type === "thought" ? cur.aid : "";
@@ -191,15 +214,16 @@ export function Overlays() {
         </Sheet>
       )}
 
-      {toast && !cur && (
+      {snack && (
         <div
           role="status"
-          className={`pop fixed inset-x-0 z-[60] mx-auto w-full max-w-[430px] px-5 ${
+          data-open={snackIn}
+          className={`snack pointer-events-none fixed inset-x-0 z-[60] mx-auto w-full max-w-[430px] px-5 ${
             hasTabBar ? "bottom-24" : "bottom-6"
           }`}
         >
-          <div className="rounded-pill bg-primary px-[18px] py-[13px] text-label-md font-medium text-on-primary shadow-[0_12px_28px_rgba(17,17,17,0.28)]">
-            {toast}
+          <div className="snack-pill rounded-pill bg-pd-snack px-[18px] py-[13px] text-label-md font-medium text-on-primary shadow-[0_2px_8px_rgba(17,17,17,0.2),0_8px_16px_-6px_rgba(17,17,17,0.18)]">
+            {snack}
           </div>
         </div>
       )}
@@ -209,6 +233,8 @@ export function Overlays() {
 
 /** 시트가 나가는 시간(ms). Sheet 의 닫힘 transition 과 같아야 한다. */
 const SHEET_EXIT_MS = 300;
+/** 스낵바가 나가는 시간(ms). snackbar.css 의 닫힘 transition(180ms)보다 조금 길게. */
+const SNACK_EXIT_MS = 220;
 
 /**
  * 하단 시트. 아래에서 올라오고, 닫을 때(바깥·닫기 버튼·Esc)는 같은 길로 아래로 내려간다.

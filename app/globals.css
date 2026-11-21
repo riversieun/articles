@@ -45,6 +45,8 @@
   --color-pd-glow-soft: #d5fbc4;
   /* 홈 사용 후기 배너 배경 */
   --color-pd-note: #fffcc0;
+  --color-pd-like: #f5a524; /* 추천해요(엄지)를 눌렀을 때 색. 저장(북마크)의 브랜드 초록과 겹치지 않는 보조 색 */
+  --color-pd-snack: #4a4a52; /* 스낵바 배경(기존 #111 에서 어두운 회색으로) */
 }
 
 @layer base {

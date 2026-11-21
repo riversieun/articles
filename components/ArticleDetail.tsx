@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { FeedbackDialog } from "./FeedbackDialog";
 import { RatingCard } from "./RatingCard";
 import { SourceLine } from "./ArticleRow";
+import "./float-bar.css";
 import { IconArrowUpRight, IconBack, IconBookmark, IconPenEdit, IconSparkle, IconThumbUp } from "./icons";
 
 const SECTION = "flex flex-col gap-5 px-6 pt-8 pb-10";
@@ -182,23 +183,34 @@ export function ArticleDetail({ aid }: { aid: string }) {
         </div>
       </article>
 
-      {/* 하단에 떠 있는 바: 추천해요(엄지) · 내 생각 기록 · 저장 */}
+      {/* 하단에 떠 있는 바: 추천해요(엄지) · 내 생각 기록 · 저장. 움직임은 float-bar.css */}
       <div
         inert={!showBar}
-        className={cn(
-          "pointer-events-none fixed inset-x-0 bottom-[max(16px,env(safe-area-inset-bottom))] z-40 mx-auto flex w-full max-w-[430px] justify-center px-6 transition-[transform,opacity] ease-[cubic-bezier(0.23,1,0.32,1)] motion-reduce:transition-opacity",
-          showBar ? "duration-300" : "translate-y-[calc(100%+24px)] opacity-0 duration-220 motion-reduce:translate-y-0",
-        )}
+        data-hidden={!showBar}
+        className="fb-bar pointer-events-none fixed inset-x-0 bottom-[max(16px,env(safe-area-inset-bottom))] z-40 mx-auto flex w-full max-w-[430px] justify-center px-6"
       >
         <div className="pointer-events-auto flex items-center gap-2 rounded-full bg-surface px-4 py-1 drop-shadow-[0_2px_6px_rgba(0,0,0,0.1)]">
           <button
             onClick={() => toggleLike(aid)}
             aria-label={count > 0 ? `추천해요 ${count}` : "추천해요"}
             aria-pressed={isLiked}
-            className={`flex h-11 min-w-11 items-center justify-center gap-1 border-0 bg-transparent ${isLiked ? "text-brand" : "text-pd-ink"}`}
+            data-on={isLiked}
+            className="fb-btn fb-like flex h-11 min-w-11 items-center justify-center gap-1 border-0 bg-transparent text-pd-ink"
           >
-            <IconThumbUp filled={isLiked} />
-            {count > 0 && <span className="text-body-sm leading-4.5 tracking-body text-pd-ink-muted">{count}</span>}
+            <span className="fb-ico">
+              <span className="fb-tilt">
+                <IconThumbUp />
+                <span className="fb-fill">
+                  <IconThumbUp filled />
+                </span>
+              </span>
+            </span>
+            {count > 0 && (
+              <span aria-hidden="true" className="fb-count text-body-sm leading-4.5 tracking-body text-pd-ink-muted">
+                <span>{count - (isLiked ? 1 : 0) || ""}</span>
+                <span>{count - (isLiked ? 1 : 0) + 1}</span>
+              </span>
+            )}
           </button>
           <button
             onClick={() => openThought(aid)}
@@ -211,9 +223,15 @@ export function ArticleDetail({ aid }: { aid: string }) {
             onClick={() => toggleA(aid)}
             aria-label={isSaved ? "글 저장 해제" : "글 저장"}
             aria-pressed={isSaved}
-            className={`flex size-11 items-center justify-center border-0 bg-transparent ${isSaved ? "text-brand" : "text-pd-ink"}`}
+            data-on={isSaved}
+            className="fb-btn fb-mark flex size-11 items-center justify-center border-0 bg-transparent text-pd-ink"
           >
-            <IconBookmark filled={isSaved} size={20} />
+            <span className="fb-ico">
+              <IconBookmark size={20} />
+              <span className="fb-fill">
+                <IconBookmark filled size={20} />
+              </span>
+            </span>
           </button>
         </div>
       </div>

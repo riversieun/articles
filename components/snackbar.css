@@ -1,0 +1,26 @@
+/*
+ * 스낵바 모션 (motion-lab 에서 S1 "아래에서 살짝 올라오기"로 확정).
+ * 들어올 때 14px 아래에서 320ms(ease-out)로 올라오고, 나갈 때는 더 빠르게 180ms.
+ * 닫힘 상태의 transition 이 나가는 모션이다. transition 이라 연달아 떠도 끊기지 않는다.
+ */
+.snack-pill {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    transform 180ms cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 140ms ease-out;
+}
+.snack[data-open="true"] .snack-pill {
+  opacity: 1;
+  transform: none;
+  transition:
+    transform 320ms cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 220ms ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .snack-pill,
+  .snack[data-open="true"] .snack-pill {
+    transform: none;
+    transition: opacity 160ms ease-out;
+  }
+}
