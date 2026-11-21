@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { formatTimestamp, lib } from "@/lib/content";
 import type { Note } from "@/lib/types";
@@ -11,6 +11,7 @@ import { copyLink } from "@/lib/inapp";
 import { cn } from "@/lib/utils";
 import { useDragDismiss } from "@/lib/useDragDismiss";
 import { ConfirmDeleteDialog } from "./ConfirmDeleteDialog";
+import { FeedbackDialog } from "./FeedbackDialog";
 import { GoogleLoginButton } from "./GoogleLoginButton";
 import { IconPencilFill, IconTrashFill } from "./icons";
 import "./snackbar.css";
@@ -36,7 +37,7 @@ const INAPP_COPY = {
 
 /** 하단 시트(로그인·코멘트·앱 안 브라우저 안내)와 토스트. 앱 폭(430px)에 맞춰 고정 배치한다. */
 export function Overlays() {
-  const { sheet, closeSheet, login, saveComment, addThought, updateNote, removeNote, notes, toast, showToast } = useStore();
+  const { sheet, closeSheet, login, saveComment, addThought, updateNote, removeNote, notes, toast, showToast, loginHelp, dismissLoginHelp } = useStore();
   const pathname = usePathname();
   const [draft, setDraft] = useState("");
   const [thoughtDraft, setThoughtDraft] = useState("");
@@ -89,6 +90,40 @@ export function Overlays() {
     const t = setTimeout(() => setSnack(""), SNACK_EXIT_MS);
     return () => clearTimeout(t);
   }, [snackOpen, toast]);
+
+  // 구글 로그인 2번 연속 실패 시 뜨는 "로그인 문제가 있나요?" 스낵바. 스스로 사라지지 않고, 보이는 화면(경로)을 벗어나면 사라진다.
+  const [fbOpen, setFbOpen] = useState(false);
+  const failPill = useRef<HTMLDivElement>(null);
+  const [failH, setFailH] = useState(0);
+  useLayoutEffect(() => {
+    if (snack && failPill.current) setFailH(failPill.current.offsetHeight);
+  }, [snack]);
+  const helpOpen = loginHelp && !cur;
+  const [helpShown, setHelpShown] = useState(false);
+  const [helpIn, setHelpIn] = useState(false);
+  useEffect(() => {
+    if (helpOpen) {
+      setHelpShown(true);
+      let r2 = 0;
+      const r1 = requestAnimationFrame(() => {
+        r2 = requestAnimationFrame(() => setHelpIn(true));
+      });
+      return () => {
+        cancelAnimationFrame(r1);
+        cancelAnimationFrame(r2);
+      };
+    }
+    setHelpIn(false);
+    const t = setTimeout(() => setHelpShown(false), SNACK_EXIT_MS);
+    return () => clearTimeout(t);
+  }, [helpOpen]);
+  const lastPath = useRef(pathname);
+  useEffect(() => {
+    if (lastPath.current !== pathname) {
+      lastPath.current = pathname;
+      dismissLoginHelp();
+    }
+  }, [pathname, dismissLoginHelp]);
 
   // 내 생각 시트는 열 때마다 빈 입력으로 시작
   // 이미 적은 생각을 다시 열면(editId) 기존 내용으로 시작
@@ -305,11 +340,49 @@ export function Overlays() {
             hasTabBar ? "bottom-24" : hasFloatBar ? "bottom-[calc(max(16px,env(safe-area-inset-bottom))+64px)]" : "bottom-6"
           }`}
         >
-          <div className="snack-pill w-fit rounded-panel bg-pd-snack/80 px-4 py-3 text-center text-label-md font-normal whitespace-pre-line text-on-primary backdrop-blur-md backdrop-saturate-120 shadow-[0_2px_8px_rgba(17,17,17,0.2),0_8px_16px_-6px_rgba(17,17,17,0.18)]">
+          <div ref={failPill} className="snack-pill w-fit rounded-panel bg-pd-snack/80 px-4 py-3 text-center text-label-md font-normal whitespace-pre-line text-on-primary backdrop-blur-md backdrop-saturate-120 shadow-[0_2px_8px_rgba(17,17,17,0.2),0_8px_16px_-6px_rgba(17,17,17,0.18)]">
             {snack}
           </div>
         </div>
       )}
+
+      {helpShown && (
+        <div
+          data-open={helpIn}
+          className={`snack pointer-events-none fixed inset-x-0 z-[61] mx-auto flex w-full max-w-[430px] justify-center px-6 ${
+            hasTabBar ? "bottom-24" : hasFloatBar ? "bottom-[calc(max(16px,env(safe-area-inset-bottom))+64px)]" : "bottom-6"
+          }`}
+        >
+          {/* 실패 스낵바가 떠 있는 동안은 그 위(8px 간격)로, 사라지면 자기 자리로 내려온다 */}
+          <div
+            className="max-w-full"
+            style={{
+              transform: snack ? `translateY(-${failH + 8}px)` : "none",
+              transition: "transform 360ms cubic-bezier(0.23, 1, 0.32, 1)",
+            }}
+          >
+            <div
+              role="status"
+              className="snack-pill flex w-fit max-w-full items-center gap-4 rounded-panel bg-pd-snack/80 px-4 py-3 text-label-md font-normal text-on-primary backdrop-blur-md backdrop-saturate-120 shadow-[0_2px_8px_rgba(17,17,17,0.2),0_8px_16px_-6px_rgba(17,17,17,0.18)]"
+              style={{ pointerEvents: helpIn ? "auto" : "none" }}
+            >
+              <span className="min-w-0">로그인 문제가 있나요?</span>
+              <button
+                type="button"
+                tabIndex={helpIn ? 0 : -1}
+                className="shrink-0 font-semibold underline underline-offset-[3px]"
+                onClick={() => {
+                  dismissLoginHelp();
+                  setFbOpen(true);
+                }}
+              >
+                피드백 보내기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      <FeedbackDialog open={fbOpen} onOpenChange={setFbOpen} />
     </>
   );
 }

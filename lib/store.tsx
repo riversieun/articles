@@ -66,6 +66,11 @@ const EMPTY: Persisted = {
 };
 
 const KEY = "articles:proto:v1";
+/** 구글 로그인이 연달아 실패한 횟수(탭이 열려 있는 동안). 구글 화면에 다녀오면 페이지가 다시 열려서 sessionStorage 에 둔다. */
+const LOGIN_FAILS_KEY = "articles:login-fails";
+const LOGIN_FAIL_TOAST = "구글 계정을 연결하지 못했어요\n잠시 후 다시 시도해주세요!";
+/** 2번째 실패 스낵바가 뜬 뒤 "로그인 문제가 있나요?" 스낵바가 위로 올라오기까지(ms) */
+const LOGIN_HELP_DELAY_MS = 900;
 /** 이 기기에서 마지막으로 동기화한 사용자 id. 바뀌면(첫 연결·다른 계정으로 로그인) 로컬 기록을 서버로 합친다. */
 const UID_KEY = "articles:uid:v1";
 /** 구글 화면으로 나가기 전에 남기는 값(돌아온 뒤 Login Completed 를 보내기 위해). 탭을 닫으면 사라지도록 sessionStorage. */
@@ -130,6 +135,9 @@ type Ctx = Persisted & {
   profile: Profile;
   sheet: Sheet;
   toast: string;
+  /** 구글 로그인이 2번 연속 실패하면 켜진다. 보이는 화면을 벗어나거나 [피드백 보내기]를 누르면 꺼진다 */
+  loginHelp: boolean;
+  dismissLoginHelp: () => void;
   hasRecords: boolean;
   closeSheet: () => void;
   login: (trigger?: LoginTrigger) => void;
@@ -171,6 +179,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
   const [sheet, setSheet] = useState<Sheet>(null);
   const [toast, setToast] = useState("");
+  const [loginHelp, setLoginHelp] = useState(false);
+  const helpTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const [auth, setAuth] = useState<Auth>(GUEST);
   const [counts, setCounts] = useState<Record<string, number>>({});
   /** 서버 추천 수를 받아온 순간 이미 서버에 반영돼 있던 내 추천. 이 이후에 바꾼 만큼만 숫자에 더하고 뺀다 */
@@ -192,6 +202,22 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     clearTimeout(timer.current);
     setToast(msg);
     timer.current = setTimeout(() => setToast(""), 2400);
+  }, []);
+
+  /** 구글 로그인 실패 알림. 2번 연속이면 잠시 뒤 도움 스낵바(loginHelp)를 이어서 띄운다 */
+  const loginFailed = useCallback(() => {
+    const n = Number(ssGet(LOGIN_FAILS_KEY) ?? "0") + 1;
+    ssSet(LOGIN_FAILS_KEY, String(n));
+    showToast(LOGIN_FAIL_TOAST);
+    if (n >= 2) {
+      clearTimeout(helpTimer.current);
+      helpTimer.current = setTimeout(() => setLoginHelp(true), LOGIN_HELP_DELAY_MS);
+    }
+  }, [showToast]);
+  const dismissLoginHelp = useCallback(() => {
+    clearTimeout(helpTimer.current);
+    ssSet(LOGIN_FAILS_KEY, null);
+    setLoginHelp(false);
   }, []);
 
   /** 서버로 보낼 변경을 편지함에 넣고 바로 전송을 시도한다. 키가 없으면 아무것도 하지 않는다. */
@@ -245,6 +271,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
       if (loggedIn) {
         lsSet(GOOGLE_SEEN_KEY, "1");
+        ssSet(LOGIN_FAILS_KEY, null); // 로그인에 성공하면 연속 실패 횟수를 처음부터
         identifyUser(user.id);
         const trigger = ssGet(TRIGGER_KEY);
         if (trigger) {
@@ -324,7 +351,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         }
         ssSet(MERGE_KEY, null);
         ssSet(TRIGGER_KEY, null);
-        showToast("구글 계정을 연결하지 못했어요\n잠시 후 다시 시도해주세요!");
+        loginFailed();
       }
       try {
         const { data } = await sb.auth.getSession();
@@ -347,7 +374,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       window.removeEventListener("online", retry);
       document.removeEventListener("visibilitychange", retry);
     };
-  }, [syncSession, showToast]);
+  }, [syncSession, loginFailed]);
 
   /** 게스트에게 가치가 쌓인 시점에 한 번만 "기록 백업"을 제안한다. (PRD F-72) */
   const maybePrompt = useCallback(
@@ -372,6 +399,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       ready,
       sheet,
       toast,
+      loginHelp,
+      dismissLoginHelp,
       hasRecords:
         state.notes.length > 0 ||
         Object.keys(state.hl).length > 0 ||
@@ -410,7 +439,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         startGoogleLogin().catch((e) => {
           console.error("[login] 구글 로그인을 시작하지 못함", e);
           ssSet(TRIGGER_KEY, null);
-          showToast("구글 계정을 연결하지 못했어요\n잠시 후 다시 시도해주세요!");
+          loginFailed();
         });
       },
       logout: () => {
@@ -543,7 +572,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         send({ t: "saved", aid, on });
       },
     };
-  }, [state, auth, ready, sheet, toast, counts, refreshLikeCounts, commit, showToast, maybePrompt, send]);
+  }, [state, auth, ready, sheet, toast, loginHelp, loginFailed, dismissLoginHelp, counts, refreshLikeCounts, commit, showToast, maybePrompt, send]);
 
   return <StoreCtx.Provider value={value}>{children}</StoreCtx.Provider>;
 }
