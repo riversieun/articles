@@ -14,7 +14,7 @@ import { FeedbackDialog } from "./FeedbackDialog";
 import { RatingCard } from "./RatingCard";
 import { SourceLine } from "./ArticleRow";
 import "./float-bar.css";
-import { IconArrowUpRight, IconBack, IconBookmark, IconPenEdit, IconPenFilled, IconSparkle, IconThumbUp } from "./icons";
+import { IconArrowUpRight, IconBack, IconBookmark, IconPenEdit, IconPenFilled, IconSparkle, IconTextDescription, IconThumbUp } from "./icons";
 
 const SECTION = "flex flex-col gap-5 px-6 pt-8 pb-10";
 const HEADING = "m-0 text-heading font-bold tracking-display text-pd-ink";
@@ -96,17 +96,9 @@ export function ArticleDetail({ aid }: { aid: string }) {
         <section aria-label="한 문장 요약" className="flex flex-col px-6 pt-8 pb-5">
           <div className="flex flex-col gap-4 rounded-panel bg-pd-tint px-5 pt-5 pb-6">
             <div className="flex items-center gap-0.5">
-              <span className="relative size-4.5 shrink-0 overflow-clip">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/icons/text-description.svg"
-                  alt=""
-                  aria-hidden="true"
-                  width="15.075"
-                  height="11.8"
-                  className="absolute max-w-none"
-                  style={{ left: 1.74, top: 4.2 }}
-                />
+              <span className="relative size-4.5 shrink-0 overflow-clip text-pd-ink">
+                {/* 아이콘 색은 옆 글자(pd-ink)와 같다. currentColor */}
+                <IconTextDescription className="absolute top-[4.2px] left-[1.74px] max-w-none" />
               </span>
               <h2 className="m-0 text-body-sm leading-4.5 font-semibold text-pd-ink">한 문장 요약</h2>
             </div>

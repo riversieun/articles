@@ -186,7 +186,7 @@ export function Overlays() {
             <h2 id="thought-title" className="m-0 text-headline font-bold tracking-headline">
               내 생각 기록
             </h2>
-            <p className="m-0 text-body-sm text-on-surface-muted">입력한 내용은 나만 볼 수 있게 저장돼요.</p>
+            <p className="m-0 text-body-md leading-6 text-on-surface-muted">입력한 내용은 나만 볼 수 있게 저장돼요.</p>
           </div>
           <label htmlFor="thought-sheet-input" className="sr-only">
             내 생각
