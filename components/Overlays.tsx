@@ -171,14 +171,17 @@ export function Overlays() {
       )}
 
       {toast && !sheet && (
+        // md 이상에서는 하단 탭바가 없고, 탭 화면은 좌측 내비(192px) 오른쪽 영역의 가운데에 맞춘다.
         <div
           role="status"
-          className={`pop fixed inset-x-0 z-[60] mx-auto w-full max-w-[430px] px-5 ${
-            hasTabBar ? "bottom-24" : "bottom-6"
+          className={`pop pointer-events-none fixed inset-x-0 z-[60] md:bottom-6 ${
+            hasTabBar ? "bottom-24 md:pl-48" : "bottom-6"
           }`}
         >
-          <div className="rounded-pill bg-primary px-[18px] py-[13px] text-label-md font-medium text-on-primary shadow-[0_12px_28px_rgba(17,17,17,0.28)]">
-            {toast}
+          <div className="mx-auto w-full max-w-[430px] px-5 md:max-w-170">
+            <div className="rounded-pill bg-primary px-[18px] py-[13px] text-label-md font-medium text-on-primary shadow-[0_12px_28px_rgba(17,17,17,0.28)]">
+              {toast}
+            </div>
           </div>
         </div>
       )}
@@ -202,7 +205,8 @@ function Sheet({
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-50 mx-auto flex w-full max-w-[430px] flex-col justify-end">
+    // 모바일은 하단 시트, md(768px) 이상은 가운데 모달
+    <div className="fixed inset-0 z-50 mx-auto flex w-full max-w-[430px] flex-col justify-end md:max-w-none md:items-center md:justify-center md:px-6">
       <button
         aria-label="닫기"
         onClick={onClose}
@@ -212,7 +216,7 @@ function Sheet({
         role="dialog"
         aria-modal="true"
         aria-labelledby={labelledBy}
-        className="up relative flex flex-col gap-2.5 rounded-t-[26px] bg-surface px-5 pt-7 pb-6"
+        className="up relative flex flex-col gap-2.5 rounded-t-[26px] bg-surface px-5 pt-7 pb-6 md:w-full md:max-w-md md:rounded-pill md:p-6"
       >
         {children}
       </div>

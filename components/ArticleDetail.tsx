@@ -173,7 +173,7 @@ export function ArticleDetail({ aid }: { aid: string }) {
       </article>
 
       {/* 하단에 떠 있는 바: 추천해요(엄지) · 내 생각 기록 · 저장 */}
-      <div className="pointer-events-none fixed inset-x-0 bottom-[max(16px,env(safe-area-inset-bottom))] z-40 mx-auto flex w-full max-w-[430px] justify-center px-6">
+      <div className="pointer-events-none fixed inset-x-0 bottom-[max(16px,env(safe-area-inset-bottom))] z-40 mx-auto flex w-full max-w-[430px] justify-center px-6 md:max-w-170">
         <div className="pointer-events-auto flex items-center gap-2 rounded-full bg-surface px-4 py-1 drop-shadow-[0_2px_6px_rgba(0,0,0,0.1)]">
           <button
             onClick={() => toggleLike(aid)}
