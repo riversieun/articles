@@ -83,10 +83,13 @@ export function Overlays() {
   }, [snackOpen, toast]);
 
   // 내 생각 시트는 열 때마다 빈 입력으로 시작
+  // 이미 적은 생각을 다시 열면(editId) 기존 내용으로 시작
   const thoughtAid = cur?.type === "thought" ? cur.aid : "";
+  const thoughtEditId = cur?.type === "thought" ? (cur.editId ?? "") : "";
   useEffect(() => {
-    setThoughtDraft("");
-  }, [thoughtAid]);
+    setThoughtDraft(thoughtEditId ? (notes.find((n) => n.id === thoughtEditId)?.text ?? "") : "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [thoughtAid, thoughtEditId]);
 
   const commentSid = cur?.type === "comment" ? cur.sid : "";
   const editId = cur?.type === "comment" ? cur.editId : "";
@@ -207,12 +210,16 @@ export function Overlays() {
               size="lg"
               disabled={!thoughtDraft.trim()}
               onClick={() => {
+                if (cur.editId) {
+                  updateNote(cur.editId, thoughtDraft);
+                  return;
+                }
                 closeSheet(); // 백업 제안 시트가 이어서 뜰 수 있어서 먼저 닫는다
                 addThought(cur.aid, thoughtDraft);
               }}
               className="h-12"
             >
-              생각 남기기
+              {cur.editId ? "수정하기" : "생각 남기기"}
             </Button>
           </div>
         </Sheet>

@@ -41,7 +41,9 @@ export function ArticleDetail({ aid }: { aid: string }) {
 
   const isLiked = !!liked[aid];
   const isSaved = !!savedA[aid];
-  const hasThought = notes.some((n) => n.aid === aid && !n.sid); // 글 아래에 직접 적은 내 생각이 있는지
+  // 글 아래에 직접 적은 내 생각(가장 최근 것). 있으면 펜이 채워지고, 다시 누르면 같은 시트로 보고 고친다.
+  const myThought = [...notes].reverse().find((n) => n.aid === aid && !n.sid);
+  const hasThought = !!myThought;
   // 내가 추천했다면 서버 집계가 아직 반영되지 않았어도 최소 1로 보여준다(첫 추천부터 숫자 표기)
   const count = Math.max(likeCount(aid), isLiked ? 1 : 0);
 
@@ -207,7 +209,7 @@ export function ArticleDetail({ aid }: { aid: string }) {
             )}
           </button>
           <button
-            onClick={() => openThought(aid)}
+            onClick={() => openThought(aid, myThought?.id)}
             aria-label="내 생각 기록"
             data-on={hasThought}
             className="fb-btn flex size-11 items-center justify-center border-0 bg-transparent text-pd-ink data-[on=true]:text-pd-ink-soft"

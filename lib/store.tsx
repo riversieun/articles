@@ -120,7 +120,7 @@ export type Sheet =
   | { type: "login"; reason: PromptReason; trigger: LoginTrigger }
   | { type: "comment"; sid: string; editId: string }
   /** 아티클 상세 하단 바의 "내 생각 기록" */
-  | { type: "thought"; aid: string }
+  | { type: "thought"; aid: string; editId?: string }
   /** 앱 안 브라우저(카카오톡·인스타그램 등)라 구글 로그인이 막혀 있을 때 기본 브라우저로 옮기도록 안내 */
   | { type: "inapp"; app: string; reason: "manual" | "record" }
   | null;
@@ -138,7 +138,8 @@ type Ctx = Persisted & {
   toggleKo: (aid?: string) => void;
   toggleHl: (sid: string) => void;
   openComment: (sid: string) => void;
-  openThought: (aid: string) => void;
+  /** editId 가 있으면 이미 적은 생각을 같은 시트에서 보고 고친다 */
+  openThought: (aid: string, editId?: string) => void;
   toggleLike: (aid: string) => void;
   /** 글의 추천 수. 서버 합계에 이 기기의 변경을 반영한 값(0이면 화면에 숫자를 쓰지 않는다) */
   likeCount: (aid: string) => number;
@@ -468,7 +469,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         send({ t: "hl", sid, aid, on });
       },
       openComment: (sid) => setSheet({ type: "comment", sid, editId: "" }),
-      openThought: (aid) => setSheet({ type: "thought", aid }),
+      openThought: (aid, editId) => setSheet({ type: "thought", aid, editId }),
       likeCount: (aid) =>
         Math.max(0, (counts[aid] ?? 0) + (state.liked[aid] ? 1 : 0) - (baseLiked.current[aid] ? 1 : 0)),
       refreshLikeCounts,
