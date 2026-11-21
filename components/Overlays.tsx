@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { copyLink } from "@/lib/inapp";
 import { cn } from "@/lib/utils";
+import { useDragDismiss } from "@/lib/useDragDismiss";
 import { ConfirmDeleteDialog } from "./ConfirmDeleteDialog";
 import { GoogleLoginButton } from "./GoogleLoginButton";
 import { IconPencilFill, IconTrashFill } from "./icons";
@@ -310,9 +311,10 @@ const SHEET_EXIT_MS = 300;
 const SNACK_EXIT_MS = 220;
 
 /**
- * 하단 시트. 아래에서 올라오고, 닫을 때(바깥·닫기 버튼·Esc)는 같은 길로 아래로 내려간다.
- * 키프레임이 아니라 transition 이라 여는 도중에 닫아도 그 자리에서 되돌아간다.
- * 들어올 때는 iOS 시트 곡선(0.32, 0.72, 0, 1) 480ms, 나갈 때는 더 빠르게 300ms. 어두운 배경은 같이 사라진다.
+ * 하단 시트. 아래에서 올라오고, 닫을 때(바깥·닫기 버튼·Esc)는 같은 길로 아래로 내려간다. 아래로 끌어서도 닫는다(useDragDismiss).
+ * 키프레임이 아니라 transition 이라 여는 도중에 잡아도 그 자리에서 이어진다.
+ * 들어올 때는 iOS 시트 곡선(0.32, 0.72, 0, 1) 500ms, 버튼으로 나갈 땐 300ms. 투명해지지 않고 화면 아래로 그대로 내려간다(들어온 방향 = 나가는 방향).
+ * 어두운 배경은 끌린 만큼 같이 옅어진다.
  */
 function Sheet({
   children,
@@ -326,6 +328,7 @@ function Sheet({
   closing: boolean;
 }) {
   const [entered, setEntered] = useState(false);
+  const drag = useDragDismiss(onClose);
   useEffect(() => {
     // 처음 그린 프레임을 "닫힘" 상태로 두고 다음 프레임에 열어야 올라오는 모션이 생긴다
     let r2 = 0;
@@ -348,24 +351,29 @@ function Sheet({
   return (
     <div className="fixed inset-0 z-50 mx-auto flex w-full max-w-[430px] flex-col justify-end">
       <button
+        ref={drag.backdrop}
         aria-label="닫기"
         onClick={onClose}
         tabIndex={closing ? -1 : 0}
         className={cn(
           "absolute inset-0 h-full w-full cursor-default border-0 bg-primary/50 p-0 transition-opacity ease-out",
-          open ? "opacity-100 duration-[320ms]" : "opacity-0 duration-[240ms]",
+          open ? "opacity-100 duration-[400ms]" : "opacity-0 duration-[300ms]",
         )}
       />
       <div
+        ref={drag.surface}
+        {...drag.bind}
         role="dialog"
         aria-modal="true"
         aria-labelledby={labelledBy}
         inert={closing}
         className={cn(
-          "relative flex flex-col gap-2.5 rounded-t-[26px] bg-surface px-5 pt-7 pb-6 transition-[transform,opacity] ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-opacity",
-          open ? "translate-y-0 opacity-100 duration-[480ms]" : "translate-y-full opacity-0 duration-[300ms] motion-reduce:translate-y-0",
+          "relative flex touch-none flex-col gap-2.5 rounded-t-sheet bg-surface px-6 pt-7 pb-6 transition-transform ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none",
+          open ? "translate-y-0 duration-500" : "translate-y-full duration-300",
         )}
       >
+        {/* 끌어서 닫을 수 있다는 단서 */}
+        <span aria-hidden="true" className="absolute top-2.5 left-1/2 h-1 w-9 -translate-x-1/2 rounded-full bg-pd-line" />
         {children}
       </div>
     </div>

@@ -196,6 +196,7 @@
   --radius-panel: 12px;
   --radius-hero: 20px;
   --radius-box: 24px;
+  --radius-sheet: 28px;
   /* --font-sans는 위 @theme(Pretendard Variable)을 그대로 쓴다. 프리셋의 자기 참조 선언은 순환이라 제거. */
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
