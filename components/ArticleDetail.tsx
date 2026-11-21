@@ -227,7 +227,7 @@ export function ArticleDetail({ aid }: { aid: string }) {
             </span>
           </button>
           <button
-            onClick={() => toggleA(aid, { quiet: true })}
+            onClick={() => toggleA(aid)}
             aria-label={isSaved ? "글 저장 해제" : "글 저장"}
             aria-pressed={isSaved}
             data-on={isSaved}
