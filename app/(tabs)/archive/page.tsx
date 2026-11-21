@@ -51,7 +51,7 @@ export default function ArchivePage() {
 
   return (
     <div>
-      <div className="ns sticky top-12 z-20 flex gap-2 overflow-x-auto bg-surface px-6 pt-3 pb-1">
+      <div className="ns sticky top-12 z-20 md:top-0 flex gap-2 overflow-x-auto bg-surface px-6 pt-3 pb-1">
         {TABS.map(([key, label]) => (
           <FilterChip
             key={key}

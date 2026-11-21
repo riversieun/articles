@@ -50,7 +50,7 @@ export function ArticleRow({
   entryPoint?: string;
 }) {
   return (
-    <div>
+    <div className="md:transition-colors md:hover:bg-pd-tint">
       {position > 0 && <div aria-hidden="true" className="mx-6 h-px bg-pd-line" />}
       <Link
         href={`/contents/${a.id}`}

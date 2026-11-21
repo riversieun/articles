@@ -27,7 +27,7 @@ export function Feed() {
 
   return (
     <div className="tracking-body">
-      <div className="ns sticky top-12 z-20 flex gap-2 overflow-x-auto bg-surface px-6 pt-3 pb-1">
+      <div className="ns sticky top-12 z-20 md:top-0 flex gap-2 overflow-x-auto bg-surface px-6 pt-3 pb-1">
         {FILTERS.map(([key, label]) => (
           <FilterChip key={key} on={topic === key} onClick={() => go(key)}>
             {label}

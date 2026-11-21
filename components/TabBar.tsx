@@ -3,13 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { IconBookmark, IconCompassFill, IconHomeFill } from "./icons";
-
-const TABS = [
-  { href: "/", label: "홈", icon: <IconHomeFill /> },
-  { href: "/explore", label: "탐색", icon: <IconCompassFill /> },
-  { href: "/archive", label: "아카이브", icon: <IconBookmark filled size={24} /> },
-];
+import { TABS } from "./tabs";
 
 function useCompactTabBar() {
   const [isCompact, setIsCompact] = useState(false);
@@ -61,7 +55,7 @@ export function TabBar() {
     <nav
       aria-label="주요 탭"
       data-compact={isCompact}
-      className="pointer-events-none fixed inset-x-0 bottom-[max(16px,env(safe-area-inset-bottom))] z-40 mx-auto w-full max-w-[430px] px-5"
+      className="pointer-events-none fixed inset-x-0 bottom-[max(16px,env(safe-area-inset-bottom))] z-40 mx-auto w-full max-w-[430px] px-5 md:hidden"
     >
       <div
         className={`tab-bar-motion pointer-events-auto mx-auto flex items-center gap-2 overflow-hidden rounded-full bg-surface px-2 shadow-sm ring-1 ring-border transition-[width,height] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
