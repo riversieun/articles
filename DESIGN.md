@@ -3,42 +3,42 @@ version: alpha
 name: crumbit
 description: 영어 아티클을 읽으며 인사이트를 얻고 내 생각을 남기는 모바일 우선 리더. 흑백 중심 화면에 브랜드 초록 한 가지로만 강조한다.
 colors:
-  primary: "#111111"
+  primary: "#1E1E28"
   on-primary: "#FFFFFF"
-  accent: "#00D866"
-  accent-strong: "#01A850"
-  accent-tint: "#DAF7DF"
-  accent-soft: "#9CE4AB"
-  on-accent: "#111111"
+  accent: "#3FE2AA"
+  accent-strong: "#008759"
+  accent-tint: "#D5F7EC"
+  accent-soft: "#A6EDD5"
+  on-accent: "#1E1E28"
   accent-sub: "#E7E0FF"
   accent-sub-strong: "#CBBCFF"
   surface: "#FFFFFF"
-  on-surface: "#111111"
+  on-surface: "#1E1E28"
   surface-muted: "#F4F4F6"
-  on-surface-muted: "#5F5F66"
+  on-surface-muted: "#5E5E66"
   subtle: "#8E8E96"
   label: "#7F7F8A"
   border: "#E7E7EA"
   border-strong: "#D5D5DA"
   danger: "oklch(0.577 0.245 27.325)"
   on-danger: "#FFFFFF"
-  focus-ring: "#111111"
+  focus-ring: "#1E1E28"
   like: "#FFBF00"
   snack: "#4A4A52"
-  pd-ink: "#0B0B0F"
+  pd-ink: "#1E1E28"
   pd-ink-muted: "#5E5E66"
-  pd-ink-soft: "#3A3A42"
+  pd-ink-soft: "#313142"
   pd-ink-quiet: "#77778D"
-  pd-icon: "#272727"
+  pd-icon: "#5E5E66"
   pd-line: "#E6E6EA"
   pd-dot: "#C6C6CF"
   pd-tint: "#F9F9F9"
   pd-chip: "#F1F1F3"
   pd-star: "#B4B4B8"
-  pd-glow: "#AEFFC0"
-  pd-glow-mid: "#B9FEC1"
-  pd-glow-soft: "#D5FBC4"
-  pd-note: "#FFFCC0"
+  pd-glow: "#AEFFE4"
+  pd-glow-mid: "#C4FBDE"
+  pd-glow-soft: "#E2FAED"
+  pd-note: "#F5EBFF"
 typography:
   display:
     fontFamily: Pretendard Variable
@@ -254,17 +254,17 @@ components:
 
 색 이름이 아니라 역할로 부른다.
 
-- **Primary (#111111):** 글자와 기본 버튼의 검정. 화면에서 가장 무게 있는 색이다.
-- **Accent (#00D866):** 브랜드 초록(redesign v2에서 예전 라임 #D9F25C 자리를 대신함). 서비스의 시그니처 강조색으로, 핵심 행동 버튼(`variant="accent"`)·저장(북마크) 켜짐·앱 바 로고의 별·프로필 이니셜 원에 쓴다(아티클 읽기 진행 바는 중성색). 위에 올리는 글자는 반드시 `on-accent`(검정)를 쓴다. CSS 토큰은 `--color-brand`(`bg-brand`, `text-brand`).
-- **Accent-strong (#01A850) / Accent-tint (#DAF7DF) / Accent-soft (#9CE4AB):** 초록의 보조 단계. `accent-strong`은 연한 초록 면 위의 글자(주제 뱃지, 홈 "새로 등록된 글"), `accent-tint`는 주제 뱃지 배경, `accent-soft`는 번호·인용선·불릿 같은 장식이다. CSS 토큰은 `brand-strong`·`brand-tint`·`brand-soft`.
+- **Primary (#1E1E28):** 글자와 기본 버튼의 검정(순검정이 아니라 남색 기운이 도는 검정, 2026-11-23 피그마 기준). 화면에서 가장 무게 있는 색이다.
+- **Accent (#3FE2AA):** 브랜드 초록(redesign v2에서 예전 라임 #D9F25C 자리를 대신함). 서비스의 시그니처 강조색으로, 핵심 행동 버튼(`variant="accent"`)·저장(북마크) 켜짐·앱 바 로고의 별·프로필 이니셜 원에 쓴다(아티클 읽기 진행 바는 중성색). 위에 올리는 글자는 반드시 `on-accent`(검정)를 쓴다. CSS 토큰은 `--color-brand`(`bg-brand`, `text-brand`).
+- **Accent-strong (#008759) / Accent-tint (#D5F7EC) / Accent-soft (#A6EDD5):** 초록의 보조 단계. `accent-strong`은 연한 초록 면 위의 글자(주제 뱃지, 홈 "새로 등록된 글"), `accent-tint`는 주제 뱃지 배경, `accent-soft`는 번호·인용선·불릿 같은 장식이다. CSS 토큰은 `brand-strong`·`brand-tint`·`brand-soft`.
 - **Accent-sub (#E7E0FF), Accent-sub-strong (#CBBCFF):** 연보라. 초록과 겹치지 않는 보조 구분용으로만 쓴다. 사용자가 하이라이트한 문장은 `accent-sub`, 코멘트 말풍선은 `accent-sub-strong`.
 - **Surface (#FFFFFF) / Surface-muted (#F4F4F6):** 페이지와 팝업은 흰색, 그 위의 카드·주제 뱃지·보조 버튼·구획 배경은 연회색.
-- **On-surface-muted (#5F5F66):** 보조 설명과 메타 정보, 읽는 글자 중 한 단계 약한 것(부연설명, 한글 번역, 안내 문구).
+- **On-surface-muted (#5E5E66):** 보조 설명과 메타 정보, 읽는 글자 중 한 단계 약한 것(부연설명, 한글 번역, 안내 문구).
 - **Label (#7F7F8A):** 입력창 placeholder 전용. `on-surface-muted`보다 한 단계 옅어 입력한 글과 확실히 구분되고, 흰 배경 대비 3.96:1이다. 다른 읽는 글자에는 쓰지 않는다. CSS 토큰은 `--color-pd-label`(`text-pd-label`).
 - **Subtle (#8E8E96):** 읽는 글자에는 쓰지 않는다(흰 배경 대비 3.25:1로 읽기 기준에 못 미침). 토글 꺼짐 배경, 로그인 전 프로필 아이콘 같은 장식에 쓴다. 예외로 **하단 탭바의 선택 안 된 탭**(아이콘과 라벨)에는 글자색으로 쓴다(대비 3.25:1). 본문의 **"- 중략 -" 구분 표시**는 한 단계 더 약한 `border-strong`을 쓴다.
 - **Border (#E7E7EA) / Border-strong (#D5D5DA):** 구분선. 일반 구분은 `border`, 입력창 테두리와 카드 안의 구분선처럼 경계를 조금 더 또렷하게 할 때는 `border-strong`.
 - **Danger:** 삭제 등 되돌릴 수 없는 행동과 입력 오류에만 쓴다. 배경에 깔 때는 옅게(10~20%) 깔고 글자만 진하게 쓴다.
-- **Focus-ring (#111111):** 키보드 포커스 표시. 지우지 않는다.
+- **Focus-ring (#1E1E28):** 키보드 포커스 표시. 지우지 않는다.
 - **Like (#FFBF00):** 앰버 노랑. 추천해요(엄지)가 켜졌을 때와 별점에서 채워진 별의 색이다(둘이 같은 값). 저장(북마크)이 브랜드 초록을 쓰니 겹치지 않게 보조 색으로 둔다. 다른 곳에는 쓰지 않는다. CSS 토큰은 `--color-pd-like`(`text-pd-like`).
 - **Snack (#4A4A52):** 어두운 회색. 스낵바(토스트) 배경(80% 투명도로 깔고 뒤를 흐리게 한다, Components의 Snackbar 참고)이고, 위에 올리는 글자는 `on-primary`(흰색)다. 기존 검정(`primary`)에서 한 단계 풀어 화면을 덜 누른다. CSS 토큰은 `--color-pd-snack`(`bg-pd-snack`).
 
@@ -272,18 +272,18 @@ components:
 
 | 토큰 | 값 | 쓰는 곳 |
 |---|---|---|
-| `pd-ink` | #0B0B0F | 본문·제목 글자, 선택된 탭, 선택된 필터 칩 배경, 읽기 진행 막대 |
+| `pd-ink` | #1E1E28 | 본문·제목 글자, 선택된 탭, 선택된 필터 칩 배경, 읽기 진행 막대 |
 | `pd-ink-muted` | #5E5E66 | 부제·날짜·영어 제목(약한 읽는 글자). 기존 `on-surface-muted`와 거의 같음 |
-| `pd-ink-soft` | #3A3A42 | 인용 번역, 보조 버튼 글자, 기록한 글의 펜 |
+| `pd-ink-soft` | #313142 | 로고·홈 카드 제목·출처 이름·더보기 글자, 기록한 글의 펜 |
 | `pd-ink-quiet` | #77778D | 요약 카드 라벨 |
-| `pd-icon` | #272727 | 글 저장 아이콘(저장 전) |
+| `pd-icon` | #5E5E66 | 글 저장 아이콘(저장 전) |
 | `pd-line` | #E6E6EA | 구분선·카드 테두리. 기존 `border`와 거의 같음 |
 | `pd-dot` | #C6C6CF | 출처와 날짜 사이 점, 읽기 진행 막대 트랙 |
 | `pd-tint` | #F9F9F9 | 한 문장 요약 카드, 더보기 버튼, 생각 카드 안 글 링크 배경 |
 | `pd-chip` | #F1F1F3 | 선택 안 된 주제 칩 배경 |
 | `pd-star` | #B4B4B8 | 비어 있는 별점 별 |
-| `pd-glow` / `pd-glow-mid` / `pd-glow-soft` | #AEFFC0 / #B9FEC1 / #D5FBC4 | 홈 "새로 등록된 글" 카드 위쪽 가운데의 초록 빛(위에서 아래로 `pd-tint`로 사라짐) |
-| `pd-note` | #FFFCC0 | 홈 사용 후기 배너 배경 |
+| `pd-glow` / `pd-glow-mid` / `pd-glow-soft` | #AEFFE4 / #C4FBDE / #E2FAED | 홈 "새로 등록된 글" 카드 위쪽 가운데의 초록 빛(위에서 아래로 `pd-tint`로 사라짐) |
+| `pd-note` | #F5EBFF | 홈 사용 후기 배너 배경(연보라) |
 | `pd-label` / `pd-like` / `pd-snack` | 위 Label / Like / Snack과 같은 값 | CSS 토큰 이름 |
 
 다크 모드 토큰은 `globals.css`에 정의돼 있지만 현재 화면에서는 사용하지 않는다.
@@ -346,7 +346,7 @@ shadcn 컴포넌트는 `components/ui`에, 서비스 전용 조합은 `component
 - **Dialog:** 중앙 팝업(`ConfirmDeleteDialog`, 피드백). 제목과 닫기 버튼이 같은 줄에 있고(닫기는 오른쪽, 배경 없는 X 아이콘만. 모든 다이얼로그 공통), 설명은 한 단계 약한 색, 구획 사이 24px. 삭제 확인은 "삭제할까요?" / "삭제하면 되돌릴 수 없어요." 문구로 통일하고 취소(왼쪽)·삭제(오른쪽, danger)를 한 줄에 둔다.
 - **Bottom sheet:** 하단에서 올라오는 시트(로그인, 코멘트, 내 생각, 앱 안 브라우저 안내). 위쪽 모서리 `sheet`(28px), 좌우 여백 24px, 위에 손잡이(grabber)가 있고 제목은 `headline`. 모션: 아래에서 올라올 때 iOS 시트 곡선(0.32, 0.72, 0, 1) 500ms, 닫기 버튼·바깥·Esc로 닫을 때는 같은 길로 300ms 내려간다. **아래로 끌어서도 닫는다**: 누른 동안 손가락과 1:1로 따라오고(위로는 20% 고무줄), 높이의 40% 이상 끌었거나 빠르게 튕기면(0.5px/ms 이상) 놓은 속도로 마무리하며 내려가고, 아니면 제자리로 돌아온다. 뒤의 어두운 배경은 끌린 만큼 같이 옅어진다. 투명도 변화 없이 화면 아래로 그대로 내려간다(들어온 방향 = 나가는 방향).
 - **Toggle:** 38×22px 알약, 손잡이 18px. 켜짐은 `primary`, 꺼짐은 `subtle`. 병기 읽기의 "번역 켜기"와 알림·설정류 스위치가 같은 컴포넌트를 쓴다. (프로필의 "번역 항상 켜기"는 v2에서 삭제)
-- **Progress bar:** 아티클 상단 고정 영역 아래 3px 막대. 트랙은 출처와 발행일 사이 점과 같은 색(`--color-pd-dot` #C6C6CF), 읽은 만큼은 아티클 제목 글자색(`--color-pd-ink` #0B0B0F). 초록은 쓰지 않는다.
+- **Progress bar:** 아티클 상단 고정 영역 아래 3px 막대. 트랙은 출처와 발행일 사이 점과 같은 색(`--color-pd-dot` #C6C6CF), 읽은 만큼은 아티클 제목 글자색(`--color-pd-ink` #1E1E28). 초록은 쓰지 않는다.
 - **Tab bar:** 위 Layout 참고. 선택된 탭은 `primary`, 선택 안 된 탭은 `subtle`. 아카이브 아이콘은 북마크(채움), 탐색은 나침반.
 - **Snackbar(토스트):** 동작 결과를 하단에 알리는 상자. 배경 `snack`(#4A4A52)을 **80%**로 깔고 뒤를 **12px 흐리게**(+채도 120%) 하는 유리 효과, 글자 `on-primary` `label-md` **400 굵기**, 모서리 `panel`(12px), 안 여백 좌우 16px·위아래 12px, 글자 폭에 맞추되(hug) 최대 폭은 화면 좌우 24px씩을 뺀 값(390px 화면에서 342px). 두 줄 문구는 가운데 정렬. 시트가 열려 있으면 띄우지 않고 닫힌 뒤에 띄운다. 위치: 탭바가 있는 화면은 탭바 위(바닥에서 96px), 아티클 상세는 플로팅 바 위 12px, 그 밖은 바닥에서 24px. 모션: 아래에서 14px 올라오며 나타나고(320ms, ease-out) 더 빠르게 사라진다(180ms). 2.4초 뒤 사라진다. 스낵바를 띄우는 경우와 문구는 아래 표가 기준이고, 글 저장·하이라이트 켜고 끄기·내 생각 수정·아카이브 카드 수정·구글 로그인 성공에는 띄우지 않는다.
   | 상황 | 문구 |
@@ -371,7 +371,7 @@ shadcn 컴포넌트는 `components/ui`에, 서비스 전용 조합은 `component
 - **Save button:** 책갈피 20px, 누르는 영역 44px. 저장 전 `pd-icon` 윤곽, 저장 후 `accent`(초록) 채움.
 - **Article detail(아티클 상세, 요약형):** 머리(주제 라벨 → `title` 한글 제목 → 영어 제목 → 출처·발행일) → "한 문장 요약" 카드(`pd-tint`, 모서리 `card`(16px), 안 여백 20/24px, 제목 `body-sm` 600 + 아이콘) → "핵심 인사이트예요"(번호 `accent-soft` 01·02, `title-sm` 소제목, `body-md` 설명) → "원문은 이렇게 말해요"(왼쪽 2px `accent-soft` 선, 영어는 Roboto 18px, 번역 `body-sm` `pd-ink-soft`) → "업무에 적용해보세요"(반짝임 아이콘 `accent-soft` + 문장) → 별점 카드 → 푸터 버튼 두 개(피드백 보내기 · 원문 보기, 높이 46px, 모서리 `md`, `pd-line` 테두리). 섹션 제목은 `heading`, 구획 안 간격 20px, 좌우 24px. 문장 병기 읽기(하이라이트·코멘트)는 `/contents/[id]/read`에 있다.
 - **Rating card(별점 카드):** 아티클 본문 아래 "이 아티클 얼마나 도움됐나요?" + 별 5개. 별을 고르면 별이 스프링으로 차오르고(700ms) 문구가 롤링으로 "의견 감사합니다"로 바뀌며 초록 체크가 그려지고(1.6초), 카드가 접히며(340ms) 사라진다. 이미 평가한 글에서는 처음부터 보이지 않는다. 빈 별은 `pd-star`, 채운 별은 `like`(#FFBF00).
-- **Review banner(홈 사용 후기 배너):** `pd-note` 면 + 말풍선 일러스트(높이 62px), 모서리 `card`(16px), 안 여백 좌우 24px·위아래 20px. 제목 `title-sm` 600, 본문 `note` `pd-ink-muted`. 환경변수 `NEXT_PUBLIC_REVIEW_URL`이 있을 때만 링크.
+- **Review banner(홈 사용 후기 배너):** `pd-note`(연보라) 면 + 보라 말풍선 일러스트(#B97FF3·#DBBBFC, 높이 62px), 모서리 `card`(16px), 안 여백 좌우 24px·위아래 20px. 제목 `title-sm` 600, 본문 `note` `pd-ink-muted`. 환경변수 `NEXT_PUBLIC_REVIEW_URL`이 있을 때만 링크.
 - **Thought card(아카이브 내 생각):** 테두리 `pd-line` 1px, 모서리 `card`, 안 여백 20px. 위에 날짜(`caption`)와 수정·삭제 아이콘(20px, 누르는 영역 44px), 본문 `body-md`, 아래에 글 링크 박스(`pd-tint`, 모서리 `panel`, 한글·영어 제목 + 오른쪽 화살표).
 
 컴포넌트 확인 페이지는 개발 서버의 `/design-system`에서 볼 수 있다. 배포 환경에서는 열리지 않는다.

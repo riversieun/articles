@@ -32,7 +32,7 @@ function HeroCard({ a, position }: { a: Article; position: number }) {
         <Link
           href={`/contents/${a.id}`}
           onClick={() => track("Article Opened", { ...articleProps(a.id), entry_point: "home_new", position })}
-          className="flex flex-col gap-1.5 text-left text-pd-ink no-underline"
+          className="flex flex-col gap-1.5 text-left text-pd-ink-soft no-underline"
         >
           <span className="text-title-md font-semibold tracking-body">{a.titleKo}</span>
           <span lang="en" className="text-body-md leading-6 tracking-body text-pd-ink-muted">
@@ -123,7 +123,7 @@ export function Home() {
             <Button
               variant="secondary"
               onClick={() => router.push(`/explore?topic=${topic}`)}
-              className="h-13 w-full rounded-panel bg-pd-tint text-pd-ink hover:bg-pd-tint"
+              className="h-13 w-full rounded-panel bg-pd-tint text-pd-ink-soft hover:bg-pd-tint"
             >
               더보기
             </Button>

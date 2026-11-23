@@ -11,7 +11,7 @@ import { IconBookmark, IconSparkle } from "./icons";
 export function SourceLine({ a, large = false }: { a: Article; large?: boolean }) {
   return (
     <span className={`flex min-w-0 items-center gap-1.5 tracking-body ${large ? "text-body-sm leading-4.5" : "text-caption"}`}>
-      <span className="flex shrink-0 items-center gap-0.5 text-pd-ink">
+      <span className="flex shrink-0 items-center gap-0.5 text-pd-ink-soft">
         <IconSparkle size={14} />
         {SOURCE_LABEL[a.src]}
       </span>

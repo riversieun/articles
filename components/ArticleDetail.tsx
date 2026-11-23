@@ -18,7 +18,7 @@ import { IconArrowUpRight, IconBack, IconBookmark, IconPenEdit, IconPenFilled, I
 
 const SECTION = "flex flex-col gap-5 px-6 pt-8 pb-10";
 const HEADING = "m-0 text-heading font-bold tracking-display text-pd-ink";
-const FOOTER_BUTTON = "h-11.5 rounded-md border-pd-line px-4 text-body-md font-semibold text-pd-ink-soft";
+const FOOTER_BUTTON = "h-11.5 rounded-md border-pd-line px-4 text-body-md font-semibold text-pd-ink";
 
 /**
  * 아티클 상세(요약형). 한 줄 요약 → 핵심 인사이트 → 원문 인용 → 업무 적용 → 별점 카드 → 피드백·원문 읽기.
@@ -135,7 +135,7 @@ export function ArticleDetail({ aid }: { aid: string }) {
                   <p lang="en" className="m-0 font-quote text-body-lg leading-6 text-pd-ink">
                     “{q.en}”
                   </p>
-                  <p className="m-0 text-body-sm leading-5.25 text-pd-ink-soft">{q.ko}</p>
+                  <p className="m-0 text-body-sm leading-5.25 text-pd-ink-muted">{q.ko}</p>
                 </blockquote>
               ))}
             </div>
