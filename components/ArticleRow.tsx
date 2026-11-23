@@ -16,7 +16,7 @@ export function SourceLine({ a, large = false }: { a: Article; large?: boolean }
         {SOURCE_LABEL[a.src]}
       </span>
       <span aria-hidden="true" className="size-0.75 shrink-0 rounded-full bg-pd-dot" />
-      <span className="truncate text-pd-ink-muted">{formatDate(a.date)}</span>
+      <span className="truncate text-pd-ink-faint">{formatDate(a.date)}</span>
     </span>
   );
 }

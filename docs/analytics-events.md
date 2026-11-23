@@ -53,6 +53,8 @@
 | Translation Toggled | 한글 번역 스위치 | `article_id`(글 화면에서만), `on` | `lib/store.tsx` |
 | Sentence Action Sheet Opened | 문장을 탭해 팝오버(하이라이트·코멘트)가 열릴 때. 이름은 옛 "액션 시트"를 그대로 유지(바꾸면 기존 데이터와 끊김). 코멘트 말풍선의 수정·삭제 팝오버는 보내지 않고 `Note Edited`/`Note Deleted`로 잡힘 (닫을 때도 보내지 않음) | `article_id`, `sentence_id` | `components/Reader.tsx` |
 | Original Article Clicked | "원문 읽기" 버튼. 상세(`ArticleDetail`) 하단과 병기 읽기(`Reader`) 두 곳에서 보냄 | `article_id`, `source`, `content_type` | `components/ArticleDetail.tsx`, `components/Reader.tsx` |
+| Coach Mark Step Viewed | 아티클 상세에서 첫 방문 안내(플로팅 바 말풍선 투어)의 각 단계가 보일 때 | `step`(1~3) | `components/CoachMark.tsx` |
+| Coach Mark Completed | 마지막 단계에서 "알겠어요"를 눌렀을 때. 건너뛰기는 없다 | (없음) | `components/CoachMark.tsx` |
 
 - 완독 기준은 `Reader.tsx`의 `COMPLETE_AT`(90) 하나다. `Article Completed`, `Article Read.completed`가 같은 기준을 쓴다. 완독했을 때 화면에 보이는 UI(배너 등)는 없다. (PRD v0.3 F-41도 90%)
 - `Translation Toggled`는 병기 읽기(`/contents/[id]/read`)의 스위치에서만 보낸다. v2에서 프로필의 "번역 항상 켜기"가 빠져 `article_id` 없는 이벤트는 더 나오지 않는다. 번역 설정은 서버에 저장하지 않고 이 기기에만 둔다.

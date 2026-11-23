@@ -17,11 +17,11 @@ const HERO_COUNT = 3;
 /** 주제별 보기에서 한 번에 보여주는 글 개수. 더 있으면 "더보기"로 탐색 탭에 보낸다. */
 const TOPIC_LIMIT = 3;
 
-/** 최신 등록 글 카드. 위쪽 가운데에 초록 빛이 번지는 면 위에 제목·출처를 올린다. 높이는 200px 이상(Figma 홈 프레임). */
+/** 최신 등록 글 카드. 위쪽 가운데에 초록 빛이 번지는 면 위에 제목·출처를 올린다. 높이는 220px 이상, 안 여백 24px(Figma 홈 프레임). */
 function HeroCard({ a, position }: { a: Article; position: number }) {
   return (
     <div
-      className="flex min-h-50 w-full shrink-0 snap-start flex-col gap-5 rounded-hero px-6 pt-5 pb-6"
+      className="flex min-h-55 w-full shrink-0 snap-start flex-col gap-6 rounded-hero p-6"
       style={{
         backgroundImage:
           "radial-gradient(ellipse 71.5% 91.8% at 50% -8.2%, var(--color-pd-glow) 0%, var(--color-pd-glow-mid) 36.058%, var(--color-pd-glow-soft) 57.059%, var(--color-pd-tint) 100%)",
