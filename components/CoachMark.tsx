@@ -205,16 +205,15 @@ export function CoachMark() {
               {last ? "알겠어요" : "다음"}
             </button>
           </div>
-          <span
+          {/* 꼬리: 끝만 아주 살짝 둥근 삼각형 */}
+          <svg
             aria-hidden="true"
-            className="absolute top-full bg-surface transition-[left] duration-360 ease-[cubic-bezier(0.23,1,0.32,1)] motion-reduce:transition-none"
-            style={{
-              left: cx - left - CARET_W / 2,
-              width: CARET_W,
-              height: CARET_H,
-              clipPath: "polygon(0 0, 100% 0, 50% 100%)",
-            }}
-          />
+            viewBox={`0 0 ${CARET_W} ${CARET_H}`}
+            className="absolute top-full fill-surface transition-[left] duration-360 ease-[cubic-bezier(0.23,1,0.32,1)] motion-reduce:transition-none"
+            style={{ left: cx - left - CARET_W / 2, width: CARET_W, height: CARET_H }}
+          >
+            <path d="M0 0H20L11.7 8.3Q10 10 8.3 8.3Z" />
+          </svg>
         </div>
       </div>
       {/* 강조 알약(플로팅 바와 같은 모양). 막 안에 두면 곱하기가 바까지 닿지 않아 바깥에 둔다 */}
