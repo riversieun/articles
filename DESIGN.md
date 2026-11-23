@@ -330,7 +330,7 @@ components:
 
 ## Shapes
 
-둥근 모서리가 기본이다. 버튼은 알약형(`full`), 필터 칩과 주제 뱃지는 `sm`(6px), 카드(생각 카드·후기 배너)는 `card`(16px), 홈 "새로 등록된 글" 카드는 `hero`(20px), 한 문장 요약 카드·더보기 버튼·스낵바는 `panel`(12px), 입력창은 `xl`(14px), 다이얼로그·팝오버 메뉴·주요 행동 버튼은 `pill`(26px), 바텀 시트는 위쪽 모서리만 `sheet`(28px), 스낵바는 `panel`(12px). 한 화면에서 둥근 정도가 다른 모양을 섞을 때는 용도(행동 요소 = 알약, 담는 그릇 = 카드)로만 구분한다.
+둥근 모서리가 기본이다. 버튼은 알약형(`full`), 필터 칩은 `md`(8px), 주제 뱃지는 `sm`(6px), 카드(생각 카드·후기 배너)는 `card`(16px), 홈 "새로 등록된 글" 카드는 `hero`(20px), 한 문장 요약 카드·더보기 버튼·스낵바는 `panel`(12px), 입력창은 `xl`(14px), 다이얼로그·팝오버 메뉴·주요 행동 버튼은 `pill`(26px), 바텀 시트는 위쪽 모서리만 `sheet`(28px), 스낵바는 `panel`(12px). 한 화면에서 둥근 정도가 다른 모양을 섞을 때는 용도(행동 요소 = 알약, 담는 그릇 = 카드)로만 구분한다.
 
 토큰에 없는 예외 두 가지: 하이라이트된 문장의 배경(3px)과 코멘트 말풍선(왼쪽 위만 4px, 나머지 14px).
 
@@ -339,7 +339,7 @@ components:
 shadcn 컴포넌트는 `components/ui`에, 서비스 전용 조합은 `components/`에 있다. 새로 만들기 전에 먼저 여기서 찾는다.
 
 - **Button:** `variant` 7종(`default`, `outline`, `secondary`, `ghost`, `destructive`, `link`, `accent`)과 `size` 4종(`xs`, `sm`, `default`, `lg`) + 아이콘 버튼. 글자는 `label-md`. `default`는 검정(`primary`), `outline`은 연한 회색 테두리, `accent`는 브랜드 초록 배경 + 검정 글자, `destructive`는 옅은 빨강 배경 + 빨강 글자다. 초록 버튼은 `bg-brand`를 직접 붙이지 말고 `variant="accent"`를 쓴다.
-- **Filter chip:** 6px 모서리(`sm`). 선택되면 `pd-ink` 면 + 흰 글자 600, 선택 안 되면 `pd-chip` 면 + `pd-ink-muted` 글자 400. 글자는 15px / 줄 높이 24px(`text-note leading-6`). 칩을 감싼 줄은 위 8px·아래 4px 여백(`pt-2 pb-1`)이고 가로로 스크롤되며 스크롤바는 숨긴다. 홈·탐색·아카이브가 같은 컴포넌트를 쓴다. 탐색 탭은 맨 앞에 "최신"(전체) 칩이 있다.
+- **Filter chip:** 8px 모서리(`md`). 홈·탐색·아카이브가 모두 같은 값을 쓴다. 선택되면 `pd-ink` 면 + 흰 글자 600, 선택 안 되면 `pd-chip` 면 + `pd-ink-muted` 글자 400. 글자는 15px / 줄 높이 24px(`text-note leading-6`). 칩을 감싼 줄은 위 8px·아래 4px 여백(`pt-2 pb-1`)이고 가로로 스크롤되며 스크롤바는 숨긴다. 홈·탐색·아카이브가 같은 컴포넌트를 쓴다. 탐색 탭은 맨 앞에 "최신"(전체) 칩이 있다.
 - **Textarea:** 흰 배경, `border-strong` 테두리, `xl` 모서리. 포커스되면 바깥 링 없이 테두리만 `primary`로 바뀐다. placeholder는 `label`(#7F7F8A). 피드백·내 생각·코멘트 입력이 모두 이것을 쓴다.
 - **Topic tag(주제 표시):** 아티클 상세 머리의 주제 라벨. 모서리 6px(`sm`), 안 여백 위아래 6px·좌우 10px, `accent-tint` 배경 + `accent-strong` 글자 `body-sm` 500. 누르는 요소가 아니다. (shadcn `Badge`와는 별개)
 - **Card:** 연회색 면, 모서리 16px, 안 여백 14px. 하이라이트·코멘트·내 생각·요약 카드가 모두 같은 모양이다. 카드 안 구분선은 `border-strong`.
