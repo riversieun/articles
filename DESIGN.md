@@ -330,7 +330,7 @@ components:
 
 ## Shapes
 
-둥근 모서리가 기본이다. 버튼은 알약형(`full`), 필터 칩은 `md`(8px), 주제 뱃지는 `sm`(6px), 카드(생각 카드·후기 배너)는 `card`(16px), 홈 "새로 등록된 글" 카드는 `hero`(20px), 한 문장 요약 카드·더보기 버튼·스낵바는 `panel`(12px), 입력창은 `xl`(14px), 다이얼로그·팝오버 메뉴·주요 행동 버튼은 `pill`(26px), 바텀 시트는 위쪽 모서리만 `sheet`(28px), 스낵바는 `panel`(12px). 한 화면에서 둥근 정도가 다른 모양을 섞을 때는 용도(행동 요소 = 알약, 담는 그릇 = 카드)로만 구분한다.
+둥근 모서리가 기본이다. 버튼은 알약형(`full`), 필터 칩은 `md`(8px), 주제 뱃지는 `md`(8px), 카드(생각 카드·후기 배너·한 문장 요약 카드)는 `card`(16px), 홈 "새로 등록된 글" 카드는 `hero`(20px), 더보기 버튼·스낵바는 `panel`(12px), 입력창은 `xl`(14px), 다이얼로그·팝오버 메뉴·주요 행동 버튼은 `pill`(26px), 바텀 시트는 위쪽 모서리만 `sheet`(28px), 스낵바는 `panel`(12px). 한 화면에서 둥근 정도가 다른 모양을 섞을 때는 용도(행동 요소 = 알약, 담는 그릇 = 카드)로만 구분한다.
 
 토큰에 없는 예외 두 가지: 하이라이트된 문장의 배경(3px)과 코멘트 말풍선(왼쪽 위만 4px, 나머지 14px).
 
@@ -341,7 +341,7 @@ shadcn 컴포넌트는 `components/ui`에, 서비스 전용 조합은 `component
 - **Button:** `variant` 7종(`default`, `outline`, `secondary`, `ghost`, `destructive`, `link`, `accent`)과 `size` 4종(`xs`, `sm`, `default`, `lg`) + 아이콘 버튼. 글자는 `label-md`. `default`는 검정(`primary`), `outline`은 연한 회색 테두리, `accent`는 브랜드 초록 배경 + 검정 글자, `destructive`는 옅은 빨강 배경 + 빨강 글자다. 초록 버튼은 `bg-brand`를 직접 붙이지 말고 `variant="accent"`를 쓴다.
 - **Filter chip:** 8px 모서리(`md`). 홈·탐색·아카이브가 모두 같은 값을 쓴다. 선택되면 `pd-ink` 면 + 흰 글자 600, 선택 안 되면 `pd-chip` 면 + `pd-ink-muted` 글자 400. 글자는 15px / 줄 높이 24px(`text-note leading-6`). 칩을 감싼 줄은 위 8px·아래 4px 여백(`pt-2 pb-1`)이고 가로로 스크롤되며 스크롤바는 숨긴다. 홈·탐색·아카이브가 같은 컴포넌트를 쓴다. 탐색 탭은 맨 앞에 "최신"(전체) 칩이 있다.
 - **Textarea:** 흰 배경, `border-strong` 테두리, `xl` 모서리. 포커스되면 바깥 링 없이 테두리만 `primary`로 바뀐다. placeholder는 `label`(#7F7F8A). 피드백·내 생각·코멘트 입력이 모두 이것을 쓴다.
-- **Topic tag(주제 표시):** 아티클 상세 머리의 주제 라벨. 모서리 6px(`sm`), 안 여백 위아래 6px·좌우 10px, `accent-tint` 배경 + `accent-strong` 글자 `body-sm` 500. 누르는 요소가 아니다. (shadcn `Badge`와는 별개)
+- **Topic tag(주제 표시):** 아티클 상세 머리의 주제 라벨. 모서리 8px(`md`), 안 여백 위아래 6px·좌우 10px, `accent-tint` 배경 + `accent-strong` 글자 `body-sm` 500. 누르는 요소가 아니다. (shadcn `Badge`와는 별개)
 - **Card:** 연회색 면, 모서리 16px, 안 여백 14px. 하이라이트·코멘트·내 생각·요약 카드가 모두 같은 모양이다. 카드 안 구분선은 `border-strong`.
 - **Dialog:** 중앙 팝업(`ConfirmDeleteDialog`, 피드백). 제목과 닫기 버튼이 같은 줄에 있고(닫기는 오른쪽, 배경 없는 X 아이콘만. 모든 다이얼로그 공통), 설명은 한 단계 약한 색, 구획 사이 24px. 삭제 확인은 "삭제할까요?" / "삭제하면 되돌릴 수 없어요." 문구로 통일하고 취소(왼쪽)·삭제(오른쪽, danger)를 한 줄에 둔다.
 - **Bottom sheet:** 하단에서 올라오는 시트(로그인, 코멘트, 내 생각, 앱 안 브라우저 안내). 위쪽 모서리 `sheet`(28px), 좌우 여백 24px, 위에 손잡이(grabber)가 있고 제목은 `headline`. 모션: 아래에서 올라올 때 iOS 시트 곡선(0.32, 0.72, 0, 1) 500ms, 닫기 버튼·바깥·Esc로 닫을 때는 같은 길로 300ms 내려간다. **아래로 끌어서도 닫는다**: 누른 동안 손가락과 1:1로 따라오고(위로는 20% 고무줄), 높이의 40% 이상 끌었거나 빠르게 튕기면(0.5px/ms 이상) 놓은 속도로 마무리하며 내려가고, 아니면 제자리로 돌아온다. 뒤의 어두운 배경은 끌린 만큼 같이 옅어진다. 투명도 변화 없이 화면 아래로 그대로 내려간다(들어온 방향 = 나가는 방향).
@@ -369,7 +369,7 @@ shadcn 컴포넌트는 `components/ui`에, 서비스 전용 조합은 `component
 - **Home hero card(새로 등록된 글):** 홈 위쪽 가로 캐러셀. 카드 한 장 폭(좌우 여백 24px)으로 넘기고 다음 카드가 12px쯤 보인다. 모서리 `hero`(20px), 높이 200px 이상, 위쪽 가운데에서 번지는 초록 빛(`pd-glow` 3단계 → `pd-tint`). 위에 "새로 등록된 글"(`accent-strong`, 가운데), 아래에 `title-md` 한글 제목·`body-md` 영어 제목(`pd-ink-muted`)·출처·저장 책갈피. 카드 아래 점 표시(8px, 현재 `pd-ink-muted`, 나머지 `border-strong`).
 - **Article card(글 카드, 홈·탐색·아카이브 저장):** 한글 제목 `title-md` 600, 아래 영어 제목 `body-md` `pd-ink-muted`, 그 아래 출처·발행일과 저장 책갈피. 카드 사이는 `pd-line` 구분선(좌우 24px 들여쓰기). 출처 줄은 별 아이콘 + 출처, 점(3px, `pd-dot`), 날짜이고 카드는 `caption`(13px), 상세는 `body-sm`(14px).
 - **Save button:** 책갈피 20px, 누르는 영역 44px. 저장 전 `pd-icon` 윤곽, 저장 후 `accent`(초록) 채움.
-- **Article detail(아티클 상세, 요약형):** 머리(주제 라벨 → `title` 한글 제목 → 영어 제목 → 출처·발행일) → "한 문장 요약" 카드(`pd-tint`, 모서리 `panel`, 안 여백 20/24px, 제목 `body-sm` 600 + 아이콘) → "핵심 인사이트예요"(번호 `accent-soft` 01·02, `title-sm` 소제목, `body-md` 설명) → "원문은 이렇게 말해요"(왼쪽 2px `accent-soft` 선, 영어는 Roboto 18px, 번역 `body-sm` `pd-ink-soft`) → "업무에 적용해보세요"(반짝임 아이콘 `accent-soft` + 문장) → 별점 카드 → 푸터 버튼 두 개(피드백 보내기 · 원문 보기, 높이 46px, 모서리 `md`, `pd-line` 테두리). 섹션 제목은 `heading`, 구획 안 간격 20px, 좌우 24px. 문장 병기 읽기(하이라이트·코멘트)는 `/contents/[id]/read`에 있다.
+- **Article detail(아티클 상세, 요약형):** 머리(주제 라벨 → `title` 한글 제목 → 영어 제목 → 출처·발행일) → "한 문장 요약" 카드(`pd-tint`, 모서리 `card`(16px), 안 여백 20/24px, 제목 `body-sm` 600 + 아이콘) → "핵심 인사이트예요"(번호 `accent-soft` 01·02, `title-sm` 소제목, `body-md` 설명) → "원문은 이렇게 말해요"(왼쪽 2px `accent-soft` 선, 영어는 Roboto 18px, 번역 `body-sm` `pd-ink-soft`) → "업무에 적용해보세요"(반짝임 아이콘 `accent-soft` + 문장) → 별점 카드 → 푸터 버튼 두 개(피드백 보내기 · 원문 보기, 높이 46px, 모서리 `md`, `pd-line` 테두리). 섹션 제목은 `heading`, 구획 안 간격 20px, 좌우 24px. 문장 병기 읽기(하이라이트·코멘트)는 `/contents/[id]/read`에 있다.
 - **Rating card(별점 카드):** 아티클 본문 아래 "이 아티클 얼마나 도움됐나요?" + 별 5개. 별을 고르면 별이 스프링으로 차오르고(700ms) 문구가 롤링으로 "의견 감사합니다"로 바뀌며 초록 체크가 그려지고(1.6초), 카드가 접히며(340ms) 사라진다. 이미 평가한 글에서는 처음부터 보이지 않는다. 빈 별은 `pd-star`, 채운 별은 `like`(#FFBF00).
 - **Review banner(홈 사용 후기 배너):** `pd-note` 면 + 말풍선 일러스트(높이 62px), 모서리 `card`(16px), 안 여백 좌우 24px·위아래 20px. 제목 `title-sm` 600, 본문 `note` `pd-ink-muted`. 환경변수 `NEXT_PUBLIC_REVIEW_URL`이 있을 때만 링크.
 - **Thought card(아카이브 내 생각):** 테두리 `pd-line` 1px, 모서리 `card`, 안 여백 20px. 위에 날짜(`caption`)와 수정·삭제 아이콘(20px, 누르는 영역 44px), 본문 `body-md`, 아래에 글 링크 박스(`pd-tint`, 모서리 `panel`, 한글·영어 제목 + 오른쪽 화살표).

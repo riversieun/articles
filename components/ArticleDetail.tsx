@@ -82,7 +82,7 @@ export function ArticleDetail({ aid }: { aid: string }) {
 
       <article>
         <header className="flex flex-col gap-4.5 px-6 py-5">
-          <span className="w-fit rounded-sm bg-brand-tint px-2.5 py-1.5 text-body-sm leading-4.5 font-medium text-brand-strong">
+          <span className="w-fit rounded-md bg-brand-tint px-2.5 py-1.5 text-body-sm leading-4.5 font-medium text-brand-strong">
             {TOPIC_LABEL[art.topic]}
           </span>
           <div className="flex flex-col gap-1.5">
@@ -97,7 +97,7 @@ export function ArticleDetail({ aid }: { aid: string }) {
         </header>
 
         <section aria-label="한 문장 요약" className="flex flex-col px-6 pt-8 pb-5">
-          <div className="flex flex-col gap-4 rounded-panel bg-pd-tint px-5 pt-5 pb-6">
+          <div className="flex flex-col gap-4 rounded-card bg-pd-tint px-5 pt-5 pb-6">
             <div className="flex items-center gap-0.5">
               <span className="relative size-4.5 shrink-0 overflow-clip text-pd-ink">
                 {/* 아이콘 색은 옆 글자(pd-ink)와 같다. currentColor */}
