@@ -157,7 +157,7 @@ export function CoachMark() {
           <p className="m-0 text-title-sm font-bold tracking-body">
             {STEPS[step][0]}
           </p>
-          <p className="mt-2 mb-0 text-body-md leading-6 tracking-body text-on-surface-muted [word-break:keep-all]">
+          <p className="mt-4 mb-0 text-body-md leading-6 tracking-body text-on-surface-muted [word-break:keep-all]">
             {STEPS[step][1]}
           </p>
           <div className="mt-5 flex items-center justify-between gap-2">
