@@ -8,6 +8,7 @@ import { articleProps, track } from "@/lib/analytics";
 import type { Article, TopicKey } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { ArticleRow, SaveButton, SourceLine } from "./ArticleRow";
+import { EXPLORE_TOP_KEY } from "./Feed";
 import { ChipRow } from "./ChipRow";
 import { FilterChip } from "./FilterChip";
 import { ReviewBanner } from "./ReviewBanner";
@@ -122,7 +123,14 @@ export function Home() {
           <div className="px-6">
             <Button
               variant="secondary"
-              onClick={() => router.push(`/explore?topic=${topic}`)}
+              onClick={() => {
+                try {
+                  sessionStorage.setItem(EXPLORE_TOP_KEY, "1"); // 탐색 탭은 맨 위에서 시작
+                } catch {
+                  /* 무시 */
+                }
+                router.push(`/explore?topic=${topic}`);
+              }}
               className="h-13 w-full rounded-panel bg-pd-tint text-pd-ink-soft hover:bg-pd-tint"
             >
               더보기
