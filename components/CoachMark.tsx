@@ -47,7 +47,9 @@ export function CoachMark() {
   // 처음 방문이면 시작. 로그인 계정의 "봤음" 기록까지 확인한 뒤에 정한다(다른 기기에서 본 사람에게 다시 뜨지 않게).
   // 시작한 뒤에는 "봤음"이 기록돼도 끊지 않는다. 다른 화면 안에 끼워 넣은 미리보기(iframe)에서는 띄우지 않는다.
   useEffect(() => {
-    if (started.current || !coach.ready || coach.seen) return;
+    // 개발 서버(npm run dev)에서는 본 기록과 상관없이 새로고침할 때마다 다시 보인다. 배포 빌드에는 영향이 없다.
+    const skipSeen = process.env.NODE_ENV !== "development" && coach.seen;
+    if (started.current || !coach.ready || skipSeen) return;
     if (window.self !== window.top) return;
     started.current = true;
     setStep(0);
@@ -183,7 +185,7 @@ export function CoachMark() {
           <p className="m-0 text-title-sm font-bold tracking-body">
             {STEPS[step][0]}
           </p>
-          <p className="mt-3 mb-0 text-body-md leading-6 tracking-body text-on-surface-muted [word-break:keep-all]">
+          <p className="mt-2 mb-0 text-body-md leading-6 tracking-body text-on-surface-muted [word-break:keep-all]">
             {STEPS[step][1]}
           </p>
           <div className="mt-5 flex items-center justify-between gap-2">
@@ -198,7 +200,7 @@ export function CoachMark() {
               ref={ctaRef}
               type="button"
               onClick={next}
-              className="relative h-10 cursor-pointer rounded-full border-0 bg-brand px-5 text-label-md font-semibold whitespace-nowrap text-on-accent after:absolute after:-inset-0.5 after:content-[''] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-on-surface active:scale-[0.97] motion-reduce:active:scale-100"
+              className="relative h-10 cursor-pointer rounded-full border-0 bg-brand px-5 text-label-md font-semibold whitespace-nowrap text-on-accent after:absolute after:-inset-0.5 after:content-[''] outline-none active:scale-[0.97] motion-reduce:active:scale-100"
             >
               {last ? "알겠어요" : "다음"}
             </button>
