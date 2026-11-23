@@ -17,6 +17,10 @@ const CARET_W = 20;
 const CARET_H = 10;
 const TIP_GAP = 8;
 const PILL_EXTRA = 12; // 버튼 폭(44) + 12 = 56
+/** "알겠어요" 뒤 사라지는 시간(ms). 막은 조금 더 천천히 걷힌다 */
+const LEAVE_MS = 220;
+/** 이동은 지금처럼 360ms, 사라질 때는 투명도·크기만 200ms ease-out */
+const EASE = "cubic-bezier(0.23,1,0.32,1)";
 
 type R = { x: number; y: number; w: number; h: number };
 type Rects = { bar: R; btns: R[] };
@@ -38,6 +42,7 @@ export function CoachMark() {
   const ctaRef = useRef<HTMLButtonElement>(null);
   const { coach } = useStore();
   const started = useRef(false);
+  const [leaving, setLeaving] = useState(false); // "알겠어요"를 누른 뒤 사라지는 중
 
   // 처음 방문이면 시작. 로그인 계정의 "봤음" 기록까지 확인한 뒤에 정한다(다른 기기에서 본 사람에게 다시 뜨지 않게).
   // 시작한 뒤에는 "봤음"이 기록돼도 끊지 않는다. 다른 화면 안에 끼워 넣은 미리보기(iframe)에서는 띄우지 않는다.
@@ -88,10 +93,10 @@ export function CoachMark() {
     const btns = [...document.querySelectorAll<HTMLElement>(".fb-bar .fb-btn")];
     btns.forEach((b, i) => {
       b.style.transition = "opacity 240ms ease-out";
-      b.style.opacity = i === step ? "" : "0.35";
+      b.style.opacity = leaving || i === step ? "" : "0.35"; // 사라지는 중에는 버튼도 함께 원래대로
     });
     return () => btns.forEach((b) => (b.style.opacity = ""));
-  }, [active, step, rects]);
+  }, [active, step, rects, leaving]);
 
   // 단계가 보일 때: 기록·분석, 버튼으로 초점
   useEffect(() => {
@@ -114,10 +119,19 @@ export function CoachMark() {
   const last = step === 2;
 
   const next = () => {
-    if (last) {
-      track("Coach Mark Completed");
+    if (leaving) return;
+    if (!last) {
+      setStep(step + 1);
+      return;
+    }
+    track("Coach Mark Completed");
+    // 모션 줄이기 설정이면 바로 닫고, 아니면 말풍선이 아래로 내려가며 작아지고 막이 걷힌 뒤 닫는다
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setStep(3);
-    } else setStep(step + 1);
+      return;
+    }
+    setLeaving(true);
+    window.setTimeout(() => setStep(3), LEAVE_MS);
   };
 
   return (
@@ -126,10 +140,14 @@ export function CoachMark() {
         role="dialog"
         aria-modal="true"
         aria-label="아티클 사용 안내"
-        className="fixed inset-0 z-50"
+        className={`fixed inset-0 z-50 ${leaving ? "pointer-events-none" : ""}`}
       >
         {/* 막: 바만 구멍. 본문을 누르거나 스크롤해도 아무 일도 없다 */}
-        <svg className="absolute inset-0 size-full" aria-hidden="true">
+        <svg
+          className="absolute inset-0 size-full motion-reduce:transition-none"
+          style={{ opacity: leaving ? 0 : 1, transition: `opacity ${LEAVE_MS}ms ease-out` }}
+          aria-hidden="true"
+        >
           <defs>
             <mask id="coach-hole">
               <rect width="100%" height="100%" fill="#fff" />
@@ -151,8 +169,16 @@ export function CoachMark() {
           />
         </svg>
         <div
-          className="absolute rounded-box bg-surface px-5 py-5 text-on-surface shadow-[0_12px_28px_rgba(30,30,40,0.28)] transition-[left] duration-360 ease-[cubic-bezier(0.23,1,0.32,1)] motion-reduce:transition-none"
-          style={{ left, bottom, width: tipW }}
+          className="absolute rounded-box bg-surface px-5 py-5 text-on-surface shadow-[0_12px_28px_rgba(30,30,40,0.28)] motion-reduce:transition-none"
+          style={{
+            left,
+            bottom,
+            width: tipW,
+            opacity: leaving ? 0 : 1,
+            transform: leaving ? "translateY(10px) scale(0.94)" : "none",
+            transformOrigin: `${cx - left}px 100%`,
+            transition: `left 360ms ${EASE}, opacity 200ms ease-out, transform 200ms ${EASE}`,
+          }}
         >
           <p className="m-0 text-title-sm font-bold tracking-body">
             {STEPS[step][0]}
@@ -192,8 +218,10 @@ export function CoachMark() {
       {/* 강조 알약(플로팅 바와 같은 모양). 막 안에 두면 곱하기가 바까지 닿지 않아 바깥에 둔다 */}
       <span
         aria-hidden="true"
-        className="pointer-events-none fixed z-50 rounded-full bg-brand-tint mix-blend-multiply transition-[left,width] duration-360 ease-[cubic-bezier(0.23,1,0.32,1)] motion-reduce:transition-none"
+        className="pointer-events-none fixed z-50 rounded-full bg-brand-tint mix-blend-multiply motion-reduce:transition-none"
         style={{
+          opacity: leaving ? 0 : 1,
+          transition: `left 360ms ${EASE}, width 360ms ${EASE}, opacity 200ms ease-out`,
           left: cx - (target.w + PILL_EXTRA) / 2,
           top: cy - target.h / 2,
           width: target.w + PILL_EXTRA,
