@@ -11,12 +11,12 @@ import { IconBookmark, IconSparkle } from "./icons";
 export function SourceLine({ a, large = false }: { a: Article; large?: boolean }) {
   return (
     <span className={`flex min-w-0 items-center gap-1.5 tracking-body ${large ? "text-body-sm leading-4.5" : "text-caption"}`}>
-      <span className="flex shrink-0 items-center gap-0.5 text-pd-ink">
+      <span className="flex shrink-0 items-center gap-0.5 text-pd-ink-soft">
         <IconSparkle size={14} />
         {SOURCE_LABEL[a.src]}
       </span>
       <span aria-hidden="true" className="size-0.75 shrink-0 rounded-full bg-pd-dot" />
-      <span className="truncate text-pd-ink-muted">{formatDate(a.date)}</span>
+      <span className="truncate text-pd-ink-faint">{formatDate(a.date)}</span>
     </span>
   );
 }

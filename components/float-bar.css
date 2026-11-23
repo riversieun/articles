@@ -1,0 +1,144 @@
+/*
+ * 아티클 상세 하단 플로팅 바 모션 (motion-lab 에서 확정).
+ *  - 바: 올라올 때 E1 300ms (0.2, 0, 0, 1), 내려갈 때 F3 — 준비 동작(살짝 위로) 뒤 94%로 작아지며 360ms. 투명도는 건드리지 않는다.
+ *  - 버튼: 누르는 동안 86%로 줄고, 떼면 스프링으로 돌아온다(B1). 엄지는 켜질 때 색이 보라로 바뀌며 축을 기울여 위로 올라갔다 내려온다(T3).
+ *  - 추천 수: 켜지면 아래에서 위로 롤링한다.
+ * 전부 transform·opacity 만 쓰고, 연타해도 끊기지 않게 transition 으로 처리한다(엄지의 한 번짜리 기울임만 keyframe).
+ */
+
+.fb-bar {
+  --fb-dist: calc(100% + 24px);
+  --fb-ease: cubic-bezier(0.23, 1, 0.32, 1);
+  --fb-spring: linear(0, 0.25 8%, 0.62 17%, 0.88 26%, 1.03 37%, 1.05 44%, 1.02 55%, 1 70%, 1 100%);
+  transform-origin: 50% 100%;
+  transition: transform 300ms cubic-bezier(0.2, 0, 0, 1);
+  will-change: transform;
+}
+.fb-bar[data-hidden="true"] {
+  transform: translateY(var(--fb-dist)) scale(0.94);
+  /* 값은 "보임 → 숨김" 진행도. 0보다 작은 구간이 준비 동작(살짝 위로) */
+  transition: transform 360ms linear(0, -0.1 14%, -0.12 20%, 0.1 38%, 0.55 58%, 0.9 78%, 1 100%);
+}
+
+.fb-btn {
+  -webkit-tap-highlight-color: transparent;
+  transition: color 180ms ease-out;
+}
+.fb-ico {
+  position: relative;
+  display: block;
+  width: 20px;
+  height: 20px;
+  transition: transform 520ms var(--fb-spring);
+}
+.fb-btn:active .fb-ico {
+  transform: scale(0.86);
+  transition: transform 90ms var(--fb-ease);
+}
+.fb-tilt {
+  position: absolute;
+  inset: 0;
+  display: block;
+  transform-origin: 20% 90%;
+}
+/* 윤곽 위에 채운 아이콘을 겹쳐 두고 투명도로 채운다 */
+.fb-fill {
+  position: absolute;
+  inset: 0;
+  display: block;
+  opacity: 0;
+  transition: opacity 120ms ease-out;
+}
+.fb-btn[data-on="true"] .fb-fill {
+  opacity: 1;
+  transition: opacity 180ms ease-out;
+}
+.fb-ico svg {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+/* 직접 누르기 전(이미 추천한 글에 다시 들어왔을 때)에는 어떤 움직임도 없이 켜진 모습으로 바로 보인다 */
+.fb-like[data-touched="false"],
+.fb-like[data-touched="false"] * {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* 엄지: 켜지면 보라, 한 번 기울었다 올라가서 제자리로 (해제할 때는 움직이지 않는다) */
+.fb-like[data-on="true"] {
+  color: var(--color-pd-like);
+}
+.fb-like[data-on="true"] .fb-tilt {
+  animation: fb-thumb-up 560ms 1 both;
+}
+@keyframes fb-thumb-up {
+  0% {
+    transform: none;
+  }
+  38% {
+    transform: translateY(-6px) rotate(-14deg);
+    animation-timing-function: cubic-bezier(0.45, 0, 0.25, 1);
+  }
+  100% {
+    transform: none;
+  }
+}
+/* 저장: 브랜드 초록 */
+.fb-mark[data-on="true"] {
+  color: var(--color-brand);
+}
+
+/* 추천 수 롤링: 두 숫자를 같은 칸에 겹쳐 두고 켜지면 위로 민다 */
+.fb-count {
+  display: inline-grid;
+  height: 18px;
+  overflow: hidden;
+}
+.fb-count > span {
+  grid-area: 1 / 1;
+  transition: transform 320ms var(--fb-ease);
+}
+.fb-count > span + span {
+  transform: translateY(100%);
+}
+.fb-like[data-on="true"] .fb-count > span:first-child {
+  transform: translateY(-100%);
+}
+.fb-like[data-on="true"] .fb-count > span + span {
+  transform: none;
+}
+
+/* 접근성: 이동·크기·기울임을 없애고 상태 변화는 투명도·색으로만 */
+@media (prefers-reduced-motion: reduce) {
+  .fb-bar,
+  .fb-bar[data-hidden="true"] {
+    transform: none;
+    transition: opacity 160ms ease;
+  }
+  .fb-bar[data-hidden="true"] {
+    opacity: 0;
+  }
+  .fb-ico,
+  .fb-btn:active .fb-ico {
+    transform: none;
+    transition: none;
+  }
+  .fb-like[data-on="true"] .fb-tilt {
+    animation: none;
+  }
+  .fb-count > span {
+    transition: opacity 160ms ease;
+    transform: none !important;
+  }
+  .fb-count > span + span {
+    opacity: 0;
+  }
+  .fb-like[data-on="true"] .fb-count > span:first-child {
+    opacity: 0;
+  }
+  .fb-like[data-on="true"] .fb-count > span + span {
+    opacity: 1;
+  }
+}

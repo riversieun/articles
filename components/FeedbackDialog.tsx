@@ -43,7 +43,7 @@ export function FeedbackDialog({ open, onOpenChange }: { open: boolean; onOpenCh
       try {
         await sendFeedbackRemote(fbKind, text);
       } catch {
-        showToast("피드백을 보내지 못했어요. 잠시 후 다시 시도해주세요");
+        showToast("피드백을 보내지 못했어요\n잠시 후 다시 시도해주세요!");
         return; // 입력한 내용은 그대로 둔다
       }
     } else {
@@ -58,7 +58,7 @@ export function FeedbackDialog({ open, onOpenChange }: { open: boolean; onOpenCh
     track("Feedback Sent", { kind: FB_KIND_KEY[fbKind] });
     setFbText("");
     onOpenChange(false);
-    showToast("피드백을 보냈어요. 운영자가 확인할게요");
+    showToast("소중한 의견 감사합니다");
   };
 
   return (
@@ -67,15 +67,13 @@ export function FeedbackDialog({ open, onOpenChange }: { open: boolean; onOpenCh
         <DialogHeader className="gap-2.5">
           <div className="flex items-center justify-between gap-3">
             <DialogTitle className="text-headline font-bold tracking-headline">피드백 보내기</DialogTitle>
-            <DialogClose render={<Button variant="ghost" size="icon-sm" className="shrink-0 bg-secondary" />}>
+            <DialogClose render={<Button variant="ghost" size="icon-sm" className="shrink-0" />}>
               <RiCloseLine />
               <span className="sr-only">닫기</span>
             </DialogClose>
           </div>
           <DialogDescription className="text-body-md text-on-surface-muted">
-            의견을 자유롭게 남겨주세요.
-            <br />
-            서비스 개선에 반영하겠습니다.
+            보내주신 의견은 서비스 개선에 반영하겠습니다.
           </DialogDescription>
         </DialogHeader>
         <div className="mt-2 flex flex-col gap-2">

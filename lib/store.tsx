@@ -66,6 +66,11 @@ const EMPTY: Persisted = {
 };
 
 const KEY = "articles:proto:v1";
+/** 구글 로그인이 연달아 실패한 횟수(탭이 열려 있는 동안). 구글 화면에 다녀오면 페이지가 다시 열려서 sessionStorage 에 둔다. */
+const LOGIN_FAILS_KEY = "articles:login-fails";
+const LOGIN_FAIL_TOAST = "구글 계정을 연결하지 못했어요\n잠시 후 다시 시도해주세요!";
+/** 2번째 실패 스낵바가 뜬 뒤 "로그인 문제가 있나요?" 스낵바가 위로 올라오기까지(ms) */
+const LOGIN_HELP_DELAY_MS = 900;
 /** 이 기기에서 마지막으로 동기화한 사용자 id. 바뀌면(첫 연결·다른 계정으로 로그인) 로컬 기록을 서버로 합친다. */
 const UID_KEY = "articles:uid:v1";
 /** 구글 화면으로 나가기 전에 남기는 값(돌아온 뒤 Login Completed 를 보내기 위해). 탭을 닫으면 사라지도록 sessionStorage. */
@@ -73,6 +78,9 @@ const TRIGGER_KEY = "articles:login-trigger";
 const MERGE_KEY = "articles:login-merge";
 /** 이 기기에서 구글 로그인을 한 적이 있다는 표시. 있으면 다음 로그인은 "연결" 없이 바로 그 계정으로 로그인한다. (구글 계정 선택 화면이 두 번 나오지 않게) */
 const GOOGLE_SEEN_KEY = "articles:google-seen";
+/** 아티클 하단 바 안내(코치마크)를 봤는지. 이 기기 값(localStorage)이고, 로그인하면 서버 onboarding_seen 과 합친다 */
+const COACH_KEY = "articles:coach:v1";
+const COACH_GUIDE = "article-coach";
 
 type Auth = { loggedIn: boolean; profile: Profile };
 const GUEST: Auth = { loggedIn: false, profile: { email: "", image: "", initial: "" } };
@@ -120,16 +128,21 @@ export type Sheet =
   | { type: "login"; reason: PromptReason; trigger: LoginTrigger }
   | { type: "comment"; sid: string; editId: string }
   /** 아티클 상세 하단 바의 "내 생각 기록" */
-  | { type: "thought"; aid: string }
+  | { type: "thought"; aid: string; editId?: string }
   /** 앱 안 브라우저(카카오톡·인스타그램 등)라 구글 로그인이 막혀 있을 때 기본 브라우저로 옮기도록 안내 */
   | { type: "inapp"; app: string; reason: "manual" | "record" }
   | null;
 
 type Ctx = Persisted & {
   ready: boolean;
+  /** 아티클 안내(코치마크). ready: 로그인 계정의 "봤음" 기록까지 확인했는지(확인 전에는 띄우지 않는다), seen: 봤는지 */
+  coach: { ready: boolean; seen: boolean; markSeen: () => void };
   profile: Profile;
   sheet: Sheet;
   toast: string;
+  /** 구글 로그인이 2번 연속 실패하면 켜진다. 보이는 화면을 벗어나거나 [피드백 보내기]를 누르면 꺼진다 */
+  loginHelp: boolean;
+  dismissLoginHelp: () => void;
   hasRecords: boolean;
   closeSheet: () => void;
   login: (trigger?: LoginTrigger) => void;
@@ -138,14 +151,16 @@ type Ctx = Persisted & {
   toggleKo: (aid?: string) => void;
   toggleHl: (sid: string) => void;
   openComment: (sid: string) => void;
-  openThought: (aid: string) => void;
+  /** editId 가 있으면 이미 적은 생각을 같은 시트에서 보고 고친다 */
+  openThought: (aid: string, editId?: string) => void;
   toggleLike: (aid: string) => void;
   /** 글의 추천 수. 서버 합계에 이 기기의 변경을 반영한 값(0이면 화면에 숫자를 쓰지 않는다) */
   likeCount: (aid: string) => number;
   refreshLikeCounts: () => Promise<void>;
   rateArticle: (aid: string, rating: number) => void;
   editNote: (id: string) => void;
-  updateNote: (id: string, text: string) => void;
+  /** keepOpen: 열려 있는 시트를 닫지 않는다(내 생각 시트가 수정 후 보기 화면으로 돌아갈 때) */
+  updateNote: (id: string, text: string, keepOpen?: boolean) => void;
   saveComment: (sid: string, text: string) => void;
   addThought: (aid: string, text: string) => void;
   removeNote: (id: string) => void;
@@ -167,8 +182,13 @@ const newId = () => `n${Date.now().toString(36)}${(seq++).toString(36)}`;
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<Persisted>(EMPTY);
   const [ready, setReady] = useState(false);
+  const [coachSeen, setCoachSeen] = useState(false);
+  const [coachReady, setCoachReady] = useState(false);
+  const loggedInRef = useRef(false);
   const [sheet, setSheet] = useState<Sheet>(null);
   const [toast, setToast] = useState("");
+  const [loginHelp, setLoginHelp] = useState(false);
+  const helpTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const [auth, setAuth] = useState<Auth>(GUEST);
   const [counts, setCounts] = useState<Record<string, number>>({});
   /** 서버 추천 수를 받아온 순간 이미 서버에 반영돼 있던 내 추천. 이 이후에 바꾼 만큼만 숫자에 더하고 뺀다 */
@@ -190,6 +210,22 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     clearTimeout(timer.current);
     setToast(msg);
     timer.current = setTimeout(() => setToast(""), 2400);
+  }, []);
+
+  /** 구글 로그인 실패 알림. 2번 연속이면 잠시 뒤 도움 스낵바(loginHelp)를 이어서 띄운다 */
+  const loginFailed = useCallback(() => {
+    const n = Number(ssGet(LOGIN_FAILS_KEY) ?? "0") + 1;
+    ssSet(LOGIN_FAILS_KEY, String(n));
+    showToast(LOGIN_FAIL_TOAST);
+    if (n >= 2) {
+      clearTimeout(helpTimer.current);
+      helpTimer.current = setTimeout(() => setLoginHelp(true), LOGIN_HELP_DELAY_MS);
+    }
+  }, [showToast]);
+  const dismissLoginHelp = useCallback(() => {
+    clearTimeout(helpTimer.current);
+    ssSet(LOGIN_FAILS_KEY, null);
+    setLoginHelp(false);
   }, []);
 
   /** 서버로 보낼 변경을 편지함에 넣고 바로 전송을 시도한다. 키가 없으면 아무것도 하지 않는다. */
@@ -239,10 +275,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       const loggedIn = !!user && !user.is_anonymous;
       logAuth(`세션 반영: ${user ? (user.is_anonymous ? "익명" : "구글") : "없음"} ${user?.id.slice(0, 8) ?? ""}`);
       setAuth(loggedIn ? { loggedIn, profile: profileFromUser(user) } : GUEST);
+      loggedInRef.current = loggedIn;
       if (!user) return;
 
       if (loggedIn) {
         lsSet(GOOGLE_SEEN_KEY, "1");
+        ssSet(LOGIN_FAILS_KEY, null); // 로그인에 성공하면 연속 실패 횟수를 처음부터
         identifyUser(user.id);
         const trigger = ssGet(TRIGGER_KEY);
         if (trigger) {
@@ -251,7 +289,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           ssSet(MERGE_KEY, null);
           setGuestState(false); // Login Completed부터 is_guest=false
           track("Login Completed", { trigger, merged });
-          showToast("구글 계정에 기록을 연결했어요");
         }
       }
 
@@ -259,18 +296,28 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         const cur = ref.current;
         logAuth(`사용자 바뀜 → 로컬 기록 올리기: 하이라이트 ${Object.keys(cur.hl).length}, 노트 ${cur.notes.length}, 저장 ${Object.keys(cur.savedA).length}`);
         seedOutbox(cur, (sid) => lib.sent[sid]?.aid);
+        if (loggedIn && lsGet(COACH_KEY) === "1") enqueue({ t: "seen", key: COACH_GUIDE }); // 이 기기에서 본 안내도 계정에 남긴다
         lsSet(UID_KEY, user.id);
       }
-      if (!(await flush())) {
-        logAuth("전송 막힘(나중에 다시)");
-        return; // 네트워크가 막히면 다음 기회(online·화면 복귀)에 다시
-      }
       try {
-        const pulled = await pull(user.id);
-        logAuth(`서버 기록: 하이라이트 ${Object.keys(pulled.hl).length}, 노트 ${pulled.notes.length}, 저장 ${Object.keys(pulled.savedA).length}`);
-        applyPulled(pulled);
-      } catch {
-        /* 못 받아와도 로컬 기록으로 계속 쓴다 */
+        if (!(await flush())) {
+          logAuth("전송 막힘(나중에 다시)");
+          return; // 네트워크가 막히면 다음 기회(online·화면 복귀)에 다시
+        }
+        try {
+          const pulled = await pull(user.id);
+          logAuth(`서버 기록: 하이라이트 ${Object.keys(pulled.hl).length}, 노트 ${pulled.notes.length}, 저장 ${Object.keys(pulled.savedA).length}`);
+          applyPulled(pulled);
+          // 다른 기기에서 이미 본 안내면 이 기기에서도 본 것으로
+          if (loggedIn && pulled.seen?.[COACH_GUIDE]) {
+            lsSet(COACH_KEY, "1");
+            setCoachSeen(true);
+          }
+        } catch {
+          /* 못 받아와도 로컬 기록으로 계속 쓴다 */
+        }
+      } finally {
+        setCoachReady(true);
       }
     },
     [applyPulled, showToast],
@@ -291,12 +338,16 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     } catch {
       /* 저장소를 못 읽어도 빈 상태로 동작 */
     }
+    setCoachSeen(lsGet(COACH_KEY) === "1");
     if (!supabaseEnabled) {
       setReady(true);
+      setCoachReady(true);
       return;
     }
 
     let alive = true;
+    // 계정 기록 확인이 끝나기를 기다리되, 오래 걸려도 안내가 영영 안 뜨지 않게 한도를 둔다
+    const coachTimer = setTimeout(() => alive && setCoachReady(true), 3000);
     const sb = supabase();
     // 콜백 안에서 바로 Supabase 를 부르면 막힐 수 있어 한 박자 뒤로 미룬다.
     logAuth(`페이지 열림 ${window.location.pathname}${window.location.search ? " (주소에 파라미터 있음: " + [...new URLSearchParams(window.location.search).keys()].join(",") + ")" : ""}${window.location.hash ? " (해시 있음)" : ""}`);
@@ -323,13 +374,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         }
         ssSet(MERGE_KEY, null);
         ssSet(TRIGGER_KEY, null);
-        showToast("구글 계정을 연결하지 못했어요. 잠시 후 다시 시도해주세요");
+        loginFailed();
       }
       try {
         const { data } = await sb.auth.getSession();
         const user = data.session?.user;
         const loggedIn = !!user && !user.is_anonymous;
         if (alive) setAuth(loggedIn ? { loggedIn, profile: profileFromUser(user) } : GUEST);
+        if (alive && !loggedIn) setCoachReady(true); // 게스트는 기기 값만 보면 된다
       } catch {
         /* 세션을 못 읽어도 게스트로 동작 */
       }
@@ -342,11 +394,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     document.addEventListener("visibilitychange", retry);
     return () => {
       alive = false;
+      clearTimeout(coachTimer);
       sub.subscription.unsubscribe();
       window.removeEventListener("online", retry);
       document.removeEventListener("visibilitychange", retry);
     };
-  }, [syncSession, showToast]);
+  }, [syncSession, loginFailed]);
 
   /** 게스트에게 가치가 쌓인 시점에 한 번만 "기록 백업"을 제안한다. (PRD F-72) */
   const maybePrompt = useCallback(
@@ -369,8 +422,19 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       loggedIn: supabaseEnabled ? auth.loggedIn : state.loggedIn,
       profile: supabaseEnabled ? auth.profile : MOCK_PROFILE,
       ready,
+      coach: {
+        ready: coachReady,
+        seen: coachSeen,
+        markSeen: () => {
+          lsSet(COACH_KEY, "1");
+          setCoachSeen(true);
+          if (loggedInRef.current) send({ t: "seen", key: COACH_GUIDE }); // 게스트는 보내지 않는다(익명 사용자가 쌓이지 않게)
+        },
+      },
       sheet,
       toast,
+      loginHelp,
+      dismissLoginHelp,
       hasRecords:
         state.notes.length > 0 ||
         Object.keys(state.hl).length > 0 ||
@@ -393,7 +457,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           track("Login Completed", { trigger, merged: false });
           commit({ ...ref.current, loggedIn: true });
           setSheet(null);
-          showToast("구글 계정에 기록을 연결했어요 (프로토타입: 실제 인증 없음)");
           return;
         }
 
@@ -410,7 +473,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         startGoogleLogin().catch((e) => {
           console.error("[login] 구글 로그인을 시작하지 못함", e);
           ssSet(TRIGGER_KEY, null);
-          showToast("로그인을 시작하지 못했어요. 잠시 후 다시 시도해주세요");
+          loginFailed();
         });
       },
       logout: () => {
@@ -467,7 +530,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         send({ t: "hl", sid, aid, on });
       },
       openComment: (sid) => setSheet({ type: "comment", sid, editId: "" }),
-      openThought: (aid) => setSheet({ type: "thought", aid }),
+      openThought: (aid, editId) => setSheet({ type: "thought", aid, editId }),
       likeCount: (aid) =>
         Math.max(0, (counts[aid] ?? 0) + (state.liked[aid] ? 1 : 0) - (baseLiked.current[aid] ? 1 : 0)),
       refreshLikeCounts,
@@ -489,7 +552,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         const n = ref.current.notes.find((it) => it.id === id);
         if (n) setSheet({ type: "comment", sid: n.sid, editId: id });
       },
-      updateNote: (id, text) => {
+      updateNote: (id, text, keepOpen) => {
         const t = text.trim();
         if (!t) return;
         const target = ref.current.notes.find((n) => n.id === id);
@@ -498,8 +561,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         commit({ ...ref.current, notes });
         const edited = notes.find((n) => n.id === id);
         if (edited) send({ t: "note", note: edited });
-        setSheet(null);
-        showToast("수정했어요");
+        if (!keepOpen) setSheet(null);
       },
       saveComment: (sid, text) => {
         const t = text.trim();
@@ -522,7 +584,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         const note: Note = { id: newId(), aid, sid: "", text: t, at: Date.now() };
         commit(maybePrompt({ ...cur, notes: [...cur.notes, note] }, "thought"));
         send({ t: "note", note });
-        showToast("생각을 남겼어요. 아카이브에서 다시 볼 수 있어요");
+        showToast("내 생각을 남겼어요");
       },
       removeNote: (id) => {
         const target = ref.current.notes.find((n) => n.id === id);
@@ -531,7 +593,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         });
         commit({ ...ref.current, notes: ref.current.notes.filter((n) => n.id !== id) });
         send({ t: "noteDel", id });
-        showToast("삭제했어요");
+        showToast("생각을 삭제했어요");
       },
       toggleA: (aid) => {
         const savedA = { ...ref.current.savedA };
@@ -542,10 +604,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         const next: Persisted = { ...ref.current, savedA };
         commit(on ? maybePrompt(next, "save") : next);
         send({ t: "saved", aid, on });
-        if (on) showToast("글을 저장했어요. 아카이브에서 볼 수 있어요");
       },
     };
-  }, [state, auth, ready, sheet, toast, counts, refreshLikeCounts, commit, showToast, maybePrompt, send]);
+  }, [state, auth, ready, coachReady, coachSeen, sheet, toast, loginHelp, loginFailed, dismissLoginHelp, counts, refreshLikeCounts, commit, showToast, maybePrompt, send]);
 
   return <StoreCtx.Provider value={value}>{children}</StoreCtx.Provider>;
 }

@@ -15,7 +15,9 @@ export type Op =
   | { t: "noteDel"; id: string }
   | { t: "saved"; aid: string; on: boolean }
   | { t: "like"; aid: string; on: boolean }
-  | { t: "rating"; aid: string; rating: number };
+  | { t: "rating"; aid: string; rating: number }
+  /** 첫 방문 안내를 봤다(guide_key = 안내 이름). 0004 마이그레이션 전이면 서버가 거절하고 앱은 건너뛴다 */
+  | { t: "seen"; key: string };
 
 export type Pulled = {
   hl: Record<string, true>;
@@ -24,6 +26,8 @@ export type Pulled = {
   /** 추천·별점 표가 서버에 아직 없으면(0002 마이그레이션 전) undefined — 로컬 값을 그대로 둔다 */
   liked?: Record<string, true>;
   rated?: Record<string, number>;
+  /** 본 안내 목록. 표가 아직 없으면(0004 마이그레이션 전) undefined */
+  seen?: Record<string, true>;
 };
 
 const OUTBOX_KEY = "articles:outbox:v1";
@@ -136,6 +140,8 @@ async function apply(uid: string, op: Op) {
       );
     case "rating":
       return check((await sb.from("article_ratings").upsert({ user_id: uid, article_id: op.aid, rating: op.rating })).error);
+    case "seen":
+      return check((await sb.from("onboarding_seen").upsert({ user_id: uid, guide_key: op.key })).error);
   }
 }
 
@@ -186,6 +192,15 @@ export async function pull(uid: string): Promise<Pulled> {
     /* 무시 */
   }
 
+  // 본 안내 표는 0004 마이그레이션 뒤에 생긴다. 없어도 나머지에는 영향이 없다.
+  let seen: Record<string, true> | undefined;
+  try {
+    const o = await sb.from("onboarding_seen").select("guide_key").eq("user_id", uid);
+    if (!o.error) seen = Object.fromEntries((o.data ?? []).map((row) => [row.guide_key as string, true as const]));
+  } catch {
+    /* 무시 */
+  }
+
   return {
     hl: Object.fromEntries((hl.data ?? []).map((r) => [r.sentence_id as string, true as const])),
     notes: (notes.data ?? [])
@@ -200,6 +215,7 @@ export async function pull(uid: string): Promise<Pulled> {
     savedA: Object.fromEntries((saved.data ?? []).map((r) => [r.article_id as string, true as const])),
     liked,
     rated,
+    seen,
   };
 }
 

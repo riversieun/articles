@@ -8,7 +8,7 @@ const REVIEW_URL = process.env.NEXT_PUBLIC_REVIEW_URL;
 const BOX = "flex w-full items-center gap-4 rounded-card bg-pd-note px-6 py-5 text-left text-pd-ink no-underline";
 
 /**
- * 홈의 사용 후기 안내 배너(노란 면 + 말풍선 일러스트, Figma 홈 프레임).
+ * 홈의 사용 후기 안내 배너(연보라 면 + 말풍선 일러스트, Figma 홈 프레임).
  * 피드백을 충분히 받은 뒤에는 이 컴포넌트와 Home 의 <ReviewBanner /> 한 줄을 지우면 된다.
  * 여러 단계의 설문 플로우로 이어질 예정이라 기존 피드백 다이얼로그는 연결하지 않는다.
  */
