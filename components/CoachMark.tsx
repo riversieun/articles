@@ -2,23 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { track } from "@/lib/analytics";
-
-/** 첫 방문 안내를 봤는지(이 기기). 로그인하면 계정에 합치는 건 아직 없다(DB 칸 추가가 필요해 결정 대기). */
-const SEEN_KEY = "articles:coach:v1";
-const readSeen = () => {
-  try {
-    return localStorage.getItem(SEEN_KEY) === "1";
-  } catch {
-    return false;
-  }
-};
-const writeSeen = () => {
-  try {
-    localStorage.setItem(SEEN_KEY, "1");
-  } catch {
-    /* 무시 */
-  }
-};
+import { useStore } from "@/lib/store";
 
 const STEPS: [title: string, body: string][] = [
   ["추천하기", "다른 사람에게도 도움이 될 내용이라면 추천을 눌러주세요."],
@@ -52,11 +36,17 @@ export function CoachMark() {
   const [rects, setRects] = useState<Rects | null>(null);
   const [vp, setVp] = useState({ w: 0, h: 0 });
   const ctaRef = useRef<HTMLButtonElement>(null);
+  const { coach } = useStore();
+  const started = useRef(false);
 
-  // 처음 방문이면 시작
+  // 처음 방문이면 시작. 로그인 계정의 "봤음" 기록까지 확인한 뒤에 정한다(다른 기기에서 본 사람에게 다시 뜨지 않게).
+  // 시작한 뒤에는 "봤음"이 기록돼도 끊지 않는다. 다른 화면 안에 끼워 넣은 미리보기(iframe)에서는 띄우지 않는다.
   useEffect(() => {
-    if (!readSeen()) setStep(0);
-  }, []);
+    if (started.current || !coach.ready || coach.seen) return;
+    if (window.self !== window.top) return;
+    started.current = true;
+    setStep(0);
+  }, [coach.ready, coach.seen]);
 
   const active = step !== null && step < 3;
 
@@ -106,7 +96,7 @@ export function CoachMark() {
   // 단계가 보일 때: 기록·분석, 버튼으로 초점
   useEffect(() => {
     if (!active || step === null || !rects) return;
-    if (step === 0) writeSeen();
+    if (step === 0) coach.markSeen();
     track("Coach Mark Step Viewed", { step: step + 1 });
     ctaRef.current?.focus({ preventScroll: true });
     // 단계가 바뀔 때마다 한 번만

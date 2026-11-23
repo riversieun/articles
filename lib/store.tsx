@@ -78,6 +78,9 @@ const TRIGGER_KEY = "articles:login-trigger";
 const MERGE_KEY = "articles:login-merge";
 /** 이 기기에서 구글 로그인을 한 적이 있다는 표시. 있으면 다음 로그인은 "연결" 없이 바로 그 계정으로 로그인한다. (구글 계정 선택 화면이 두 번 나오지 않게) */
 const GOOGLE_SEEN_KEY = "articles:google-seen";
+/** 아티클 하단 바 안내(코치마크)를 봤는지. 이 기기 값(localStorage)이고, 로그인하면 서버 onboarding_seen 과 합친다 */
+const COACH_KEY = "articles:coach:v1";
+const COACH_GUIDE = "article-coach";
 
 type Auth = { loggedIn: boolean; profile: Profile };
 const GUEST: Auth = { loggedIn: false, profile: { email: "", image: "", initial: "" } };
@@ -132,6 +135,8 @@ export type Sheet =
 
 type Ctx = Persisted & {
   ready: boolean;
+  /** 아티클 안내(코치마크). ready: 로그인 계정의 "봤음" 기록까지 확인했는지(확인 전에는 띄우지 않는다), seen: 봤는지 */
+  coach: { ready: boolean; seen: boolean; markSeen: () => void };
   profile: Profile;
   sheet: Sheet;
   toast: string;
@@ -177,6 +182,9 @@ const newId = () => `n${Date.now().toString(36)}${(seq++).toString(36)}`;
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<Persisted>(EMPTY);
   const [ready, setReady] = useState(false);
+  const [coachSeen, setCoachSeen] = useState(false);
+  const [coachReady, setCoachReady] = useState(false);
+  const loggedInRef = useRef(false);
   const [sheet, setSheet] = useState<Sheet>(null);
   const [toast, setToast] = useState("");
   const [loginHelp, setLoginHelp] = useState(false);
@@ -267,6 +275,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       const loggedIn = !!user && !user.is_anonymous;
       logAuth(`세션 반영: ${user ? (user.is_anonymous ? "익명" : "구글") : "없음"} ${user?.id.slice(0, 8) ?? ""}`);
       setAuth(loggedIn ? { loggedIn, profile: profileFromUser(user) } : GUEST);
+      loggedInRef.current = loggedIn;
       if (!user) return;
 
       if (loggedIn) {
@@ -287,18 +296,28 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         const cur = ref.current;
         logAuth(`사용자 바뀜 → 로컬 기록 올리기: 하이라이트 ${Object.keys(cur.hl).length}, 노트 ${cur.notes.length}, 저장 ${Object.keys(cur.savedA).length}`);
         seedOutbox(cur, (sid) => lib.sent[sid]?.aid);
+        if (loggedIn && lsGet(COACH_KEY) === "1") enqueue({ t: "seen", key: COACH_GUIDE }); // 이 기기에서 본 안내도 계정에 남긴다
         lsSet(UID_KEY, user.id);
       }
-      if (!(await flush())) {
-        logAuth("전송 막힘(나중에 다시)");
-        return; // 네트워크가 막히면 다음 기회(online·화면 복귀)에 다시
-      }
       try {
-        const pulled = await pull(user.id);
-        logAuth(`서버 기록: 하이라이트 ${Object.keys(pulled.hl).length}, 노트 ${pulled.notes.length}, 저장 ${Object.keys(pulled.savedA).length}`);
-        applyPulled(pulled);
-      } catch {
-        /* 못 받아와도 로컬 기록으로 계속 쓴다 */
+        if (!(await flush())) {
+          logAuth("전송 막힘(나중에 다시)");
+          return; // 네트워크가 막히면 다음 기회(online·화면 복귀)에 다시
+        }
+        try {
+          const pulled = await pull(user.id);
+          logAuth(`서버 기록: 하이라이트 ${Object.keys(pulled.hl).length}, 노트 ${pulled.notes.length}, 저장 ${Object.keys(pulled.savedA).length}`);
+          applyPulled(pulled);
+          // 다른 기기에서 이미 본 안내면 이 기기에서도 본 것으로
+          if (loggedIn && pulled.seen?.[COACH_GUIDE]) {
+            lsSet(COACH_KEY, "1");
+            setCoachSeen(true);
+          }
+        } catch {
+          /* 못 받아와도 로컬 기록으로 계속 쓴다 */
+        }
+      } finally {
+        setCoachReady(true);
       }
     },
     [applyPulled, showToast],
@@ -319,12 +338,16 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     } catch {
       /* 저장소를 못 읽어도 빈 상태로 동작 */
     }
+    setCoachSeen(lsGet(COACH_KEY) === "1");
     if (!supabaseEnabled) {
       setReady(true);
+      setCoachReady(true);
       return;
     }
 
     let alive = true;
+    // 계정 기록 확인이 끝나기를 기다리되, 오래 걸려도 안내가 영영 안 뜨지 않게 한도를 둔다
+    const coachTimer = setTimeout(() => alive && setCoachReady(true), 3000);
     const sb = supabase();
     // 콜백 안에서 바로 Supabase 를 부르면 막힐 수 있어 한 박자 뒤로 미룬다.
     logAuth(`페이지 열림 ${window.location.pathname}${window.location.search ? " (주소에 파라미터 있음: " + [...new URLSearchParams(window.location.search).keys()].join(",") + ")" : ""}${window.location.hash ? " (해시 있음)" : ""}`);
@@ -358,6 +381,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         const user = data.session?.user;
         const loggedIn = !!user && !user.is_anonymous;
         if (alive) setAuth(loggedIn ? { loggedIn, profile: profileFromUser(user) } : GUEST);
+        if (alive && !loggedIn) setCoachReady(true); // 게스트는 기기 값만 보면 된다
       } catch {
         /* 세션을 못 읽어도 게스트로 동작 */
       }
@@ -370,6 +394,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     document.addEventListener("visibilitychange", retry);
     return () => {
       alive = false;
+      clearTimeout(coachTimer);
       sub.subscription.unsubscribe();
       window.removeEventListener("online", retry);
       document.removeEventListener("visibilitychange", retry);
@@ -397,6 +422,15 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       loggedIn: supabaseEnabled ? auth.loggedIn : state.loggedIn,
       profile: supabaseEnabled ? auth.profile : MOCK_PROFILE,
       ready,
+      coach: {
+        ready: coachReady,
+        seen: coachSeen,
+        markSeen: () => {
+          lsSet(COACH_KEY, "1");
+          setCoachSeen(true);
+          if (loggedInRef.current) send({ t: "seen", key: COACH_GUIDE }); // 게스트는 보내지 않는다(익명 사용자가 쌓이지 않게)
+        },
+      },
       sheet,
       toast,
       loginHelp,
@@ -572,7 +606,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         send({ t: "saved", aid, on });
       },
     };
-  }, [state, auth, ready, sheet, toast, loginHelp, loginFailed, dismissLoginHelp, counts, refreshLikeCounts, commit, showToast, maybePrompt, send]);
+  }, [state, auth, ready, coachReady, coachSeen, sheet, toast, loginHelp, loginFailed, dismissLoginHelp, counts, refreshLikeCounts, commit, showToast, maybePrompt, send]);
 
   return <StoreCtx.Provider value={value}>{children}</StoreCtx.Provider>;
 }
