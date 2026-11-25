@@ -23,6 +23,18 @@ const BUTTON_SIZES = ["xs", "sm", "default", "lg"] as const;
 const ICON_SIZES = ["icon-xs", "icon-sm", "icon", "icon-lg"] as const;
 const BADGE_VARIANTS = ["default", "secondary", "destructive", "outline", "ghost", "link"] as const;
 
+/** DESIGN.md "반응형 기준점" 표의 요약. 값을 바꾸면 DESIGN.md와 함께 고친다. */
+const RESPONSIVE_HEAD = ["컴포넌트", "~767px", "768~1279px (md)", "1280px~ (xl)"] as const;
+const RESPONSIVE_ROWS: [string, string, string, string][] = [
+  ["본문 컬럼", "430px", "680px", "680px"],
+  ["상단 헤더", "컬럼 폭, sticky", "전체 폭 고정 + 아래 구분선", "같음"],
+  ["탭 이동", "하단 탭바(알약)", "좌측 레일 80px(아이콘 위·라벨 아래)", "좌측 사이드바 192px(아이콘 옆 라벨)"],
+  ["바텀 시트", "하단 시트·끌어서 닫기", "가운데 모달 448px", "같음"],
+  ["스낵바(탭 화면)", "바닥 96px", "바닥 24px, 내비 뺀 영역 가운데", "같음"],
+  ["플로팅 바", "화면 가운데", "본문 컬럼 가운데", "같음"],
+  ["글 카드 호버", "없음", "pd-tint 배경", "같음"],
+];
+
 function Section({ id, title, note, children }: { id: string; title: string; note?: string; children: React.ReactNode }) {
   return (
     <section id={id} className="flex flex-col gap-5 border-t border-border pt-8">
@@ -426,6 +438,44 @@ export default function DesignSystemPage() {
             </Dialog>
           </div>
         </Group>
+      </Section>
+
+      <Section
+        id="responsive"
+        title="Responsive"
+        note="기준점 두 개: md 768px · xl 1280px. 모바일 값은 접두어 없이, PC 값만 md:·xl:로 덧붙인다. 창 폭을 바꿔 보세요."
+      >
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-140 border-collapse text-left text-body-sm">
+            <thead>
+              <tr className="border-b border-border text-on-surface-muted">
+                {RESPONSIVE_HEAD.map((h) => (
+                  <th key={h} className="py-2 pr-4 font-semibold">
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {RESPONSIVE_ROWS.map(([name, ...cells]) => (
+                <tr key={name} className="border-b border-border align-top">
+                  <th className="py-2 pr-4 font-semibold">{name}</th>
+                  {cells.map((c, i) => (
+                    <td key={i} className="py-2 pr-4">
+                      {c}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="m-0 text-body-sm text-on-surface-muted">
+          지금 창 폭:{" "}
+          <span className="font-semibold text-on-surface md:hidden">모바일(~767px)</span>
+          <span className="hidden font-semibold text-on-surface md:inline xl:hidden">태블릿·노트북(768~1279px)</span>
+          <span className="hidden font-semibold text-on-surface xl:inline">데스크탑(1280px~)</span>
+        </p>
       </Section>
 
       <Section id="service" title="Service components" note="본문·아카이브·프로필에서 쓰는 서비스 전용 컴포넌트.">
