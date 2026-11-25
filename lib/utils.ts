@@ -7,7 +7,7 @@ import { createCn } from "cn/config"
 export const cn = createCn({
   extend: {
     theme: {
-      radius: ["card", "pill", "panel", "hero", "box"],
+      radius: ["card", "pill", "panel", "hero", "box", "sheet"],
     },
     classGroups: {
       "font-size": [

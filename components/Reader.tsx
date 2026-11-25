@@ -329,7 +329,7 @@ export function Reader({ aid }: { aid: string }) {
                   setThought("");
                 }}
               >
-                생각 남기기
+                기록 저장하기
               </Button>
             </div>
           </div>

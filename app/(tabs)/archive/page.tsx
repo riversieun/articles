@@ -3,15 +3,14 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { articleProps, track } from "@/lib/analytics";
-import { TOPIC_LABEL, formatTimestamp, lib } from "@/lib/content";
+import { formatTimestamp, lib } from "@/lib/content";
 import { useStore } from "@/lib/store";
 import { ArticleRow } from "@/components/ArticleRow";
 import { ConfirmDeleteDialog } from "@/components/ConfirmDeleteDialog";
 import { FilterChip } from "@/components/FilterChip";
-import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { IconChevron, IconPen, IconTrash } from "@/components/icons";
+import { IconCaretRight, IconPencilFill, IconTrashFill } from "@/components/icons";
 
 /**
  * 아카이브는 "저장한 아티클"과 "내 생각" 두 칩만 보여준다(이 순서).
@@ -36,9 +35,7 @@ export default function ArchivePage() {
   const [delId, setDelId] = useState("");
 
   // 내 생각: 글 아래 "내 생각"에 직접 적은 글 전체 단위 생각
-  const thoughtGroups = lib.arts
-    .map((a) => ({ a, items: notes.filter((n) => n.aid === a.id && !n.sid) }))
-    .filter((g) => g.items.length > 0);
+  const thoughtCards = lib.arts.flatMap((a) => notes.filter((n) => n.aid === a.id && !n.sid).map((n) => ({ a, n })));
 
   // 저장한 글 목록은 이 화면에 들어오거나 탭을 열 때의 상태를 기준으로 고정한다.
   // 저장을 해제해도 카드는 그대로 두고 아이콘만 바뀌며, 화면을 벗어났다 돌아오면 사라진다.
@@ -51,7 +48,7 @@ export default function ArchivePage() {
 
   return (
     <div>
-      <div className="ns sticky top-12 z-20 md:top-0 flex gap-2 overflow-x-auto bg-surface px-6 pt-3 pb-1">
+      <div className="ns sticky top-12 z-20 flex md:top-0 gap-2 overflow-x-auto bg-surface px-6 pt-2 pb-1">
         {TABS.map(([key, label]) => (
           <FilterChip
             key={key}
@@ -66,60 +63,52 @@ export default function ArchivePage() {
         ))}
       </div>
 
-      {seg === "thoughts" && ready && thoughtGroups.length === 0 && <Empty title="아직 남긴 생각이 없어요" />}
+      {seg === "thoughts" && ready && thoughtCards.length === 0 && <Empty title="아직 남긴 생각이 없어요" />}
       {seg === "saved" && ready && savedArts.length === 0 && <Empty title="아직 저장한 아티클이 없어요" />}
 
-      {seg === "thoughts" && thoughtGroups.length > 0 && (
-        <div className="flex flex-col gap-7 px-6 pt-5 pb-7">
-          {thoughtGroups.map(({ a, items }, gi) => (
-            <section key={a.id} className="flex flex-col gap-2">
+      {seg === "thoughts" && thoughtCards.length > 0 && (
+        <ul className="m-0 flex list-none flex-col gap-6 px-6 pt-6 pb-28">
+          {thoughtCards.map(({ a, n }, i) => (
+            <li key={n.id} className="flex flex-col gap-6 rounded-card border border-pd-line bg-surface p-5">
+              <div className="flex flex-col gap-6">
+                <div className="flex h-6 items-center justify-between">
+                  <span className="text-caption text-pd-ink-muted">{formatTimestamp(n.at)}</span>
+                  {/* 보이는 아이콘은 20px, 누르는 영역은 44px. 아이콘 사이 16px */}
+                  <div className="-mr-3 flex items-center -space-x-2">
+                    <button
+                      onClick={() => editNote(n.id)}
+                      aria-label="수정"
+                      className="flex size-11 shrink-0 items-center justify-center border-0 bg-transparent text-pd-ink-muted"
+                    >
+                      <IconPencilFill />
+                    </button>
+                    <button
+                      onClick={() => setDelId(n.id)}
+                      aria-label="삭제"
+                      className="flex size-11 shrink-0 items-center justify-center border-0 bg-transparent text-pd-ink-muted"
+                    >
+                      <IconTrashFill />
+                    </button>
+                  </div>
+                </div>
+                <p className="m-0 text-body-md leading-6 whitespace-pre-wrap text-pd-ink">{n.text}</p>
+              </div>
               <Link
                 href={`/contents/${a.id}`}
-                onClick={() => track("Article Opened", { ...articleProps(a.id), entry_point: "archive", position: gi })}
-                className="flex flex-col items-start gap-2 py-1 text-left text-on-surface no-underline"
+                onClick={() => track("Article Opened", { ...articleProps(a.id), entry_point: "archive", position: i })}
+                className="flex items-start gap-1.5 rounded-panel bg-pd-tint p-4 text-left no-underline"
               >
-                <Badge variant="secondary" className="h-7 rounded-md border-0 px-3 text-label-sm">
-                  {TOPIC_LABEL[a.topic]}
-                </Badge>
-                <span className="flex w-full items-start gap-2">
-                  <span lang="en" className="min-w-0 flex-1 text-body-md font-bold">
+                <span className="flex min-w-0 flex-1 flex-col gap-1">
+                  <span className="truncate text-body-sm leading-5 font-medium text-pd-ink">{a.titleKo}</span>
+                  <span lang="en" className="truncate text-body-sm leading-5 text-pd-ink-muted">
                     {a.titleEn}
                   </span>
-                  <span className="flex h-5 shrink-0 items-center">
-                    <IconChevron size={18} />
-                  </span>
                 </span>
-                <span className="-mt-1 text-body-sm text-on-surface-muted">{a.titleKo}</span>
+                <IconCaretRight className="shrink-0 text-pd-ink-muted" />
               </Link>
-              <ul className="m-0 flex list-none flex-col gap-2 p-0">
-                {items.map((n) => (
-                  <li key={n.id} className="flex flex-col gap-2 rounded-card bg-surface-muted pt-3.5 pr-1 pb-0.5 pl-3.5">
-                    <p className="m-0 mr-2.5 text-body-md whitespace-pre-wrap">{n.text}</p>
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-label-sm text-on-surface-muted">{formatTimestamp(n.at)}</span>
-                      <div className="flex items-center">
-                        <button
-                          onClick={() => editNote(n.id)}
-                          aria-label="수정"
-                          className="flex size-11 shrink-0 items-center justify-center border-0 bg-transparent text-on-surface-muted"
-                        >
-                          <IconPen size={18} />
-                        </button>
-                        <button
-                          onClick={() => setDelId(n.id)}
-                          aria-label="삭제"
-                          className="flex size-11 shrink-0 items-center justify-center border-0 bg-transparent text-on-surface-muted"
-                        >
-                          <IconTrash size={18} />
-                        </button>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </section>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
 
       {seg === "saved" && savedArts.length > 0 && (

@@ -63,7 +63,7 @@
   display: flex;
   justify-content: center;
   margin: 0;
-  color: var(--color-pd-ink-soft);
+  color: var(--color-pd-ink);
   font-size: 16px;
   font-weight: 600;
   line-height: 24px;
@@ -143,8 +143,8 @@
   animation-delay: calc(var(--i) * var(--star-gap));
 }
 .rc-star[data-on="true"] path {
-  fill: var(--color-brand);
-  stroke: var(--color-brand);
+  fill: var(--color-pd-star-on);
+  stroke: var(--color-pd-star-on);
   transition-delay: calc(var(--i) * var(--star-gap));
 }
 @keyframes rc-pop {

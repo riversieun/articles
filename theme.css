@@ -1,24 +1,45 @@
 /* DESIGN.md에서 내보낸 참고용 사본 (npx @google/design.md export --format css-tailwind DESIGN.md).
  * 앱은 이 파일을 읽지 않는다. 실제 토큰은 app/globals.css의 @theme.
- * --text-*--line-height 5줄은 내보내기에 없어서 globals.css와 맞춰 추가한 것.
+ * --text-*--line-height 줄은 내보내기에 없어서 globals.css와 맞춰 추가한 것.
  * --spacing-*는 문서용 이름이다. Tailwind의 max-w-md 같은 클래스와 충돌하므로 globals.css에는 넣지 않고 --ds-space-*로 둔다. */
 @theme {
-  --color-primary: #111111;
+  --color-primary: #1e1e28;
   --color-on-primary: #ffffff;
-  --color-accent: #d9f25c;
-  --color-on-accent: #111111;
+  --color-accent: #3fe2aa;
+  --color-accent-strong: #008759;
+  --color-accent-tint: #d5f7ec;
+  --color-accent-soft: #a6edd5;
+  --color-on-accent: #1e1e28;
   --color-accent-sub: #e7e0ff;
   --color-accent-sub-strong: #cbbcff;
   --color-surface: #ffffff;
-  --color-on-surface: #111111;
+  --color-on-surface: #1e1e28;
   --color-surface-muted: #f4f4f6;
-  --color-on-surface-muted: #5f5f66;
+  --color-on-surface-muted: #5e5e66;
   --color-subtle: #8e8e96;
+  --color-label: #7f7f8a;
   --color-border: #e7e7ea;
   --color-border-strong: #d5d5da;
   --color-danger: #e7000b;
   --color-on-danger: #ffffff;
-  --color-focus-ring: #111111;
+  --color-focus-ring: #1e1e28;
+  --color-like: #c994ff;
+  --color-snack: #4a4a52;
+  --color-pd-ink: #1e1e28;
+  --color-pd-ink-muted: #5e5e66;
+  --color-pd-ink-soft: #313142;
+  --color-pd-ink-faint: #8d8d99;
+  --color-pd-ink-quiet: #77778d;
+  --color-pd-icon: #5e5e66;
+  --color-pd-line: #e6e6ea;
+  --color-pd-dot: #c6c6cf;
+  --color-pd-tint: #f9f9f9;
+  --color-pd-chip: #f1f1f3;
+  --color-pd-star: #b4b4b8;
+  --color-pd-glow: #aeffe4;
+  --color-pd-glow-mid: #c4fbde;
+  --color-pd-glow-soft: #e2faed;
+  --color-pd-note: #f5ebff;
   --font-display: "Pretendard Variable";
   --font-headline: "Pretendard Variable";
   --font-body-lg: "Pretendard Variable";
@@ -29,6 +50,12 @@
   --font-label-md-semibold: "Pretendard Variable";
   --font-label-md: "Pretendard Variable";
   --font-label-sm: "Pretendard Variable";
+  --font-title: "Pretendard Variable";
+  --font-heading: "Pretendard Variable";
+  --font-title-md: "Pretendard Variable";
+  --font-title-sm: "Pretendard Variable";
+  --font-note: "Pretendard Variable";
+  --font-caption: "Pretendard Variable";
   --text-display: 28px;
   --text-display--line-height: 1.2;
   --text-headline: 20px;
@@ -44,6 +71,18 @@
   --text-label-md-semibold: 14px;
   --text-label-md: 14px;
   --text-label-sm: 12px;
+  --text-title: 24px;
+  --text-title--line-height: 30px;
+  --text-heading: 22px;
+  --text-heading--line-height: 28px;
+  --text-title-md: 20px;
+  --text-title-md--line-height: 26px;
+  --text-title-sm: 18px;
+  --text-title-sm--line-height: 26px;
+  --text-note: 15px;
+  --text-note--line-height: 20px;
+  --text-caption: 13px;
+  --text-caption--line-height: 18px;
   --tracking-display: -0.03em;
   --tracking-headline: -0.02em;
   --font-weight-display: 700;
@@ -56,12 +95,22 @@
   --font-weight-label-md-semibold: 600;
   --font-weight-label-md: 500;
   --font-weight-label-sm: 500;
+  --font-weight-title: 700;
+  --font-weight-heading: 700;
+  --font-weight-title-md: 600;
+  --font-weight-title-sm: 700;
+  --font-weight-note: 400;
+  --font-weight-caption: 400;
   --radius-sm: 6px;
   --radius-md: 8px;
   --radius-lg: 10px;
+  --radius-panel: 12px;
   --radius-xl: 14px;
   --radius-card: 16px;
+  --radius-hero: 20px;
+  --radius-box: 24px;
   --radius-pill: 26px;
+  --radius-sheet: 28px;
   --radius-full: 9999px;
   --spacing-xs: 4px;
   --spacing-sm: 8px;

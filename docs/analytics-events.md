@@ -53,6 +53,8 @@
 | Translation Toggled | 한글 번역 스위치 | `article_id`(글 화면에서만), `on` | `lib/store.tsx` |
 | Sentence Action Sheet Opened | 문장을 탭해 팝오버(하이라이트·코멘트)가 열릴 때. 이름은 옛 "액션 시트"를 그대로 유지(바꾸면 기존 데이터와 끊김). 코멘트 말풍선의 수정·삭제 팝오버는 보내지 않고 `Note Edited`/`Note Deleted`로 잡힘 (닫을 때도 보내지 않음) | `article_id`, `sentence_id` | `components/Reader.tsx` |
 | Original Article Clicked | "원문 읽기" 버튼. 상세(`ArticleDetail`) 하단과 병기 읽기(`Reader`) 두 곳에서 보냄 | `article_id`, `source`, `content_type` | `components/ArticleDetail.tsx`, `components/Reader.tsx` |
+| Coach Mark Step Viewed | 아티클 상세에서 첫 방문 안내(플로팅 바 말풍선 투어)의 각 단계가 보일 때 | `step`(1~3) | `components/CoachMark.tsx` |
+| Coach Mark Completed | 마지막 단계에서 "알겠어요"를 눌렀을 때. 건너뛰기는 없다 | (없음) | `components/CoachMark.tsx` |
 
 - 완독 기준은 `Reader.tsx`의 `COMPLETE_AT`(90) 하나다. `Article Completed`, `Article Read.completed`가 같은 기준을 쓴다. 완독했을 때 화면에 보이는 UI(배너 등)는 없다. (PRD v0.3 F-41도 90%)
 - `Translation Toggled`는 병기 읽기(`/contents/[id]/read`)의 스위치에서만 보낸다. v2에서 프로필의 "번역 항상 켜기"가 빠져 `article_id` 없는 이벤트는 더 나오지 않는다. 번역 설정은 서버에 저장하지 않고 이 기기에만 둔다.
@@ -73,7 +75,7 @@
 
 `note_type`: 문장 코멘트면 `comment`, 글 전체 "내 생각"이면 `thought`.
 
-하이라이트·글 저장을 **해제할 때 스낵바는 뜨지 않지만** 이벤트(`on: false`)는 그대로 보낸다. 삭제 확인 다이얼로그에서 취소하면 삭제 이벤트를 보내지 않는다.
+내 생각·코멘트를 수정할 때(`Note Edited`)와 하이라이트·글 저장을 해제할 때(`on: false`)는 **스낵바가 뜨지 않지만** 이벤트는 그대로 보낸다. 삭제 확인 다이얼로그에서 취소하면 삭제 이벤트를 보내지 않는다.
 
 ### 후기 설문 (구현 예정)
 
@@ -119,6 +121,7 @@ v2 디자인에서 하이라이트·코멘트를 없애기로 했다. 코드(`li
 
 - 앱 안 브라우저(카카오톡·인스타그램 등)에서는 기록이 남는 첫 행동 직후 로그인 시트 대신 "외부 브라우저에서 열어주세요" 시트가 뜬다. 이때도 `Backup Prompt Shown`(`trigger=first_comment` 등)은 보내지만, 이 시트를 닫을 때 `Backup Prompt Dismissed`는 보내지 않는다. 로그인 버튼을 눌렀을 때도 같은 시트가 뜨고 `Login Button Clicked`는 보내지만 `Login Completed`는 나오지 않는다.
 - 로그인 화면을 숨긴 빌드(`NEXT_PUBLIC_LOGIN_ENABLED=false`)에서는 `Login Button Clicked`, `Backup Prompt Shown/Dismissed`, `Login Completed`가 나오지 않는다. 이때 대시보드의 로그인 전환 지표는 비어 있는 게 정상이다.
+- 구글 연결 실패 스낵바가 연속 2번 뜬 뒤 나오는 "로그인 문제가 있나요? 피드백 보내기"의 CTA는 피드백 다이얼로그를 열고, 보내면 `Feedback Sent`가 같은 `kind`로 기록된다(별도 이벤트 없음). 연속 실패 횟수는 `sessionStorage`(`articles:login-fails`)에 두고 로그인 성공 시 지운다.
 - `Login Completed.trigger`는 로그인을 시작한 진입 경로와 같은 값이다.
 - `backup_prompt`는 시트 안의 버튼이 곧 로그인 버튼이라, `Login Button Clicked`를 그 버튼을 누를 때 보낸다. 나머지 경로는 진입 버튼을 누를 때 보낸다. (이후 시트의 "Google로 계속하기"는 `Login Completed`로 이어진다)
 - `Login Completed`는 구글 화면에 다녀온 뒤 새로 열린 페이지에서 보낸다. 진입 경로(`trigger`)는 나가기 전에 `sessionStorage`에 남겨 두었다가 읽는다. 구글 화면에서 취소하고 돌아오면 이 이벤트는 없다(`Login Button Clicked`만 있음).
