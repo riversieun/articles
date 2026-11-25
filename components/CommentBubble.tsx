@@ -6,7 +6,7 @@ import { MenuBtn } from "./MenuBtn";
 
 /** 코멘트 말풍선 모양. 팝오버가 없는 곳(아카이브 카드)에서는 이 클래스만 가져다 쓴다. */
 export const BUBBLE_CLASS =
-  "rounded-[4px_14px_14px_14px] bg-accent-sub-strong px-3 py-2 text-label-md font-medium text-on-surface";
+  "min-w-0 rounded-[4px_14px_14px_14px] bg-accent-sub-strong px-3 py-2 text-label-md font-medium wrap-anywhere text-on-surface";
 
 /** 문장에 남긴 코멘트 말풍선. 누르면 위에 "수정 · 삭제" 팝오버가 뜬다. 본문과 아카이브가 같이 쓴다. */
 export function CommentBubble({

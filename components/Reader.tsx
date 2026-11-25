@@ -283,7 +283,7 @@ export function Reader({ aid }: { aid: string }) {
             {artNotes.map((n) => {
               return (
                 <li key={n.id} className="flex flex-col gap-2 rounded-card bg-surface-muted pt-3.5 pr-1 pb-0.5 pl-3.5">
-                  <p className="m-0 mr-2.5 text-body-md whitespace-pre-wrap">{n.text}</p>
+                  <p className="m-0 mr-2.5 text-body-md whitespace-pre-wrap wrap-anywhere">{n.text}</p>
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-label-sm text-on-surface-muted">{formatTimestamp(n.at)}</span>
                     <div className="flex items-center">

@@ -265,7 +265,7 @@ export function Overlays() {
                           </button>
                         </div>
                       </div>
-                      <p className="m-0 text-body-md leading-6 whitespace-pre-wrap text-pd-ink">{note.text}</p>
+                      <p className="m-0 text-body-md leading-6 whitespace-pre-wrap wrap-anywhere text-pd-ink">{note.text}</p>
                     </div>
                   )}
                 </>
@@ -337,7 +337,7 @@ export function Overlays() {
           role="status"
           data-open={snackIn}
           className={`snack pointer-events-none fixed inset-x-0 z-[60] mx-auto flex w-full max-w-[430px] justify-center px-6 md:max-w-none ${
-            hasTabBar ? "bottom-24 md:bottom-6 md:pl-26 xl:pl-54" : hasFloatBar ? "bottom-[calc(max(16px,env(safe-area-inset-bottom))+64px)]" : "bottom-6"
+            hasTabBar ? "bottom-24 md:bottom-6 md:pl-26 lg:pl-54" : hasFloatBar ? "bottom-[calc(max(16px,env(safe-area-inset-bottom))+64px)]" : "bottom-6"
           }`}
         >
           <div ref={failPill} className="snack-pill w-fit rounded-panel bg-pd-snack/80 px-4 py-3 text-center text-label-md font-normal whitespace-pre-line text-on-primary backdrop-blur-md backdrop-saturate-120 shadow-[0_2px_8px_rgba(17,17,17,0.2),0_8px_16px_-6px_rgba(17,17,17,0.18)]">
@@ -350,7 +350,7 @@ export function Overlays() {
         <div
           data-open={helpIn}
           className={`snack pointer-events-none fixed inset-x-0 z-[61] mx-auto flex w-full max-w-[430px] justify-center px-6 md:max-w-none ${
-            hasTabBar ? "bottom-24 md:bottom-6 md:pl-26 xl:pl-54" : hasFloatBar ? "bottom-[calc(max(16px,env(safe-area-inset-bottom))+64px)]" : "bottom-6"
+            hasTabBar ? "bottom-24 md:bottom-6 md:pl-26 lg:pl-54" : hasFloatBar ? "bottom-[calc(max(16px,env(safe-area-inset-bottom))+64px)]" : "bottom-6"
           }`}
         >
           {/* 실패 스낵바가 떠 있는 동안은 그 위(8px 간격)로, 사라지면 자기 자리로 내려온다 */}
@@ -411,6 +411,8 @@ function Sheet({
 }) {
   const [entered, setEntered] = useState(false);
   const drag = useDragDismiss(onClose);
+  // 시트를 연 요소. 입력창 autoFocus 가 포커스를 가져가기 전(첫 렌더)에 기억해 둔다.
+  const [opener] = useState(() => (typeof document === "undefined" ? null : (document.activeElement as HTMLElement | null)));
   useEffect(() => {
     // 처음 그린 프레임을 "닫힘" 상태로 두고 다음 프레임에 열어야 올라오는 모션이 생긴다
     let r2 = 0;
@@ -429,6 +431,38 @@ function Sheet({
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
+
+  // 열리면 포커스를 시트 안으로 옮기고(입력창 autoFocus가 있으면 그대로 둔다), 닫히면 시트를 연 요소로 돌려준다.
+  useEffect(() => {
+    const el = drag.surface.current;
+    // 입력창이 있으면 입력창, 없으면(로그인·앱 안 브라우저 안내) 시트 자체에 포커스
+    if (el && !el.contains(document.activeElement)) (el.querySelector<HTMLElement>("textarea, input") ?? el).focus({ preventScroll: true });
+    return () => {
+      if (opener?.isConnected && opener !== document.body) opener.focus({ preventScroll: true });
+    };
+  }, [drag.surface, opener]);
+
+  // Tab 이동이 시트 밖(뒤 화면)으로 빠지지 않게 처음 ↔ 끝 요소 사이에서 돈다.
+  const trapTab = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== "Tab") return;
+    const items = Array.from(
+      e.currentTarget.querySelectorAll<HTMLElement>('a[href], button, textarea, input, select, [tabindex]'),
+    ).filter((x) => x.tabIndex >= 0 && !x.matches(":disabled"));
+    if (items.length === 0) {
+      e.preventDefault();
+      return;
+    }
+    const first = items[0];
+    const last = items[items.length - 1];
+    const active = document.activeElement;
+    if (e.shiftKey && (active === first || active === e.currentTarget)) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && active === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
 
   return (
     // 모바일은 하단 시트, md(768px) 이상은 가운데 모달
@@ -449,9 +483,11 @@ function Sheet({
         role="dialog"
         aria-modal="true"
         aria-labelledby={labelledBy}
+        tabIndex={-1}
+        onKeyDown={trapTab}
         inert={closing}
         className={cn(
-          "relative flex touch-none flex-col gap-2.5 rounded-t-sheet bg-surface px-6 pt-7 pb-6 transition-transform ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none",
+          "relative flex touch-none outline-none flex-col gap-2.5 rounded-t-sheet bg-surface px-6 pt-7 pb-6 transition-transform ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none",
           // md 이상: 가운데 모달. 화면 아래로 빠지는 대신 8px 떠오르며 나타나고 같은 길로 사라진다(끌어 닫기 없음).
           "md:w-full md:max-w-md md:touch-auto md:rounded-sheet md:transition-[transform,opacity]",
           open
