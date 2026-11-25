@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { lib } from "@/lib/content";
 import { ArticleDetail } from "@/components/ArticleDetail";
+import { Column } from "@/components/Column";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -18,5 +19,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ContentPage({ params }: Props) {
   const { id } = await params;
   if (!lib.byId[id]) notFound();
-  return <ArticleDetail aid={id} />;
+  return (
+    <Column>
+      <ArticleDetail aid={id} />
+    </Column>
+  );
 }

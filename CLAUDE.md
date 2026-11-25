@@ -20,6 +20,13 @@ UI 작업 전에 반드시 DESIGN.md를 먼저 읽을 것.
 ### 공통 컴포넌트
 - 삭제 확인은 `ConfirmDeleteDialog`(문구 고정), 여러 줄 입력은 `components/ui/textarea`, 토글은 `ToggleSwitch`, 코멘트 말풍선은 `CommentBubble`을 쓴다. 같은 역할의 컴포넌트를 새로 만들지 않는다.
 
+### 반응형
+- 기준점은 두 개다: `md:`(768px, 태블릿·노트북)와 `xl:`(1280px, 데스크탑). 모바일(~767px) 값은 접두어 없이 두고 PC 값만 접두어로 덧붙인다. 모바일 클래스를 바꾸면 휴대폰 화면이 바뀌므로, PC 작업에서는 접두어 붙은 클래스만 더한다.
+- 화면 폭은 `components/Column.tsx`(모바일 430px, `md` 이상 680px)가 정한다. 새 화면은 `Column`으로 감싼다. 탭 화면은 `app/(tabs)/layout.tsx`가 헤더·좌측 내비·하단 탭바를 조립한다.
+- 상단 헤더(`AppBar`)는 모든 해상도에서 유지하고, 탭 이동만 하단 탭바(~767px) → 좌측 내비(`SideNav`, 768px~)로 바뀐다. 탭 목록은 `components/tabs.tsx` 하나를 같이 쓴다.
+- 고정 위치 요소(시트·스낵바·플로팅 바)는 `Column`과 같은 폭(430/680px)을 맞춘다. 컴포넌트별 변화표는 DESIGN.md "반응형 기준점"이 기준이다.
+- 반응형을 고치면 375·767·768·1279·1280·1440px에서 확인하고, 모바일 폭(375·600·767px)은 main과 화면이 같은지 비교한다.
+
 ### 문서 동기화
 - 화면이나 동작을 바꾸면 `docs/PRD.md`, `docs/analytics-events.md`, `DESIGN.md`를 같이 고친다. 이벤트를 추가·삭제하면 `analytics-events.md`가 기준이다.
 

@@ -185,7 +185,7 @@ export function ArticleDetail({ aid }: { aid: string }) {
       <div
         inert={!showBar}
         data-hidden={!showBar}
-        className="fb-bar pointer-events-none fixed inset-x-0 bottom-[max(16px,env(safe-area-inset-bottom))] z-40 mx-auto flex w-full max-w-[430px] justify-center px-6"
+        className="fb-bar pointer-events-none fixed inset-x-0 bottom-[max(16px,env(safe-area-inset-bottom))] z-40 mx-auto flex w-full max-w-[430px] justify-center px-6 md:max-w-170"
       >
         <div className="pointer-events-auto flex items-center gap-2 rounded-full bg-surface px-4 py-1 drop-shadow-[0_2px_6px_rgba(0,0,0,0.1)]">
           <button

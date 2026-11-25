@@ -27,10 +27,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="ko">
       <body>
         <StoreProvider>
-          {/* 모바일 웹 기준 단일 컬럼. 데스크톱에서는 가운데 정렬된 폰 폭으로 보여준다. */}
-          <div className="relative mx-auto min-h-dvh w-full max-w-[430px] bg-surface sm:shadow-[0_0_0_1px_var(--color-border)]">
-            {children}
-          </div>
+          {/* 폭은 화면마다 Column이 정한다(모바일 430px, md 이상 680px). 탭 화면은 좌측 내비가 붙는다. */}
+          {children}
           <Overlays />
           <Analytics />
           <AmplitudeInit />

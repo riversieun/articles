@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Column } from "@/components/Column";
 import { IconBack } from "@/components/icons";
 
 export const metadata: Metadata = {
@@ -21,7 +22,7 @@ const UL = "m-0 flex list-disc flex-col gap-1.5 pl-5 text-body-sm text-on-surfac
  */
 export default function PrivacyPage() {
   return (
-    <div className="min-h-dvh pb-16">
+    <Column className="pb-16">
       <div className="sticky top-0 z-30 flex h-14 items-center gap-1 bg-surface pr-5 pl-1">
         <Link
           href="/"
@@ -195,6 +196,6 @@ export default function PrivacyPage() {
           </p>
         </section>
       </main>
-    </div>
+    </Column>
   );
 }

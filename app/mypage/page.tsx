@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { loginEnabled } from "@/lib/flags";
+import { Column } from "@/components/Column";
 import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { GoogleLoginButton } from "@/components/GoogleLoginButton";
 import { IconAvatar, IconBack } from "@/components/icons";
@@ -25,7 +26,7 @@ export default function MyPage() {
   const goBack = () => goBackInApp(router);
 
   return (
-    <div className="min-h-dvh pb-10">
+    <Column className="pb-10">
       <div className="sticky top-0 z-30 flex h-14 items-center gap-1 bg-surface pr-5 pl-1">
         <button
           onClick={goBack}
@@ -96,6 +97,6 @@ export default function MyPage() {
           router.push("/");
         }}
       />
-    </div>
+    </Column>
   );
 }

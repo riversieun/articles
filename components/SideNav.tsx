@@ -1,0 +1,42 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { TABS } from "./tabs";
+
+/**
+ * 탭 이동 내비(LNB). 하단 탭바(~767px)가 768px 이상에서 왼쪽으로 옮겨 온 것으로, 로고·프로필은 상단 헤더(AppBar)에 그대로 둔다.
+ * - 768~1279px(md): 폭 80px 레일. 아이콘 위·라벨 아래(하단 탭바와 같은 모양), 항목 64×56px.
+ * - 1280px~(xl): 폭 192px 사이드바. 아이콘 옆 라벨, 항목 높이 48px.
+ * 헤더(48px) 아래에서 화면 바닥까지 붙어 있고, 첫 항목은 본문 첫 줄과 같은 높이(위 20px)에서 시작한다.
+ */
+export function SideNav() {
+  const pathname = usePathname();
+
+  return (
+    <nav
+      aria-label="주요 탭"
+      className="fixed top-12 bottom-0 left-0 z-20 hidden w-20 flex-col border-r border-pd-line bg-surface px-2 pt-5 md:flex xl:w-48 xl:px-3"
+    >
+      <ul className="m-0 flex list-none flex-col gap-1 p-0">
+        {TABS.map(({ href, label, icon }) => {
+          const on = href === "/" ? pathname === "/" : pathname.startsWith(href);
+          return (
+            <li key={href}>
+              <Link
+                href={href}
+                aria-current={on ? "page" : undefined}
+                className={`flex h-14 flex-col items-center justify-center gap-1 rounded-md text-label-sm no-underline transition-colors hover:bg-pd-chip focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none xl:h-12 xl:flex-row xl:justify-start xl:gap-3 xl:px-3 xl:text-body-md ${
+                  on ? "font-semibold text-pd-ink" : "font-medium text-pd-ink-muted"
+                }`}
+              >
+                {icon}
+                {label}
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  );
+}

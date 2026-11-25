@@ -27,6 +27,8 @@ export function useDragDismiss(onDismiss: () => void) {
 
   const down = (e: RPointerEvent<HTMLDivElement>) => {
     if ((e.target as HTMLElement).closest("button, a, textarea, input, select, [data-no-drag]")) return;
+    // md(768px) 이상에서는 시트가 가운데 모달이라 끌어 닫기를 쓰지 않는다(바깥·닫기 버튼·Esc로 닫음)
+    if (window.matchMedia("(min-width: 768px)").matches) return;
     const el = surface.current;
     if (!el || !backdrop.current) return;
     d.current = { on: true, y0: e.clientY, y: 0, ly: e.clientY, lt: e.timeStamp, v: 0, id: e.pointerId, h: el.offsetHeight };

@@ -336,8 +336,8 @@ export function Overlays() {
         <div
           role="status"
           data-open={snackIn}
-          className={`snack pointer-events-none fixed inset-x-0 z-[60] mx-auto flex w-full max-w-[430px] justify-center px-6 ${
-            hasTabBar ? "bottom-24" : hasFloatBar ? "bottom-[calc(max(16px,env(safe-area-inset-bottom))+64px)]" : "bottom-6"
+          className={`snack pointer-events-none fixed inset-x-0 z-[60] mx-auto flex w-full max-w-[430px] justify-center px-6 md:max-w-none ${
+            hasTabBar ? "bottom-24 md:bottom-6 md:pl-26 xl:pl-54" : hasFloatBar ? "bottom-[calc(max(16px,env(safe-area-inset-bottom))+64px)]" : "bottom-6"
           }`}
         >
           <div ref={failPill} className="snack-pill w-fit rounded-panel bg-pd-snack/80 px-4 py-3 text-center text-label-md font-normal whitespace-pre-line text-on-primary backdrop-blur-md backdrop-saturate-120 shadow-[0_2px_8px_rgba(17,17,17,0.2),0_8px_16px_-6px_rgba(17,17,17,0.18)]">
@@ -349,8 +349,8 @@ export function Overlays() {
       {helpShown && (
         <div
           data-open={helpIn}
-          className={`snack pointer-events-none fixed inset-x-0 z-[61] mx-auto flex w-full max-w-[430px] justify-center px-6 ${
-            hasTabBar ? "bottom-24" : hasFloatBar ? "bottom-[calc(max(16px,env(safe-area-inset-bottom))+64px)]" : "bottom-6"
+          className={`snack pointer-events-none fixed inset-x-0 z-[61] mx-auto flex w-full max-w-[430px] justify-center px-6 md:max-w-none ${
+            hasTabBar ? "bottom-24 md:bottom-6 md:pl-26 xl:pl-54" : hasFloatBar ? "bottom-[calc(max(16px,env(safe-area-inset-bottom))+64px)]" : "bottom-6"
           }`}
         >
           {/* 실패 스낵바가 떠 있는 동안은 그 위(8px 간격)로, 사라지면 자기 자리로 내려온다 */}
@@ -431,7 +431,8 @@ function Sheet({
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-50 mx-auto flex w-full max-w-[430px] flex-col justify-end">
+    // 모바일은 하단 시트, md(768px) 이상은 가운데 모달
+    <div className="fixed inset-0 z-50 mx-auto flex w-full max-w-[430px] flex-col justify-end md:max-w-none md:items-center md:justify-center md:px-6">
       <button
         ref={drag.backdrop}
         aria-label="닫기"
@@ -451,11 +452,15 @@ function Sheet({
         inert={closing}
         className={cn(
           "relative flex touch-none flex-col gap-2.5 rounded-t-sheet bg-surface px-6 pt-7 pb-6 transition-transform ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none",
-          open ? "translate-y-0 duration-500" : "translate-y-full duration-300",
+          // md 이상: 가운데 모달. 화면 아래로 빠지는 대신 8px 떠오르며 나타나고 같은 길로 사라진다(끌어 닫기 없음).
+          "md:w-full md:max-w-md md:touch-auto md:rounded-sheet md:transition-[transform,opacity]",
+          open
+            ? "translate-y-0 duration-500 md:opacity-100 md:duration-200"
+            : "translate-y-full duration-300 md:translate-y-2 md:opacity-0 md:duration-150",
         )}
       >
-        {/* 끌어서 닫을 수 있다는 단서 */}
-        <span aria-hidden="true" className="absolute top-2.5 left-1/2 h-1 w-9 -translate-x-1/2 rounded-full bg-pd-line" />
+        {/* 끌어서 닫을 수 있다는 단서(모바일 시트에서만) */}
+        <span aria-hidden="true" className="absolute top-2.5 left-1/2 h-1 w-9 -translate-x-1/2 rounded-full bg-pd-line md:hidden" />
         {children}
       </div>
     </div>
