@@ -14,7 +14,7 @@ export default function TabsLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <SideNav />
-      <div className="md:pl-20 xl:pl-48">
+      <div className="md:pl-20 lg:pl-48">
         <Column>
           <AppBar />
           {/* md 이상: 헤더가 위에 고정(48px)이라 그만큼 + 20px을 비워 좌측 내비 첫 항목과 시작선을 맞춘다 */}

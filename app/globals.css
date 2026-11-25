@@ -9,6 +9,8 @@
 
 /* 디자인 시안(claude_design_prototype2)의 토큰 */
 @theme {
+  /* 좌측 내비가 레일(80px)에서 사이드바(192px)로 바뀌는 기준점. Tailwind 기본 lg(1024px)를 960px로 당겼다. */
+  --breakpoint-lg: 60rem;
   --color-ink: #1e1e28;
   --color-paper: #ffffff;
   --color-panel: #f4f4f6;

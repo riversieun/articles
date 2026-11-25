@@ -337,7 +337,7 @@ export function Overlays() {
           role="status"
           data-open={snackIn}
           className={`snack pointer-events-none fixed inset-x-0 z-[60] mx-auto flex w-full max-w-[430px] justify-center px-6 md:max-w-none ${
-            hasTabBar ? "bottom-24 md:bottom-6 md:pl-26 xl:pl-54" : hasFloatBar ? "bottom-[calc(max(16px,env(safe-area-inset-bottom))+64px)]" : "bottom-6"
+            hasTabBar ? "bottom-24 md:bottom-6 md:pl-26 lg:pl-54" : hasFloatBar ? "bottom-[calc(max(16px,env(safe-area-inset-bottom))+64px)]" : "bottom-6"
           }`}
         >
           <div ref={failPill} className="snack-pill w-fit rounded-panel bg-pd-snack/80 px-4 py-3 text-center text-label-md font-normal whitespace-pre-line text-on-primary backdrop-blur-md backdrop-saturate-120 shadow-[0_2px_8px_rgba(17,17,17,0.2),0_8px_16px_-6px_rgba(17,17,17,0.18)]">
@@ -350,7 +350,7 @@ export function Overlays() {
         <div
           data-open={helpIn}
           className={`snack pointer-events-none fixed inset-x-0 z-[61] mx-auto flex w-full max-w-[430px] justify-center px-6 md:max-w-none ${
-            hasTabBar ? "bottom-24 md:bottom-6 md:pl-26 xl:pl-54" : hasFloatBar ? "bottom-[calc(max(16px,env(safe-area-inset-bottom))+64px)]" : "bottom-6"
+            hasTabBar ? "bottom-24 md:bottom-6 md:pl-26 lg:pl-54" : hasFloatBar ? "bottom-[calc(max(16px,env(safe-area-inset-bottom))+64px)]" : "bottom-6"
           }`}
         >
           {/* 실패 스낵바가 떠 있는 동안은 그 위(8px 간격)로, 사라지면 자기 자리로 내려온다 */}
