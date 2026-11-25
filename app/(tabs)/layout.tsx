@@ -12,7 +12,8 @@ export default function TabsLayout({ children }: { children: ReactNode }) {
       <div className="md:pl-48">
         <Column>
           <AppBar />
-          <div className="pb-[104px] md:pb-10">{children}</div>
+          {/* md 이상: 앱 바가 없으므로 위 20px을 둬서 좌측 내비의 로고 줄과 시작선을 맞춘다 */}
+          <div className="pb-[104px] md:pt-5 md:pb-10">{children}</div>
           <TabBar />
         </Column>
       </div>
