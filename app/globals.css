@@ -2,6 +2,9 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/* 개발 전용 모션랩(app/motion-lab)은 .gitignore 에 있어 Tailwind 가 자동으로 읽지 않는다. 폴더가 있을 때만(개발 PC) 클래스를 만든다. */
+@source "./motion-lab";
+
 @custom-variant dark (&:is(.dark *));
 
 /* 디자인 시안(claude_design_prototype2)의 토큰 */

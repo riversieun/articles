@@ -91,7 +91,7 @@ export default function ArchivePage() {
                     </button>
                   </div>
                 </div>
-                <p className="m-0 text-body-md leading-6 whitespace-pre-wrap text-pd-ink">{n.text}</p>
+                <p className="m-0 text-body-md leading-6 whitespace-pre-wrap wrap-anywhere text-pd-ink">{n.text}</p>
               </div>
               <Link
                 href={`/contents/${a.id}`}
