@@ -35,7 +35,7 @@
    */
   --color-pd-ink: #1e1e28; /* 본문·제목 글자. on-surface와 같은 값 */
   --color-pd-ink-muted: #5e5e66; /* 부제·날짜 (기존 on-surface-muted #5f5f66) */
-  --color-pd-ink-soft: #313142; /* 로고·홈 카드 제목·출처 이름·더보기 글자 */
+  --color-pd-ink-soft: #313142; /* 로고·홈 카드 제목·더보기 글자 */
   --color-pd-ink-faint: #8d8d99; /* 출처 옆 발행일. 대비가 낮은 걸 알고 쓰는 예외(DESIGN.md) */
   --color-pd-ink-quiet: #77778d; /* 요약 카드 라벨 */
   --color-pd-icon: #5e5e66; /* 글 저장 아이콘(저장 전) */
