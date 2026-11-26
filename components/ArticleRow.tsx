@@ -11,7 +11,7 @@ import { IconBookmark, IconSparkle } from "./icons";
 export function SourceLine({ a, large = false }: { a: Article; large?: boolean }) {
   return (
     <span className={`flex min-w-0 items-center gap-1.5 tracking-body ${large ? "text-body-sm leading-4.5" : "text-caption"}`}>
-      <span className="flex shrink-0 items-center gap-0.5 text-pd-ink-soft">
+      <span className="flex shrink-0 items-center gap-0.5 text-pd-ink">
         <IconSparkle size={14} />
         {SOURCE_LABEL[a.src]}
       </span>
@@ -50,15 +50,9 @@ export function ArticleRow({
   entryPoint?: string;
 }) {
   return (
-    // PC(md~) hover: 행 전체가 pd-tint 면(모서리 card 16px)이 되고, 면 위·아래 구분선은 숨긴다(위는 자기 구분선, 아래는 다음 행의 구분선).
-    // 누르는 순간만 98%로 줄어 눌림을 알린다. 목록 안에서 ArticleRow끼리 형제로 붙어 있어야 아래 구분선 숨김이 동작한다.
-    <div className="article-row group/row md:rounded-card md:transition-[background-color,transform] md:duration-150 md:ease-[cubic-bezier(0.23,1,0.32,1)] md:hover:bg-pd-tint md:active:scale-[0.98] motion-reduce:transform-none">
-      {position > 0 && (
-        <div
-          aria-hidden="true"
-          className="mx-6 h-px bg-panel transition-opacity duration-150 md:group-hover/row:opacity-0 md:[.article-row:hover+.article-row_&]:opacity-0"
-        />
-      )}
+    // PC(md~): hover 색 변화 없음. 누르는 순간만 98%로 줄어 눌림을 알린다.
+    <div className="md:transition-transform md:duration-150 md:ease-[cubic-bezier(0.23,1,0.32,1)] md:active:scale-[0.98] motion-reduce:transform-none">
+      {position > 0 && <div aria-hidden="true" className="mx-6 h-px bg-panel" />}
       <Link
         href={`/contents/${a.id}`}
         onClick={() => track("Article Opened", { ...articleProps(a.id), entry_point: entryPoint, position })}

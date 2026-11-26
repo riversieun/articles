@@ -76,7 +76,7 @@ const COLORS: [name: string, hex: string, token: string, hint: string][] = [
   ["snack", "#4A4A52", "--color-pd-snack", "스낵바(토스트) 배경. 글자는 흰색"],
   ["pd-ink", "#1E1E28", "--color-pd-ink", "v2 본문·제목 글자, 선택된 칩·탭"],
   ["pd-ink-muted", "#5E5E66", "--color-pd-ink-muted", "v2 부제·날짜·영어 제목"],
-  ["pd-ink-soft", "#313142", "--color-pd-ink-soft", "v2 로고·홈 카드 제목·출처 이름·더보기 글자"],
+  ["pd-ink-soft", "#313142", "--color-pd-ink-soft", "v2 로고·홈 카드 제목·더보기 글자"],
   ["pd-ink-faint", "#8D8D99", "--color-pd-ink-faint", "v2 발행일(대비 3.3:1, 날짜 한정 예외)"],
   ["pd-ink-quiet", "#77778D", "--color-pd-ink-quiet", "v2 요약 카드 라벨"],
   ["pd-icon", "#5E5E66", "--color-pd-icon", "v2 글 저장 아이콘(저장 전)"],
